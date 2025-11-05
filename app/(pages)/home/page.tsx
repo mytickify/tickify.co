@@ -48,7 +48,7 @@ export default function Home() {
     <div className="min-h-screen">
       {/* Hero Section */}
       <section className="relative overflow-hidden">
-        <div className="absolute inset-0 bg-gradient-to-br from-cyan-600 via-cyan-700 to-amber-600 gradient-animate" />
+        <div className="absolute inset-0 bg-linear-to-br from-cyan-600 via-cyan-700 to-amber-600 gradient-animate" />
         <div className="absolute inset-0 bg-[url('https://images.unsplash.com/photo-1540039155733-5bb30b53aa14?w=1600')] bg-cover bg-center opacity-20 mix-blend-overlay" />
         
         <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20 sm:py-32">
@@ -56,7 +56,7 @@ export default function Home() {
             <h1 className="text-5xl sm:text-7xl font-bold mb-6 animate-fade-in">
               Discover Your Next
               <br />
-              <span className="bg-gradient-to-r from-amber-300 to-pink-300 bg-clip-text text-transparent">
+              <span className="bg-linear-to-r from-amber-300 to-pink-300 bg-clip-text text-transparent">
                 Unforgettable Experience
               </span>
             </h1>
@@ -79,7 +79,7 @@ export default function Home() {
                   </div>
                   <Button
                     size="lg"
-                    className="h-14 px-8 bg-gradient-to-r from-cyan-600 to-amber-500 hover:from-cyan-700 hover:to-amber-600 text-white font-semibold"
+                    className="h-14 px-8 bg-linear-to-r from-cyan-600 to-amber-500 hover:from-cyan-700 hover:to-amber-600 text-white font-semibold"
                   >
                     Search
                     <ArrowRight className="ml-2 w-5 h-5" />
@@ -102,7 +102,7 @@ export default function Home() {
                 onClick={() => setSelectedCategory(category.id as EventCategoryType  | "all")}
                 className={
                   selectedCategory === category.id
-                    ? "bg-gradient-to-r from-cyan-600 to-amber-500 text-white"
+                    ? "bg-linear-to-r from-cyan-600 to-amber-500 text-white"
                     : "hover:bg-cyan-100/50"
                 }
               >
@@ -119,10 +119,10 @@ export default function Home() {
         <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
           <div className="flex items-center justify-between mb-8">
             <div>
-              <h2 className="text-3xl sm:text-4xl font-bold bg-gradient-to-r from-cyan-600 to-amber-500 bg-clip-text text-transparent">
+              <h2 className="text-3xl sm:text-4xl font-bold bg-linear-to-r from-cyan-600 to-amber-500 bg-clip-text text-transparent">
                 Featured Events
               </h2>
-              <p className="text-gray-600 mt-2">Don't miss these amazing experiences</p>
+              <p className="text-gray-600 mt-2">Don&apos;t miss these amazing experiences</p>
             </div>
           </div>
 
