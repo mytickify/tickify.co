@@ -2,29 +2,6 @@ import { eventStore } from '@/lib/store';
 import { Event, EventCategory, EventStatus, PaymentStatus } from '@/types';
 
 const resolvers = {
-  EventCategoryType: {
-    MUSIC: 'MUSIC',
-    SPORTS: 'SPORTS',
-    ARTS: 'ARTS',
-    FESTIVAL: 'FESTIVAL',
-    CONFERENCE: 'CONFERENCE',
-    NIGHTLIFE: 'NIGHTLIFE',
-    COMEDY: 'COMEDY',
-    THEATRE: 'THEATRE',
-    OTHER: 'OTHER',
-  },
-
-  EventStatus: {
-    Draft: EventStatus.Draft,
-    Published: EventStatus.Published,
-    Ended: EventStatus.Ended,
-  },
-
-  PaymentStatus: {
-    Pending: PaymentStatus.Pending,
-    Completed: PaymentStatus.Completed,
-    Failed: PaymentStatus.Failed,
-  },
   Query: {
     events: () => {
       return eventStore.getAll();

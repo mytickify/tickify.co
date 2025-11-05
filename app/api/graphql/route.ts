@@ -2,7 +2,7 @@ import { ApolloServer } from '@apollo/server';
 import { startServerAndCreateNextHandler } from '@as-integrations/next';
 import typeDefs from '@/lib/graphql/typeDefs';
 import resolvers from '@/lib/graphql/resolvers';
-import { NextRequest } from 'next/server';
+import { NextRequest, NextResponse } from 'next/server';
 
 const server = new ApolloServer({
   typeDefs,
@@ -10,14 +10,14 @@ const server = new ApolloServer({
 });
 
 // req has the type NextRequest
-const handler = startServerAndCreateNextHandler(server)
+const handler = startServerAndCreateNextHandler<NextRequest>(server)
 
 // required to open apollo server
-export async function GET(request: Request): Promise<Response> {
+export async function GET(request: NextRequest): Promise<Response> {
   return handler(request);
 }
 
 // where queries will be sent
-export async function POST(request: Request): Promise<Response> {
+export async function POST(request: NextRequest): Promise<Response> {
   return handler(request);
 }
