@@ -8,7 +8,7 @@ import { ArrowLeft, Save, Eye } from "lucide-react";
 import EventEditor from "@/components/events/EventEditor";
 import EventPreview from "@/components/events/EventPreview";
 import { Skeleton } from "@/components/ui/skeleton";
-import { create, update, getById, CREATE_EVENT_MUTATION, UPDATE_EVENT_MUTATION, GET_EVENT_BY_ID_QUERY } from "@/app/actions/graphql-events";
+import { CREATE_EVENT_MUTATION, UPDATE_EVENT_MUTATION, GET_EVENT_BY_ID_QUERY } from "@/app/actions/graphql-events";
 import { Event, EventCategoryType, EventStatus, GetEventByIdQuery } from "@/app/gql/graphql";
 import { useMutation, useQuery } from "@apollo/client/react";
 

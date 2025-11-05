@@ -56,8 +56,8 @@ const resolvers = {
       return events.filter(event =>
         event.title.toLowerCase().includes(term) ||
         event.description.toLowerCase().includes(term) ||
-        event.location.venue.toLowerCase().includes(term) ||
-        event.location.city.toLowerCase().includes(term)
+        (event.location?.venue && event.location.venue.toLowerCase().includes(term)) ||
+        (event.location?.city && event.location.city.toLowerCase().includes(term))
       );
     },
   },
