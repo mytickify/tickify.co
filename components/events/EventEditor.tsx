@@ -13,7 +13,7 @@ export default function EventEditor({ editorData }: { editorData: Event | null, 
   const [eventData, setEventData] = useState(editorData);
   const fileInputRef = useRef(null);
   const collabAvatarInputRef = useRef(null);
-  const [uploadingCollabIndex, setUploadingCollabIndex] = useState(null);
+  const [uploadingCollabIndex, setUploadingCollabIndex] = useState<number | null>(null);
 
   const handleInputChange = (field: keyof Event, value: Event[typeof field]) => {
     setEventData(prev => prev ? { ...prev, [field]: value } : null);
@@ -110,7 +110,7 @@ export default function EventEditor({ editorData }: { editorData: Event | null, 
     const file = e.target.files?.[0];
     if (!file) return;
 
-    setUploadingCollabIndex(index as any);
+    setUploadingCollabIndex(index);
     try {
       const formData = new FormData();
       formData.append('file', file);

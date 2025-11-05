@@ -12,7 +12,7 @@ interface EventsListProps {
   filteredEvents: Event[];
   isLoading: boolean;
   selectedCategory: EventCategoryType | "all";
-  categories: Array<{ id: string; label: string; icon: any }>;
+  categories: { id: EventCategoryType; label: string;}[];
 }
 
 export default function EventsList({
@@ -33,7 +33,7 @@ export default function EventsList({
         </div>
 
         <Link href={"/create"}>
-          <Button className="bg-gradient-to-r from-cyan-600 to-amber-500 text-white">
+          <Button className="bg-linear-to-r from-cyan-600 to-amber-500 text-white">
             Create Event
           </Button>
         </Link>
@@ -60,13 +60,13 @@ export default function EventsList({
         </div>
       ) : (
         <div className="text-center py-20">
-          <div className="w-24 h-24 mx-auto mb-6 rounded-full bg-gradient-to-br from-cyan-100 to-amber-100 flex items-center justify-center">
+          <div className="w-24 h-24 mx-auto mb-6 rounded-full bg-linear-to-br from-cyan-100 to-amber-100 flex items-center justify-center">
             <Calendar className="w-12 h-12 text-cyan-600" />
           </div>
           <h3 className="text-2xl font-bold text-gray-900 mb-2">No events found</h3>
           <p className="text-gray-600 mb-6">Try adjusting your search or filters</p>
           <Link href={"/create"}>
-            <Button className="bg-gradient-to-r from-cyan-600 to-amber-500 text-white">
+            <Button className="bg-linear-to-r from-cyan-600 to-amber-500 text-white">
               Create the first event
             </Button>
           </Link>
