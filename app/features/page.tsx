@@ -16,7 +16,8 @@ import {
   Eye,
   Zap,
   Smartphone,
-  CheckCircle
+  CheckCircle,
+  Rocket
 } from "lucide-react";
 
 export default function FeaturesPage() {
@@ -144,6 +145,12 @@ export default function FeaturesPage() {
         
         <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20 sm:py-32">
           <div className="text-center text-white">
+            {/* Coming Soon Badge */}
+            <div className="inline-flex items-center gap-2 px-6 py-2 rounded-full bg-white/10 backdrop-blur-sm border border-white/20 mb-8">
+              <Rocket className="w-4 h-4 text-amber-300" />
+              <span className="text-amber-300 font-semibold text-sm">Coming Soon</span>
+            </div>
+            
             <h1 className="text-4xl sm:text-6xl font-bold mb-6 animate-fade-in">
               Powerful Features for
               <br />
