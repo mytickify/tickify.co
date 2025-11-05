@@ -1,48 +1,45 @@
 
 "use client";
 
-import { useState, useEffect } from "react";
-import { useQuery } from "@tanstack/react-query";
+import { useState, useEffect, ReactNode, ReactElement } from "react";
+import { useQuery } from "@apollo/client/react";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
-import { Search, Calendar, MapPin, ArrowRight, Sparkles, TrendingUp } from "lucide-react";
+import { Search, Calendar, MapPin, ArrowRight, Sparkles, TrendingUp, LucideIcon } from "lucide-react";
 import { format } from "date-fns";
 import EventCard from "@/components/events/EventCard";
 import EventsList from "@/components/events/EventsList";
 import { Skeleton } from "@/components/ui/skeleton";
-import { getAll } from "@/app/actions/events";
+
 import { EventCategory, Event } from "@/types";
-import { EventCategoryType } from "@/app/gql/graphql";
+import { EventCategoryType, GetEventsQuery } from "@/app/gql/graphql";
+import { GET_EVENTS_QUERY } from "@/app/actions/graphql-events";
 
 export default function Home() {
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedCategory, setSelectedCategory] = useState<EventCategoryType|"all">("all");
 
- const {data: events, isLoading } = useQuery({
-    queryKey: ['events'],
-    queryFn: getAll,
-    initialData: [],
-  });
+ const {data: events, loading: isLoading } = useQuery<GetEventsQuery>(GET_EVENTS_QUERY);
 
-  const categories = [
+  const categories: { id: EventCategoryType | "all"; label: string; icon: LucideIcon }[] = [
     { id: "all", label: "All Events", icon: Sparkles },
-    { id: "music", label: "Music", icon: TrendingUp },
-    { id: "sports", label: "Sports", icon: TrendingUp },
-    { id: "arts", label: "Arts", icon: TrendingUp },
-    { id: "festival", label: "Festivals", icon: TrendingUp },
-    { id: "nightlife", label: "Nightlife", icon: TrendingUp },
+    { id: EventCategoryType.Music, label: "Music", icon: TrendingUp },
+    { id: EventCategoryType.Sports, label: "Sports", icon: TrendingUp },
+    { id: EventCategoryType.Arts, label: "Arts", icon: TrendingUp },
+    { id: EventCategoryType.Festival, label: "Festivals", icon: TrendingUp },
+    { id: EventCategoryType.Nightlife, label: "Nightlife", icon: TrendingUp },
   ];
 
-  const filteredEvents = events.filter(event => {
+  const filteredEvents = events?.events?.filter(event => {
     const matchesSearch = event.title?.toLowerCase().includes(searchTerm.toLowerCase()) ||
                          event.location?.venue?.toLowerCase().includes(searchTerm.toLowerCase());
     const matchesCategory = !selectedCategory || selectedCategory === "all" || event.category.type.includes(selectedCategory);
     return matchesSearch && matchesCategory;
-  });
+  }) || [];
 
-  const featuredEvents = events.filter(e => e.is_featured).slice(0, 3);
+  const featuredEvents = events?.events?.filter(e => e.is_featured).slice(0, 3) || [];
 
   return (
     <div className="min-h-screen">
@@ -136,7 +133,7 @@ export default function Home() {
 
       {/* All Events */}
       <EventsList
-        events={events}
+        events={events?.events || []}
         filteredEvents={filteredEvents}
         isLoading={isLoading}
         selectedCategory={selectedCategory}

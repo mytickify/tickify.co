@@ -11,7 +11,14 @@ const config: CodegenConfig = {
       plugins: []
     },
     "./lib/graphql/resolvers-types.ts": {
-      plugins: [ "typescript", "typescript-resolvers"]
+      plugins: [ "typescript", "typescript-resolvers"],
+      config: {
+        
+        scalars: {
+          DateTime: "Date",
+          JSON: "object",
+        },
+      }
     }
   }
 };

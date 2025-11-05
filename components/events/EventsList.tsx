@@ -4,15 +4,15 @@ import EventCard from "./EventCard";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
-import { Calendar } from "lucide-react";
-import { Event, EventCategoryType } from "@/app/gql/graphql";
+import { Calendar, LucideIcon } from "lucide-react";
+import { Event, EventCategoryType, GetEventsQuery } from "@/app/gql/graphql";
 
 interface EventsListProps {
-  events: Event[];
+  events?: GetEventsQuery["events"];
   filteredEvents: Event[];
   isLoading: boolean;
   selectedCategory: EventCategoryType | "all";
-  categories: { id: EventCategoryType; label: string;}[];
+  categories: { id: EventCategoryType | "all"; label: string; icon: LucideIcon }[];
 }
 
 export default function EventsList({

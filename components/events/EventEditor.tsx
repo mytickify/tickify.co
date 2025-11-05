@@ -11,8 +11,8 @@ import { Event } from "@/app/gql/graphql";
 
 export default function EventEditor({ editorData }: { editorData: Event | null, }) {
   const [eventData, setEventData] = useState(editorData);
-  const fileInputRef = useRef(null);
-  const collabAvatarInputRef = useRef(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
+  const collabAvatarInputRef = useRef<HTMLInputElement>(null);
   const [uploadingCollabIndex, setUploadingCollabIndex] = useState<number | null>(null);
 
   const handleInputChange = (field: keyof Event, value: Event[typeof field]) => {
@@ -77,7 +77,7 @@ export default function EventEditor({ editorData }: { editorData: Event | null, 
     }
   };
 
-  const handleCollabChange = (index: number, field: keyof Event['collaborators'][0], value: Event['collaborators'][0][typeof field]) => {
+  const handleCollabChange = (index: number, field: keyof NonNullable<Event['collaborators']>[0], value: NonNullable<Event['collaborators']>[0][typeof field]) => {
     const newCollabs = [...(eventData?.collaborators || [])];
     newCollabs[index] = { ...newCollabs[index], [field]: value };
     setEventData(prev => prev ? { ...prev, collaborators: newCollabs } : null);
@@ -147,8 +147,8 @@ export default function EventEditor({ editorData }: { editorData: Event | null, 
             <Label htmlFor="name">Event Name</Label>
             <Input
               id="name"
-              value={eventData.name}
-              onChange={(e) => handleInputChange('name', e.target.value)}
+              value={eventData?.title || ''}
+              onChange={(e) => handleInputChange('title', e.target.value)}
               placeholder="Enter event name"
               className="text-lg font-semibold"
             />
@@ -158,7 +158,7 @@ export default function EventEditor({ editorData }: { editorData: Event | null, 
             <Label htmlFor="description">Description</Label>
             <Textarea
               id="description"
-              value={eventData.description}
+              value={eventData?.description || ''}
               onChange={(e) => handleInputChange('description', e.target.value)}
               placeholder="Describe your event..."
               rows={4}
@@ -171,14 +171,14 @@ export default function EventEditor({ editorData }: { editorData: Event | null, 
               <Input
                 id="date"
                 type="datetime-local"
-                value={eventData.date ? new Date(eventData.date).toISOString().slice(0, 16) : ''}
-                onChange={(e) => handleInputChange('date', new Date(e.target.value).toISOString())}
+                value={eventData?.startDate ? new Date(eventData.startDate).toISOString().slice(0, 16) : ''}
+                onChange={(e) => handleInputChange('startDate', new Date(e.target.value).toISOString())}
               />
             </div>
 
             <div>
               <Label htmlFor="category">Category</Label>
-              <Select value={eventData.category} onValueChange={(value) => handleInputChange('category', value)}>
+              <Select value={eventData?.category.type[0] || ''} onValueChange={(value) => handleInputChange('category', value)}>
                 <SelectTrigger>
                   <SelectValue />
                 </SelectTrigger>
@@ -202,8 +202,8 @@ export default function EventEditor({ editorData }: { editorData: Event | null, 
               <Label htmlFor="venue">Venue</Label>
               <Input
                 id="venue"
-                value={eventData.venue}
-                onChange={(e) => handleInputChange('venue', e.target.value)}
+                value={eventData?.location?.venue || ''}
+                onChange={(e) => handleInputChange('location', { ...eventData?.location || {}, venue: e.target.value })}
                 placeholder="Venue name"
               />
             </div>
@@ -212,8 +212,8 @@ export default function EventEditor({ editorData }: { editorData: Event | null, 
               <Label htmlFor="location">Location</Label>
               <Input
                 id="location"
-                value={eventData.location}
-                onChange={(e) => handleInputChange('location', e.target.value)}
+                value={eventData?.location?.city || ''}
+                onChange={(e) => handleInputChange('location', { ...eventData?.location || {}, city: e.target.value })}
                 placeholder="City, State"
               />
             </div>
@@ -249,7 +249,7 @@ export default function EventEditor({ editorData }: { editorData: Event | null, 
                 <Upload className="w-4 h-4 mr-2" />
                 Upload Cover Image
               </Button>
-              {eventData.cover_image && (
+              {eventData?.cover_image && (
                 <div className="mt-3 rounded-lg overflow-hidden">
                   <img 
                     src={eventData.cover_image} 
@@ -268,12 +268,12 @@ export default function EventEditor({ editorData }: { editorData: Event | null, 
                 <Input
                   id="primary_color"
                   type="color"
-                  value={eventData.primary_color}
+                  value={eventData?.primary_color || ''}
                   onChange={(e) => handleInputChange('primary_color', e.target.value)}
                   className="w-16 h-10 p-1 cursor-pointer"
                 />
                 <Input
-                  value={eventData.primary_color}
+                  value={eventData?.primary_color || ''}
                   onChange={(e) => handleInputChange('primary_color', e.target.value)}
                   placeholder="#06B6D4"
                   className="flex-1"
@@ -287,12 +287,12 @@ export default function EventEditor({ editorData }: { editorData: Event | null, 
                 <Input
                   id="secondary_color"
                   type="color"
-                  value={eventData.secondary_color}
+                  value={eventData?.secondary_color || ''}
                   onChange={(e) => handleInputChange('secondary_color', e.target.value)}
                   className="w-16 h-10 p-1 cursor-pointer"
                 />
                 <Input
-                  value={eventData.secondary_color}
+                  value={eventData?.secondary_color || ''}
                   onChange={(e) => handleInputChange('secondary_color', e.target.value)}
                   placeholder="#F59E0B"
                   className="flex-1"
@@ -323,8 +323,8 @@ export default function EventEditor({ editorData }: { editorData: Event | null, 
           </div>
         </CardHeader>
         <CardContent className="space-y-4">
-          {(eventData.collaborators || []).length > 0 ? (
-            (eventData.collaborators || []).map((collab, index) => (
+          {(eventData?.collaborators || []).length > 0 ? (
+            (eventData?.collaborators || []).map((collab, index) => (
               <div key={index} className="p-4 border rounded-lg space-y-3">
                 <div className="flex items-center justify-between">
                   <h4 className="font-semibold">Collaborator {index + 1}</h4>
@@ -378,7 +378,7 @@ export default function EventEditor({ editorData }: { editorData: Event | null, 
                       <div>
                         <Label>Role</Label>
                         <Select 
-                          value={collab.role} 
+                          value={collab?.role || ''} 
                           onValueChange={(value) => handleCollabChange(index, 'role', value)}
                         >
                           <SelectTrigger>
@@ -400,7 +400,7 @@ export default function EventEditor({ editorData }: { editorData: Event | null, 
                     <div>
                       <Label>Description</Label>
                       <Textarea
-                        value={collab.description}
+                        value={collab?.description || ''}
                         onChange={(e) => handleCollabChange(index, 'description', e.target.value)}
                         placeholder="Brief description..."
                         rows={2}
@@ -432,11 +432,11 @@ export default function EventEditor({ editorData }: { editorData: Event | null, 
           </div>
         </CardHeader>
         <CardContent className="space-y-4">
-          {eventData.ticket_types.map((ticket, index) => (
+          {(eventData?.ticketTiers || []).map((ticket, index) => (
             <div key={index} className="p-4 border rounded-lg space-y-3">
               <div className="flex items-center justify-between">
                 <h4 className="font-semibold">Ticket {index + 1}</h4>
-                {eventData.ticket_types.length > 1 && (
+                {(eventData?.ticketTiers || []).length > 1 && (
                   <Button
                     variant="ghost"
                     size="sm"
@@ -472,8 +472,8 @@ export default function EventEditor({ editorData }: { editorData: Event | null, 
                   <Label>Available Quantity</Label>
                   <Input
                     type="number"
-                    value={ticket.quantity_available}
-                    onChange={(e) => handleTicketChange(index, 'quantity_available', parseInt(e.target.value))}
+                    value={ticket.quantity}
+                    onChange={(e) => handleTicketChange(index, 'quantity', parseInt(e.target.value))}
                     min="0"
                   />
                 </div>
@@ -500,7 +500,7 @@ export default function EventEditor({ editorData }: { editorData: Event | null, 
               <div>
                 <Label>Description</Label>
                 <Textarea
-                  value={ticket.description}
+                  value={ticket?.description || ''}
                   onChange={(e) => handleTicketChange(index, 'description', e.target.value)}
                   placeholder="Ticket benefits and details..."
                   rows={2}

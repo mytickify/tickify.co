@@ -4,23 +4,24 @@ import Link from "next/link";
 import { Badge } from "@/components/ui/badge";
 import { Calendar, MapPin, Ticket, Star } from "lucide-react";
 import { format } from "date-fns";
+import { Event } from "@/app/gql/graphql";
 
-export default function EventCard({ event, featured = false }) {
+export default function EventCard({ event, featured = false } : { event: Event, featured?: boolean }) {
   const categoryColors = {
-    music: "bg-purple-100 text-purple-700 border-purple-200",
-    sports: "bg-blue-100 text-blue-700 border-blue-200",
-    arts: "bg-pink-100 text-pink-700 border-pink-200",
-    festival: "bg-orange-100 text-orange-700 border-orange-200",
-    conference: "bg-green-100 text-green-700 border-green-200",
-    nightlife: "bg-indigo-100 text-indigo-700 border-indigo-200",
-    comedy: "bg-yellow-100 text-yellow-700 border-yellow-200",
-    theatre: "bg-red-100 text-red-700 border-red-200",
-    other: "bg-gray-100 text-gray-700 border-gray-200"
+    MUSIC: "bg-purple-100 text-purple-700 border-purple-200",
+    SPORTS: "bg-blue-100 text-blue-700 border-blue-200",
+    ARTS: "bg-pink-100 text-pink-700 border-pink-200",
+    FESTIVAL: "bg-orange-100 text-orange-700 border-orange-200",
+    CONFERENCE: "bg-green-100 text-green-700 border-green-200",
+    NIGHTLIFE: "bg-indigo-100 text-indigo-700 border-indigo-200",
+    COMEDY: "bg-yellow-100 text-yellow-700 border-yellow-200",
+    THEATRE: "bg-red-100 text-red-700 border-red-200",
+    OTHER: "bg-gray-100 text-gray-700 border-gray-200"
   };
 
-  const minPrice = event.ticket_types?.reduce((min, ticket) => 
+  const minPrice = event?.ticketTiers?.reduce((min, ticket) => 
     ticket.price < min ? ticket.price : min, 
-    event.ticket_types[0]?.price || 0
+    event?.ticketTiers[0]?.price || 0
   );
 
   return (
@@ -41,12 +42,12 @@ export default function EventCard({ event, featured = false }) {
               backgroundImage: `url(${event.cover_image || 'https://images.unsplash.com/photo-1492684223066-81342ee5ff30?w=800'})`
             }}
           />
-          <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/20 to-transparent" />
+          <div className="absolute inset-0 bg-linear-to-t from-black/60 via-black/20 to-transparent" />
           
           {/* Badges */}
           <div className="absolute top-4 left-4 right-4 flex justify-between items-start">
-            <Badge className={`${categoryColors[event.category || 'other']} border`}>
-              {event.category || 'Event'}
+            <Badge className={`${categoryColors[event.category.type[0] || 'OTHER']} border`}>
+              {event.category.type[0] || 'Event'}
             </Badge>
             {featured && (
               <Badge className="bg-orange-500 text-white border-0">
@@ -74,24 +75,24 @@ export default function EventCard({ event, featured = false }) {
         {/* Content */}
         <div className="p-6 bg-white">
           <h3 className="text-xl font-bold text-gray-900 mb-3 group-hover:text-purple-600 transition-colors line-clamp-1">
-            {event.name}
+            {event.title || 'Event'}
           </h3>
 
           <div className="space-y-2 text-sm text-gray-600">
             <div className="flex items-center gap-2">
               <Calendar className="w-4 h-4 text-purple-500" />
-              <span>{format(new Date(event.date), "EEE, MMM d, yyyy 'at' h:mm a")}</span>
+              <span>{format(new Date(event.startDate), "EEE, MMM d, yyyy 'at' h:mm a")}</span>
             </div>
             
             <div className="flex items-center gap-2">
               <MapPin className="w-4 h-4 text-orange-500" />
-              <span className="line-clamp-1">{event.venue || event.location}</span>
+              <span className="line-clamp-1">{event.location.venue || 'Location not specified'}</span>
             </div>
 
-            {event.ticket_types && event.ticket_types.length > 0 && (
+            {event.ticketTiers && event.ticketTiers.length > 0 && (
               <div className="flex items-center gap-2">
                 <Ticket className="w-4 h-4 text-teal-500" />
-                <span>{event.ticket_types.length} ticket type{event.ticket_types.length > 1 ? 's' : ''} available</span>
+                <span>{event.ticketTiers.length} ticket type{event.ticketTiers.length > 1 ? 's' : ''} available</span>
               </div>
             )}
           </div>
