@@ -55,6 +55,41 @@ You can start editing the page by modifying `app/page.tsx`. The page auto-update
 
 This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
 
+## Authentication (Better Auth) + Prisma
+
+This project integrates Better Auth with Prisma Postgres to provide authentication.
+
+### Setup
+
+- Install dependencies:
+  - `npm install -D prisma`
+  - `npm install @prisma/client @prisma/extension-accelerate better-auth`
+
+- Configure environment variables in `.env`:
+  - `BETTER_AUTH_SECRET` — generate via `npx @better-auth/cli@latest secret`
+  - `BETTER_AUTH_URL` — your app URL (e.g., `http://localhost:3000`)
+  - `DATABASE_URL` — Postgres connection string
+
+- Initialize Prisma:
+  - `npx prisma init`
+  - Edit `prisma/schema.prisma` if needed and then `npx prisma generate`
+  - Create your database and run migrations (example):
+    - `npx prisma migrate dev --name init`
+
+### Files added
+
+- `lib/prisma.ts`: Shared Prisma client instance
+- `lib/auth.ts`: Better Auth server configuration using Prisma adapter
+- `app/api/auth/[...all]/route.ts`: Next.js route mounting Better Auth handlers
+- `lib/auth-client.ts`: Better Auth React client for sign-in/sign-up and session
+- `app/auth/page.tsx`: Minimal UI to test email/password flows
+
+### Notes
+
+- The Prisma schema includes models required by Better Auth: `User`, `Session`, `Account`, `Verification`.
+- Migrations require a reachable Postgres instance configured via `DATABASE_URL`.
+- If your app runs on a port other than `3000`, add it to `trustedOrigins` or set `BETTER_AUTH_URL` accordingly.
+
 ## Learn More
 
 To learn more about Next.js, take a look at the following resources:
