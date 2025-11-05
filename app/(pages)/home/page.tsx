@@ -1,39 +1,26 @@
 
 "use client";
 
-import { useState } from "react";
-// import { base44 } from "@/api/base44Client";
+import { useState, useEffect } from "react";
 import { useQuery } from "@tanstack/react-query";
 import Link from "next/link";
-//import { createPageUrl } from "@/utils";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { Search, Calendar, MapPin, ArrowRight, Sparkles, TrendingUp } from "lucide-react";
 import { format } from "date-fns";
 import EventCard from "@/components/events/EventCard";
+import EventsList from "@/components/events/EventsList";
 import { Skeleton } from "@/components/ui/skeleton";
 import { getAll } from "@/app/actions/events";
-import { EventCategory } from "@/types";
-
-async function getEvents() {
-  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000';
-  const res = await fetch(`${baseUrl}/api/events`, {
-    cache: 'no-store'
-  });
-  
-  if (!res.ok) {
-    return [];
-  }
-  
-  return res.json();
-}
+import { EventCategory, Event } from "@/types";
+import { EventCategoryType } from "@/app/gql/graphql";
 
 export default function Home() {
   const [searchTerm, setSearchTerm] = useState("");
-  const [selectedCategory, setSelectedCategory] = useState<EventCategory|"all">("all");
+  const [selectedCategory, setSelectedCategory] = useState<EventCategoryType|"all">("all");
 
-  const { data: events, isLoading } = useQuery({
+ const {data: events, isLoading } = useQuery({
     queryKey: ['events'],
     queryFn: getAll,
     initialData: [],
@@ -112,7 +99,7 @@ export default function Home() {
               <Button
                 key={category.id}
                 variant={selectedCategory === category.id ? "default" : "ghost"}
-                onClick={() => setSelectedCategory(category.id as EventCategory | "all")}
+                onClick={() => setSelectedCategory(category.id as EventCategoryType  | "all")}
                 className={
                   selectedCategory === category.id
                     ? "bg-gradient-to-r from-cyan-600 to-amber-500 text-white"
@@ -148,56 +135,13 @@ export default function Home() {
       )}
 
       {/* All Events */}
-      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
-        <div className="flex items-center justify-between mb-8">
-          <div>
-            <h2 className="text-3xl sm:text-4xl font-bold text-gray-900">
-              {selectedCategory ? `${categories.find(c => c.id === selectedCategory)?.label}` : "All Events"}
-            </h2>
-            <p className="text-gray-600 mt-2">{filteredEvents.length} events available</p>
-          </div>
-
-          <Link href={"/create"}>
-            <Button className="bg-gradient-to-r from-cyan-600 to-amber-500 text-white">
-              Create Event
-            </Button>
-          </Link>
-        </div>
-
-        {isLoading ? (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-            {Array(6).fill(0).map((_, i) => (
-              <div key={i} className="rounded-2xl overflow-hidden">
-                <Skeleton className="h-64 w-full" />
-                <div className="p-6 space-y-3">
-                  <Skeleton className="h-6 w-3/4" />
-                  <Skeleton className="h-4 w-1/2" />
-                  <Skeleton className="h-4 w-full" />
-                </div>
-              </div>
-            ))}
-          </div>
-        ) : filteredEvents.length > 0 ? (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-            {filteredEvents.map((event) => (
-              <EventCard key={event.id} event={event} />
-            ))}
-          </div>
-        ) : (
-          <div className="text-center py-20">
-            <div className="w-24 h-24 mx-auto mb-6 rounded-full bg-gradient-to-br from-cyan-100 to-amber-100 flex items-center justify-center">
-              <Calendar className="w-12 h-12 text-cyan-600" />
-            </div>
-            <h3 className="text-2xl font-bold text-gray-900 mb-2">No events found</h3>
-            <p className="text-gray-600 mb-6">Try adjusting your search or filters</p>
-            <Link href={"/create"}>
-              <Button className="bg-gradient-to-r from-cyan-600 to-amber-500 text-white">
-                Create the first event
-              </Button>
-            </Link>
-          </div>
-        )}
-      </section>
+      <EventsList
+        events={events}
+        filteredEvents={filteredEvents}
+        isLoading={isLoading}
+        selectedCategory={selectedCategory}
+        categories={categories}
+      />
     </div>
   );
 }

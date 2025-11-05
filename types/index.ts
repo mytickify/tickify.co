@@ -21,6 +21,18 @@ export interface TicketTier {
   available: boolean;
 }
 
+export enum EventStatus {
+  Draft = "draft",
+  Published = "published",
+  Ended = "ended"
+}
+
+export enum PaymentStatus {
+  Pending = "pending",
+  Completed = "completed",
+  Failed = "failed"
+}
+
 export enum EventCategory {
   Music = "music",
   Sports = "sports",
@@ -67,7 +79,7 @@ export interface Event {
   ticketTiers: TicketTier[];
   images: {
     banner?: string;
-    gallery: string[];
+    gallery?: string[];
   };
   features: {
     showGallery: boolean;

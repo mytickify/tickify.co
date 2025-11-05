@@ -6,6 +6,7 @@ import { usePathname } from "next/navigation";
 import { Ticket, Plus, Home, Calendar, Menu, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { QueryProvider } from "@/providers/query";
+import { ApolloProviderWrapper } from "@/providers/apollo";
 
 export default function Layout({
   children,
@@ -32,7 +33,8 @@ export default function Layout({
 
   return (
     <QueryProvider>
-      <div className="min-h-screen bg-gradient-to-br from-slate-50 via-cyan-50/30 to-amber-50/20">
+      <ApolloProviderWrapper>
+        <div className="min-h-screen bg-gradient-to-br from-cyan-50 to-amber-50">
         <style>{`
           :root {
             --primary: 188 94% 43%;
@@ -188,6 +190,7 @@ export default function Layout({
         </div>
       </footer>
     </div>
+      </ApolloProviderWrapper>
     </QueryProvider>
   );
 }
