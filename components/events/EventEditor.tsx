@@ -138,7 +138,7 @@ export default function EventEditor({ editorData }: { editorData: Event | null, 
       <Card>
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
-            <div className="w-2 h-6 bg-gradient-to-b from-cyan-600 to-amber-500 rounded-full" />
+            <div className="w-2 h-6 bg-linear-to-b from-cyan-600 to-amber-500 rounded-full" />
             Event Details
           </CardTitle>
         </CardHeader>
@@ -338,7 +338,7 @@ export default function EventEditor({ editorData }: { editorData: Event | null, 
                 </div>
 
                 <div className="flex gap-4">
-                  <div className="flex-shrink-0">
+                  <div className="shrink-0">
                     <Label>Avatar</Label>
                     <div className="mt-2">
                       <input
