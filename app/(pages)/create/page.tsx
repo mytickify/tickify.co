@@ -1,138 +1,121 @@
 
 "use client";
 
-import React, { useState, useEffect } from "react";
-import { useRouter } from "next/navigation";
-import { useMutation, useQueryClient, useQuery } from "@tanstack/react-query";
+import React, { useState } from "react";
+import { useRouter, useParams } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { ArrowLeft, Save, Eye } from "lucide-react";
 import EventEditor from "@/components/events/EventEditor";
 import EventPreview from "@/components/events/EventPreview";
 import { Skeleton } from "@/components/ui/skeleton";
+import { create, update, getById, CREATE_EVENT_MUTATION, UPDATE_EVENT_MUTATION, GET_EVENT_BY_ID_QUERY } from "@/app/actions/graphql-events";
+import { Event, EventCategoryType, EventStatus, GetEventByIdQuery } from "@/app/gql/graphql";
+import { useMutation, useQuery } from "@apollo/client/react";
+
+const DEFAULT_EVENT_DATA = {
+  title: "Event Name",
+  description: "Description of the event",
+  location: {
+    address: "19 Rue de la République",
+    city: "Paris",
+    venue: "Parc des Princes",
+  },
+  category: {
+    type: [EventCategoryType.Music,],
+    description: "",
+  },
+  status: EventStatus.Draft,
+  is_featured: false,
+  createdAt: new Date().toISOString(),
+  endDate: new Date().toISOString(),
+  endTime: new Date().toISOString(),
+  startTime: new Date().toISOString(),
+  startDate: new Date().toISOString().split('T')[0],
+  id: "",
+  organizer: {
+    name: "Organizer Name",
+    email: "organizer@example.com",
+    phone: "1234567890",
+  },
+}
 
 export default function CreateEvent() {
   const router = useRouter();
-  const queryClient = useQueryClient();
+  const params = useParams();
+  const editEventId = params.id as string;
+
   const [showPreview, setShowPreview] = useState(true);
-  const [eventData, setEventData] = useState({
-    name: "My Amazing Event",
-    description: "Join us for an unforgettable experience",
-    date: new Date().toISOString(),
-    location: "Your City",
-    venue: "Main Venue",
-    category: "music",
-    status: "draft",
-    primary_color: "#06B6D4", // Changed from #8B5CF6
-    secondary_color: "#F59E0B", // Changed from #F97316
-    cover_image: "https://images.unsplash.com/photo-1492684223066-81342ee5ff30?w=1200",
-    ticket_types: [
-      {
-        name: "General Admission",
-        description: "Standard entry ticket",
-        price: 50,
-        currency: "USD",
-        quantity_available: 100,
-        quantity_sold: 0
-      }
-    ],
-    tags: [],
-    is_featured: false
-  });
 
   // Get URL params using Next.js approach
-  const [editEventId, setEditEventId] = useState<string | null>(null);
   const isEditing = !!editEventId;
 
-  useEffect(() => {
-    // Parse URL params on client side
-    const urlParams = new URLSearchParams(window.location.search);
-    const id = urlParams.get('id');
-    setEditEventId(id);
-  }, []);
-
   // Load event data if editing
-  const { data: existingEvent, isLoading } = useQuery({
-    queryKey: ['event-edit', editEventId],
-    queryFn: async () => {
-      const response = await fetch(`/api/events/${editEventId}`);
-      if (!response.ok) {
-        throw new Error('Failed to fetch event');
-      }
-      return response.json();
-    },
-    enabled: isEditing,
+  const { data: existingEvent, loading: isLoading } = useQuery<GetEventByIdQuery>(GET_EVENT_BY_ID_QUERY, {
+    variables: { id: editEventId },
+    skip: !isEditing,
   });
 
-  useEffect(() => {
-    if (existingEvent) {
-      setEventData(existingEvent);
-    }
-  }, [existingEvent]);
+  const eventData: Event = isEditing ? existingEvent?.event || DEFAULT_EVENT_DATA : DEFAULT_EVENT_DATA;
 
-  const createEventMutation = useMutation({
-    mutationFn: async (data) => {
-      const response = await fetch('/api/events', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(data),
-      });
-      if (!response.ok) {
-        throw new Error('Failed to create event');
-      }
-      return response.json();
-    },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['events'] });
-      queryClient.invalidateQueries({ queryKey: ['my-events'] });
-      router.push("/my-events");
-    },
-  });
+  const [createEventMutation, { data: createData, loading: createLoading, error: createError }] = useMutation(CREATE_EVENT_MUTATION);
 
-  const updateEventMutation = useMutation({
-    mutationFn: async ({ id, data }) => {
-      const response = await fetch(`/api/events/${id}`, {
-        method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(data),
-      });
-      if (!response.ok) {
-        throw new Error('Failed to update event');
-      }
-      return response.json();
-    },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['events'] });
-      queryClient.invalidateQueries({ queryKey: ['my-events'] });
-      queryClient.invalidateQueries({ queryKey: ['event', editEventId] });
-      router.push("/my-events");
-    },
-  });
+  const [updateEventMutation, { data: updateData, loading: updateLoading, error: updateError }] = useMutation(UPDATE_EVENT_MUTATION);
 
-  const handleSave = async (status) => {
-    const user = await base44.auth.me();
-    const dataToSave = {
+  const handleSave = async (status?: EventStatus) => {
+    const dataToSave: Event = {
       ...eventData,
-      status: status || eventData.status, // Keep current status if not specified
-      organizer_email: user.email,
-      organizer_name: user.full_name
+      status: status || eventData?.status // Keep current status if not specified
     };
 
     if (isEditing) {
-      updateEventMutation.mutate({ id: editEventId, data: dataToSave });
+      updateEventMutation({
+        variables: {
+          id: editEventId,
+          input: dataToSave,
+        },
+        refetchQueries: "active",
+      });
     } else {
-      createEventMutation.mutate(dataToSave);
+      createEventMutation(
+        {
+          variables: {
+            input: {
+
+              title: dataToSave.title || "",
+              description: dataToSave.description || "",
+              startDate: new Date(dataToSave.startTime || "").toISOString().split('T')[0],
+              startTime: new Date(dataToSave.startTime || "").toISOString().split('T')[1].slice(0, 5),
+              endDate: new Date(dataToSave.endTime || "").toISOString().split('T')[0],
+              endTime: new Date(dataToSave.endTime || "").toISOString().split('T')[1].slice(0, 5),
+              location: dataToSave.location || {
+                address: "",
+                city: "",
+                venue: "",
+              },
+              category: dataToSave.category || {
+                type: [],
+                description: "",
+              },
+              status: dataToSave.status || EventStatus.Draft,
+              is_featured: dataToSave.is_featured || false,
+              organizer: {
+                name: dataToSave.organizer?.name || "",
+                email: dataToSave.organizer?.email || "",
+                phone: dataToSave.organizer?.phone || "",
+              },
+
+            }
+          }
+        }
+      );
     }
   };
 
-  const isPending = createEventMutation.isPending || updateEventMutation.isPending;
+  const isPending = createLoading || updateLoading;
 
   if (isLoading && isEditing) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-slate-50 via-purple-50/30 to-orange-50/20 flex items-center justify-center">
+      <div className="min-h-screen bg-linear-to-br from-slate-50 via-purple-50/30 to-orange-50/20 flex items-center justify-center">
         <div className="text-center">
           <Skeleton className="w-64 h-8 mx-auto mb-4" />
           <Skeleton className="w-48 h-4 mx-auto" />
@@ -142,7 +125,7 @@ export default function CreateEvent() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-cyan-50/30 to-amber-50/20">
+    <div className="min-h-screen bg-linear-to-br from-slate-50 via-cyan-50/30 to-amber-50/20">
       {/* Header */}
       <div className="bg-white border-b sticky top-16 sm:top-20 z-40">
         <div className="max-w-[1800px] mx-auto px-4 sm:px-6 lg:px-8 py-4">
@@ -172,23 +155,23 @@ export default function CreateEvent() {
                 <Eye className="w-4 h-4 mr-2" />
                 {showPreview ? "Hide Preview" : "Show Preview"}
               </Button>
-              
+
               {isEditing ? (
                 <>
                   <Button
                     variant="outline"
-                    onClick={() => handleSave(eventData.status)}
+                    onClick={() => handleSave(eventData?.status)}
                     disabled={isPending}
                   >
                     <Save className="w-4 h-4 mr-2" />
                     Save Changes
                   </Button>
 
-                  {eventData.status !== 'published' && (
+                  {eventData?.status !== EventStatus.Published && (
                     <Button
-                      onClick={() => handleSave('published')}
+                      onClick={() => handleSave(EventStatus.Published)}
                       disabled={isPending}
-                      className="bg-gradient-to-r from-cyan-600 to-amber-500 text-white"
+                      className="bg-linear-to-r from-cyan-600 to-amber-500 text-white"
                     >
                       {isPending ? "Publishing..." : "Publish Event"}
                     </Button>
@@ -198,7 +181,7 @@ export default function CreateEvent() {
                 <>
                   <Button
                     variant="outline"
-                    onClick={() => handleSave('draft')}
+                    onClick={() => handleSave(EventStatus.Draft)}
                     disabled={isPending}
                   >
                     <Save className="w-4 h-4 mr-2" />
@@ -206,9 +189,9 @@ export default function CreateEvent() {
                   </Button>
 
                   <Button
-                    onClick={() => handleSave('published')}
+                    onClick={() => handleSave(EventStatus.Published)}
                     disabled={isPending}
-                    className="bg-gradient-to-r from-cyan-600 to-amber-500 text-white"
+                    className="bg-linear-to-r from-cyan-600 to-amber-500 text-white"
                   >
                     {isPending ? "Publishing..." : "Publish Event"}
                   </Button>
@@ -224,11 +207,11 @@ export default function CreateEvent() {
         <div className="grid lg:grid-cols-2 gap-0 min-h-[calc(100vh-180px)]">
           {/* Editor Panel */}
           <div className="bg-white border-r overflow-y-auto" style={{ maxHeight: 'calc(100vh - 180px)' }}>
-            <EventEditor eventData={eventData} setEventData={setEventData} />
+            <EventEditor editorData={eventData} />
           </div>
 
           {/* Preview Panel */}
-          <div 
+          <div
             className={`bg-gray-50 overflow-y-auto ${showPreview ? '' : 'hidden lg:block'}`}
             style={{ maxHeight: 'calc(100vh - 180px)' }}
           >
@@ -248,7 +231,7 @@ export default function CreateEvent() {
         <Button
           size="lg"
           onClick={() => setShowPreview(!showPreview)}
-          className="rounded-full shadow-2xl bg-gradient-to-r from-purple-600 to-orange-500 text-white"
+          className="rounded-full shadow-2xl bg-linear-to-r from-purple-600 to-orange-500 text-white"
         >
           <Eye className="w-5 h-5 mr-2" />
           {showPreview ? "Show Editor" : "Show Preview"}

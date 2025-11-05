@@ -1,5 +1,5 @@
 
-import React, { useRef } from "react";
+import React, { useRef, useState } from "react";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
@@ -7,48 +7,55 @@ import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Plus, Trash2, Upload, Palette, Users } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Event } from "@/app/gql/graphql";
 
-export default function EventEditor({ eventData, setEventData }) {
+export default function EventEditor({ editorData }: { editorData: Event | null, }) {
+  const [eventData, setEventData] = useState(editorData);
   const fileInputRef = useRef(null);
   const collabAvatarInputRef = useRef(null);
   const [uploadingCollabIndex, setUploadingCollabIndex] = React.useState(null);
 
-  const handleInputChange = (field, value) => {
-    setEventData(prev => ({ ...prev, [field]: value }));
+
+  const handleInputChange = (field: keyof Event, value: Event[typeof field]) => {
+    setEventData(prev => prev ? { ...prev, [field]: value } : null);
   };
 
-  const handleTicketChange = (index, field, value) => {
-    const newTickets = [...eventData.ticket_types];
+  const handleTicketChange = (index: number, field: keyof NonNullable<NonNullable<Event['ticketTiers']>[0]>, value: NonNullable<NonNullable<Event['ticketTiers']>[0]>[typeof field]) => {
+    const newTickets = [...(eventData?.ticketTiers || [])];
     newTickets[index] = { ...newTickets[index], [field]: value };
-    setEventData(prev => ({ ...prev, ticket_types: newTickets }));
+    setEventData(prev => prev ? { ...prev, ticketTiers: newTickets } : null);
   };
 
   const addTicketType = () => {
-    setEventData(prev => ({
+    setEventData(prev => prev ? {
       ...prev,
-      ticket_types: [
-        ...prev.ticket_types,
+      ticketTiers: [
+        ...(prev.ticketTiers || []),
         {
           name: "New Ticket",
           description: "",
           price: 0,
           currency: "USD",
           quantity_available: 100,
-          quantity_sold: 0
+          quantity_sold: 0,
+          available: true,
+          id: `temp-${Date.now()}`,
+          quantity: 100,
+          soldCount: 0
         }
       ]
-    }));
+    } : null);
   };
 
-  const removeTicketType = (index) => {
-    setEventData(prev => ({
+  const removeTicketType = (index: number) => {
+    setEventData(prev => prev ? {
       ...prev,
-      ticket_types: prev.ticket_types.filter((_, i) => i !== index)
-    }));
+      ticketTiers: (prev.ticketTiers || []).filter((_, i) => i !== index)
+    } : null);
   };
 
-  const handleImageUpload = async (e) => {
-    const file = e.target.files[0];
+  const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement> ) => {
+    const file = e.target.files?.[0];
     if (!file) return;
 
     try {
@@ -62,14 +69,14 @@ export default function EventEditor({ eventData, setEventData }) {
     }
   };
 
-  const handleCollabChange = (index, field, value) => {
-    const newCollabs = [...(eventData.collaborators || [])];
+  const handleCollabChange = (index: number, field: keyof Event['collaborators'][0], value: Event['collaborators'][0][typeof field]) => {
+    const newCollabs = [...(eventData?.collaborators || [])];
     newCollabs[index] = { ...newCollabs[index], [field]: value };
-    setEventData(prev => ({ ...prev, collaborators: newCollabs }));
+    setEventData(prev => prev ? { ...prev, collaborators: newCollabs } : null);
   };
 
   const addCollaborator = () => {
-    setEventData(prev => ({
+    setEventData(prev => prev ? {
       ...prev,
       collaborators: [
         ...(prev.collaborators || []),
@@ -80,17 +87,17 @@ export default function EventEditor({ eventData, setEventData }) {
           description: ""
         }
       ]
-    }));
+    } : null);
   };
 
-  const removeCollaborator = (index) => {
-    setEventData(prev => ({
+  const removeCollaborator = (index: number) => {
+    setEventData(prev => prev ? {
       ...prev,
       collaborators: (prev.collaborators || []).filter((_, i) => i !== index)
-    }));
+    } : null);
   };
 
-  const handleCollabAvatarUpload = async (e, index) => {
+  const handleCollabAvatarUpload = async (e: React.ChangeEvent<HTMLInputElement>, index: number) => {
     const file = e.target.files[0];
     if (!file) return;
 

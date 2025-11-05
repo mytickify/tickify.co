@@ -3,11 +3,84 @@
 import { gql } from '@apollo/client';
 import client from '@/lib/apollo-client';
 import { Event } from '@/types';
-import { CreateEventMutation, GetEventBySlugQuery, GetEventsQuery } from '../gql/graphql';
+import { CreateEventInput, CreateEventMutation, GetEventByIdQuery, GetEventBySlugQuery, GetEventsQuery, UpdateEventInput, UpdateEventMutation } from '../gql/graphql';
 
 const GET_EVENTS_QUERY = gql`
   query GetEvents {
     events {
+      id
+      slug
+      title
+      description
+      startDate
+      startTime
+      endDate
+      endTime
+      category {
+        type
+        description
+      }
+      is_featured
+      location {
+        venue
+        address
+        city
+        coordinates {
+          lat
+          lng
+        }
+      }
+      organizer {
+        name
+        email
+        phone
+      }
+      theme {
+        primaryColor
+        secondaryColor
+        accentColor
+        backgroundColor
+        textColor
+        fontFamily
+        layout
+        gradientEnabled
+        gradientDirection
+      }
+      ticketTiers {
+        id
+        name
+        price
+        currency
+        quantity
+        soldCount
+        description
+        available
+      }
+      images {
+        banner
+        gallery
+      }
+      features {
+        showGallery
+        allowGuestUploads
+        showChat
+        showCollaborators
+      }
+      collaborators {
+        name
+        type
+        logo
+      }
+      status
+      createdAt
+      updatedAt
+    }
+  }
+`;
+
+export const GET_EVENT_BY_ID_QUERY = gql`
+  query GetEventById($id: ID!) {
+    event(id: $id) {
       id
       slug
       title
@@ -151,7 +224,7 @@ const GET_EVENT_BY_SLUG_QUERY = gql`
   }
 `;
 
-const CREATE_EVENT_MUTATION = gql`
+export const CREATE_EVENT_MUTATION = gql`
   mutation CreateEvent($input: CreateEventInput!) {
     createEvent(input: $input) {
       id
@@ -249,7 +322,93 @@ export async function getBySlug(slug: string) {
   }
 }
 
-export async function create(event: Omit<Event, 'id' | 'slug' | 'createdAt' | 'updatedAt'>) {
+export async function getById(id: string) {
+  try {
+    const { data } = await client.query<GetEventByIdQuery>({
+      query: GET_EVENT_BY_ID_QUERY,
+      variables: { id },
+    });
+    return data?.event || null;
+  } catch (error) {
+    console.error('Error fetching event by id:', error);
+    throw new Error('Failed to fetch event');
+  }
+}
+
+export const UPDATE_EVENT_MUTATION = gql`
+  mutation UpdateEvent($id: ID!, $input: UpdateEventInput!) {
+    updateEvent(id: $id, input: $input) {
+      id
+      slug
+      title
+      description
+      startDate
+      startTime
+      endDate
+      endTime
+      category {
+        type
+        description
+      }
+      is_featured
+      location {
+        venue
+        address
+        city
+        coordinates {
+          lat
+          lng
+        }
+      }
+      organizer {
+        name
+        email
+        phone
+      }
+      theme {
+        primaryColor
+        secondaryColor
+        accentColor
+        backgroundColor
+        textColor
+        fontFamily
+        layout
+        gradientEnabled
+        gradientDirection
+      }
+      ticketTiers {
+        id
+        name
+        price
+        currency
+        quantity
+        soldCount
+        description
+        available
+      }
+      images {
+        banner
+        gallery
+      }
+      features {
+        showGallery
+        allowGuestUploads
+        showChat
+        showCollaborators
+      }
+      collaborators {
+        name
+        type
+        logo
+      }
+      status
+      createdAt
+      updatedAt
+    }
+  }
+`;
+
+export async function create(event: CreateEventInput) {
   try {
     const { data } = await client.mutate<CreateEventMutation>({
       mutation: CREATE_EVENT_MUTATION,
@@ -259,5 +418,18 @@ export async function create(event: Omit<Event, 'id' | 'slug' | 'createdAt' | 'u
   } catch (error) {
     console.error('Error creating event:', error);
     throw new Error('Failed to create event');
+  }
+}
+
+export async function update(id: string, event: UpdateEventInput) {
+  try {
+    const { data } = await client.mutate<UpdateEventMutation>({
+      mutation: UPDATE_EVENT_MUTATION,
+      variables: { id, input: event },
+    });
+    return data?.updateEvent || null;
+  } catch (error) {
+    console.error('Error updating event:', error);
+    throw new Error('Failed to update event');
   }
 }

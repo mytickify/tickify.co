@@ -80,8 +80,8 @@ export type CreateEventInput = {
   startDate: Scalars['String']['input'];
   startTime: Scalars['String']['input'];
   status?: InputMaybe<EventStatus>;
-  theme: EventThemeInput;
-  ticketTiers: Array<TicketTierInput>;
+  theme?: InputMaybe<EventThemeInput>;
+  ticketTiers?: InputMaybe<Array<TicketTierInput>>;
   title: Scalars['String']['input'];
 };
 
@@ -96,24 +96,24 @@ export type Event = {
   __typename?: 'Event';
   category: Category;
   collaborators?: Maybe<Array<Collaborator>>;
-  createdAt: Scalars['DateTime']['output'];
+  createdAt?: Maybe<Scalars['DateTime']['output']>;
   description: Scalars['String']['output'];
   endDate: Scalars['String']['output'];
   endTime: Scalars['String']['output'];
-  features: EventFeatures;
+  features?: Maybe<EventFeatures>;
   id: Scalars['ID']['output'];
-  images: EventImage;
+  images?: Maybe<EventImage>;
   is_featured: Scalars['Boolean']['output'];
   location: Location;
-  organizer: Organizer;
-  slug: Scalars['String']['output'];
+  organizer?: Maybe<Organizer>;
+  slug?: Maybe<Scalars['String']['output']>;
   startDate: Scalars['String']['output'];
   startTime: Scalars['String']['output'];
   status: EventStatus;
-  theme: EventTheme;
-  ticketTiers: Array<TicketTier>;
+  theme?: Maybe<EventTheme>;
+  ticketTiers?: Maybe<Array<TicketTier>>;
   title: Scalars['String']['output'];
-  updatedAt: Scalars['DateTime']['output'];
+  updatedAt?: Maybe<Scalars['DateTime']['output']>;
 };
 
 export enum EventCategoryType {
@@ -532,24 +532,24 @@ export interface DateTimeScalarConfig extends GraphQLScalarTypeConfig<ResolversT
 export type EventResolvers<ContextType = any, ParentType extends ResolversParentTypes['Event'] = ResolversParentTypes['Event']> = {
   category?: Resolver<ResolversTypes['Category'], ParentType, ContextType>;
   collaborators?: Resolver<Maybe<Array<ResolversTypes['Collaborator']>>, ParentType, ContextType>;
-  createdAt?: Resolver<ResolversTypes['DateTime'], ParentType, ContextType>;
+  createdAt?: Resolver<Maybe<ResolversTypes['DateTime']>, ParentType, ContextType>;
   description?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   endDate?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   endTime?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
-  features?: Resolver<ResolversTypes['EventFeatures'], ParentType, ContextType>;
+  features?: Resolver<Maybe<ResolversTypes['EventFeatures']>, ParentType, ContextType>;
   id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
-  images?: Resolver<ResolversTypes['EventImage'], ParentType, ContextType>;
+  images?: Resolver<Maybe<ResolversTypes['EventImage']>, ParentType, ContextType>;
   is_featured?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
   location?: Resolver<ResolversTypes['Location'], ParentType, ContextType>;
-  organizer?: Resolver<ResolversTypes['Organizer'], ParentType, ContextType>;
-  slug?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  organizer?: Resolver<Maybe<ResolversTypes['Organizer']>, ParentType, ContextType>;
+  slug?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   startDate?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   startTime?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   status?: Resolver<ResolversTypes['EventStatus'], ParentType, ContextType>;
-  theme?: Resolver<ResolversTypes['EventTheme'], ParentType, ContextType>;
-  ticketTiers?: Resolver<Array<ResolversTypes['TicketTier']>, ParentType, ContextType>;
+  theme?: Resolver<Maybe<ResolversTypes['EventTheme']>, ParentType, ContextType>;
+  ticketTiers?: Resolver<Maybe<Array<ResolversTypes['TicketTier']>>, ParentType, ContextType>;
   title?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
-  updatedAt?: Resolver<ResolversTypes['DateTime'], ParentType, ContextType>;
+  updatedAt?: Resolver<Maybe<ResolversTypes['DateTime']>, ParentType, ContextType>;
 };
 
 export type EventFeaturesResolvers<ContextType = any, ParentType extends ResolversParentTypes['EventFeatures'] = ResolversParentTypes['EventFeatures']> = {

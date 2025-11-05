@@ -62,9 +62,9 @@ export interface Event {
   category: Category;
   is_featured: boolean;
   location: {
-    venue: string;
-    address: string;
-    city: string;
+    venue?: string;
+    address?: string;
+    city?: string;
     coordinates?: {
       lat: number;
       lng: number;

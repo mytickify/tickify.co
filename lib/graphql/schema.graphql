@@ -112,7 +112,7 @@
 
   type Event {
     id: ID!
-    slug: String!
+    slug: String
     title: String!
     description: String!
     startDate: String!
@@ -122,15 +122,15 @@
     category: Category!
     is_featured: Boolean!
     location: Location!
-    organizer: Organizer!
-    theme: EventTheme!
-    ticketTiers: [TicketTier!]!
-    images: EventImage!
-    features: EventFeatures!
+    organizer: Organizer
+    theme: EventTheme
+    ticketTiers: [TicketTier!]
+    images: EventImage
+    features: EventFeatures
     collaborators: [Collaborator!]
     status: EventStatus!
-    createdAt: DateTime!
-    updatedAt: DateTime!
+    createdAt: DateTime
+    updatedAt: DateTime
   }
 
   type Buyer {
@@ -177,8 +177,8 @@
     is_featured: Boolean
     location: LocationInput!
     organizer: OrganizerInput!
-    theme: EventThemeInput!
-    ticketTiers: [TicketTierInput!]!
+    theme: EventThemeInput
+    ticketTiers: [TicketTierInput!]
     images: EventImageInput
     features: EventFeaturesInput
     collaborators: [CollaboratorInput!]
