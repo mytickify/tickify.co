@@ -51,13 +51,18 @@ export default function HomePage() {
             description="Add galleries, chat, collaborators and more to engage attendees"
           />
         </div>
-
-        <div className="text-center mt-20">
+        <div className="text-center mt-20 space-y-4">
           <Link 
             href="/events"
-            className="text-white text-lg underline hover:opacity-80 transition-opacity"
+            className=" text-lg underline hover:opacity-80 transition-opacity mr-8"
           >
             Browse All Events →
+          </Link>
+          <Link 
+            href="/features"
+            className="text-white text-lg underline hover:opacity-80 transition-opacity"
+          >
+            See All Features →
           </Link>
         </div>
       </div>
