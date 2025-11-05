@@ -4,8 +4,9 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Calendar, MapPin, Users, Ticket, Clock } from "lucide-react";
 import { format } from "date-fns";
+import { Event } from "@/app/gql/graphql";
 
-export default function EventPreview({ eventData }) {
+export default function EventPreview({ eventData }: { eventData: Event }) {
   return (
     <div className="pb-12">
       {/* Hero Section */}
@@ -25,21 +26,21 @@ export default function EventPreview({ eventData }) {
         
         <div className="absolute bottom-0 left-0 right-0 p-8 text-white">
           <Badge className="mb-4 bg-white/20 backdrop-blur-sm text-white border-white/30">
-            {eventData.category}
+            {eventData.category?.description || 'General'}
           </Badge>
-          <h1 className="text-4xl font-bold mb-2">{eventData.name}</h1>
+          <h1 className="text-4xl font-bold mb-2">{eventData.title}</h1>
           <div className="flex flex-wrap items-center gap-4 text-sm">
             <div className="flex items-center gap-2">
               <Calendar className="w-4 h-4" />
-              {format(new Date(eventData.date), "EEE, MMM d, yyyy")}
+              {format(new Date(`${eventData.startDate} ${eventData.startTime}`), "EEE, MMM d, yyyy")}
             </div>
             <div className="flex items-center gap-2">
               <Clock className="w-4 h-4" />
-              {format(new Date(eventData.date), "h:mm a")}
+              {format(new Date(`${eventData.startDate} ${eventData.startTime}`), "h:mm a")}
             </div>
             <div className="flex items-center gap-2">
               <MapPin className="w-4 h-4" />
-              {eventData.venue}
+              {eventData.location?.venue || 'Virtual Event'}
             </div>
           </div>
         </div>
@@ -60,12 +61,12 @@ export default function EventPreview({ eventData }) {
                 >
                   <MapPin 
                     className="w-6 h-6"
-                    style={{ color: eventData.primary_color }}
+                    style={{ color: eventData.primary_color as string }}
                   />
                 </div>
                 <div>
                   <p className="text-sm text-gray-600">Location</p>
-                  <p className="font-semibold">{eventData.location}</p>
+                  <p className="font-semibold">{eventData.location?.venue || 'Virtual Event'}</p>
                 </div>
               </div>
 
@@ -76,13 +77,13 @@ export default function EventPreview({ eventData }) {
                 >
                   <Users 
                     className="w-6 h-6"
-                    style={{ color: eventData.secondary_color }}
+                    style={{ color: eventData.secondary_color as string }}
                   />
                 </div>
                 <div>
                   <p className="text-sm text-gray-600">Capacity</p>
                   <p className="font-semibold">
-                    {eventData.ticket_types?.reduce((sum, t) => sum + (t.quantity_available || 0), 0)} tickets
+                    {eventData.ticketTiers?.reduce((sum, t) => sum + (t.quantity || 0), 0)} tickets
                   </p>
                 </div>
               </div>
@@ -110,7 +111,7 @@ export default function EventPreview({ eventData }) {
                           src={collab.avatar} 
                           alt={collab.name}
                           className="w-20 h-20 rounded-full object-cover mx-auto border-4 shadow-lg"
-                          style={{ borderColor: eventData.primary_color }}
+                          style={{ borderColor: eventData.primary_color as string }}
                         />
                       ) : (
                         <div 
@@ -143,13 +144,13 @@ export default function EventPreview({ eventData }) {
               Tickets
             </h2>
             <div className="space-y-4">
-              {eventData.ticket_types?.map((ticket, index) => (
+              {eventData.ticketTiers?.map((ticket, index) => (
                 <div 
                   key={index}
                   className="p-4 rounded-xl border-2 hover:shadow-lg transition-all duration-300"
                   style={{
-                    borderColor: `${eventData.primary_color}30`,
-                    background: `linear-gradient(135deg, ${eventData.primary_color}05, ${eventData.secondary_color}05)`
+                    borderColor: `${eventData.primary_color as string}30`,
+                    background: `linear-gradient(135deg, ${eventData.primary_color as string}05, ${eventData.secondary_color as string}05)` 
                   }}
                 >
                   <div className="flex items-center justify-between mb-2">
@@ -162,7 +163,7 @@ export default function EventPreview({ eventData }) {
                     <div className="text-right">
                       <p 
                         className="text-2xl font-bold"
-                        style={{ color: eventData.primary_color }}
+                        style={{ color: eventData.primary_color as string }}
                       >
                         ${ticket.price}
                       </p>
@@ -172,7 +173,7 @@ export default function EventPreview({ eventData }) {
                   
                   <div className="flex items-center justify-between mt-4">
                     <p className="text-sm text-gray-600">
-                      {ticket.quantity_available - (ticket.quantity_sold || 0)} available
+                      {ticket.quantity - (ticket.soldCount || 0)} available
                     </p>
                     <Button
                       size="sm"

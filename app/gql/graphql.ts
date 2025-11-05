@@ -44,8 +44,11 @@ export type CategoryInput = {
 
 export type Collaborator = {
   __typename?: 'Collaborator';
+  avatar?: Maybe<Scalars['String']['output']>;
+  description?: Maybe<Scalars['String']['output']>;
   logo?: Maybe<Scalars['String']['output']>;
   name: Scalars['String']['output'];
+  role?: Maybe<Scalars['String']['output']>;
   type: Scalars['String']['output'];
 };
 
@@ -96,6 +99,7 @@ export type Event = {
   __typename?: 'Event';
   category: Category;
   collaborators?: Maybe<Array<Collaborator>>;
+  cover_image?: Maybe<Scalars['String']['output']>;
   createdAt?: Maybe<Scalars['DateTime']['output']>;
   description: Scalars['String']['output'];
   endDate: Scalars['String']['output'];
@@ -106,6 +110,8 @@ export type Event = {
   is_featured: Scalars['Boolean']['output'];
   location: Location;
   organizer?: Maybe<Organizer>;
+  primary_color?: Maybe<Scalars['String']['output']>;
+  secondary_color?: Maybe<Scalars['String']['output']>;
   slug?: Maybe<Scalars['String']['output']>;
   startDate: Scalars['String']['output'];
   startTime: Scalars['String']['output'];

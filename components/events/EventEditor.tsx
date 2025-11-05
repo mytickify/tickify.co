@@ -13,8 +13,7 @@ export default function EventEditor({ editorData }: { editorData: Event | null, 
   const [eventData, setEventData] = useState(editorData);
   const fileInputRef = useRef(null);
   const collabAvatarInputRef = useRef(null);
-  const [uploadingCollabIndex, setUploadingCollabIndex] = React.useState(null);
-
+  const [uploadingCollabIndex, setUploadingCollabIndex] = useState(null);
 
   const handleInputChange = (field: keyof Event, value: Event[typeof field]) => {
     setEventData(prev => prev ? { ...prev, [field]: value } : null);
@@ -59,10 +58,19 @@ export default function EventEditor({ editorData }: { editorData: Event | null, 
     if (!file) return;
 
     try {
-      const { file_url } = await fetch('/api/integrations/core/upload-file', {
+      const formData = new FormData();
+      formData.append('file', file);
+
+      const response = await fetch('/api/integrations/core/upload-file', {
         method: 'POST',
-        body: file,
+        body: formData,
       });
+
+      if (!response.ok) {
+        throw new Error(`Upload failed: ${response.status}`);
+      }
+
+      const { file_url } = await response.json();
       handleInputChange('cover_image', file_url);
     } catch (error) {
       console.error("Error uploading image:", error);
@@ -84,7 +92,8 @@ export default function EventEditor({ editorData }: { editorData: Event | null, 
           name: "",
           role: "Artist",
           avatar: "",
-          description: ""
+          description: "",
+          type: "Collaborator"
         }
       ]
     } : null);
@@ -98,15 +107,24 @@ export default function EventEditor({ editorData }: { editorData: Event | null, 
   };
 
   const handleCollabAvatarUpload = async (e: React.ChangeEvent<HTMLInputElement>, index: number) => {
-    const file = e.target.files[0];
+    const file = e.target.files?.[0];
     if (!file) return;
 
-    setUploadingCollabIndex(index);
+    setUploadingCollabIndex(index as any);
     try {
-      const { file_url } = await fetch('/api/integrations/core/upload-file', {
+      const formData = new FormData();
+      formData.append('file', file);
+
+      const response = await fetch('/api/integrations/core/upload-file', {
         method: 'POST',
-        body: file,
+        body: formData,
       });
+
+      if (!response.ok) {
+        throw new Error(`Upload failed: ${response.status}`);
+      }
+
+      const { file_url } = await response.json();
       handleCollabChange(index, 'avatar', file_url);
     } catch (error) {
       console.error("Error uploading avatar:", error);

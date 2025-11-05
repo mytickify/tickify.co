@@ -44,8 +44,11 @@ export type CategoryInput = {
 
 export type Collaborator = {
   __typename?: 'Collaborator';
+  avatar?: Maybe<Scalars['String']['output']>;
+  description?: Maybe<Scalars['String']['output']>;
   logo?: Maybe<Scalars['String']['output']>;
   name: Scalars['String']['output'];
+  role?: Maybe<Scalars['String']['output']>;
   type: Scalars['String']['output'];
 };
 
@@ -96,6 +99,7 @@ export type Event = {
   __typename?: 'Event';
   category: Category;
   collaborators?: Maybe<Array<Collaborator>>;
+  cover_image?: Maybe<Scalars['String']['output']>;
   createdAt?: Maybe<Scalars['DateTime']['output']>;
   description: Scalars['String']['output'];
   endDate: Scalars['String']['output'];
@@ -106,6 +110,8 @@ export type Event = {
   is_featured: Scalars['Boolean']['output'];
   location: Location;
   organizer?: Maybe<Organizer>;
+  primary_color?: Maybe<Scalars['String']['output']>;
+  secondary_color?: Maybe<Scalars['String']['output']>;
   slug?: Maybe<Scalars['String']['output']>;
   startDate: Scalars['String']['output'];
   startTime: Scalars['String']['output'];
@@ -515,8 +521,11 @@ export type CategoryResolvers<ContextType = any, ParentType extends ResolversPar
 };
 
 export type CollaboratorResolvers<ContextType = any, ParentType extends ResolversParentTypes['Collaborator'] = ResolversParentTypes['Collaborator']> = {
+  avatar?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  description?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   logo?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   name?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  role?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   type?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
 };
 
@@ -532,6 +541,7 @@ export interface DateTimeScalarConfig extends GraphQLScalarTypeConfig<ResolversT
 export type EventResolvers<ContextType = any, ParentType extends ResolversParentTypes['Event'] = ResolversParentTypes['Event']> = {
   category?: Resolver<ResolversTypes['Category'], ParentType, ContextType>;
   collaborators?: Resolver<Maybe<Array<ResolversTypes['Collaborator']>>, ParentType, ContextType>;
+  cover_image?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   createdAt?: Resolver<Maybe<ResolversTypes['DateTime']>, ParentType, ContextType>;
   description?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   endDate?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
@@ -542,6 +552,8 @@ export type EventResolvers<ContextType = any, ParentType extends ResolversParent
   is_featured?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
   location?: Resolver<ResolversTypes['Location'], ParentType, ContextType>;
   organizer?: Resolver<Maybe<ResolversTypes['Organizer']>, ParentType, ContextType>;
+  primary_color?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  secondary_color?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   slug?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   startDate?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   startTime?: Resolver<ResolversTypes['String'], ParentType, ContextType>;

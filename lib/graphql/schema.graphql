@@ -103,6 +103,9 @@
     name: String!
     type: String!
     logo: String
+    avatar: String
+    role: String
+    description: String
   }
 
   type EventImage {
@@ -121,6 +124,9 @@
     endTime: String!
     category: Category!
     is_featured: Boolean!
+    cover_image: String
+    primary_color: String
+    secondary_color: String
     location: Location!
     organizer: Organizer
     theme: EventTheme
