@@ -29,7 +29,7 @@ const DEFAULT_EVENT_DATA = {
   createdAt: new Date().toISOString(),
   endDate: new Date().toISOString(),
   endTime: new Date().toISOString(),
-  startTime: new Date().toISOString(),
+  startTime: new Date().toISOString().split('T')[1].slice(0, 5),
   startDate: new Date().toISOString().split('T')[0],
   id: "",
   organizer: {

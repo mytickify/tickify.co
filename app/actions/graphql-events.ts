@@ -1,8 +1,6 @@
-"use server";
-
 import { gql } from '@apollo/client';
 import client from '@/lib/apollo-client';
-import { Event } from '@/types';
+
 import { CreateEventInput, CreateEventMutation, GetEventByIdQuery, GetEventBySlugQuery, GetEventsQuery, UpdateEventInput, UpdateEventMutation } from '../gql/graphql';
 
 export const GET_EVENTS_QUERY = gql`

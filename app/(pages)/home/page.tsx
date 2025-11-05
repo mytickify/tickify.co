@@ -1,19 +1,15 @@
 
 "use client";
 
-import { useState, useEffect, ReactNode, ReactElement } from "react";
+import { useState } from "react";
 import { useQuery } from "@apollo/client/react";
-import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Badge } from "@/components/ui/badge";
-import { Search, Calendar, MapPin, ArrowRight, Sparkles, TrendingUp, LucideIcon } from "lucide-react";
-import { format } from "date-fns";
+import { Search, ArrowRight, Sparkles, TrendingUp, LucideIcon } from "lucide-react";
+
 import EventCard from "@/components/events/EventCard";
 import EventsList from "@/components/events/EventsList";
-import { Skeleton } from "@/components/ui/skeleton";
 
-import { EventCategory, Event } from "@/types";
 import { EventCategoryType, GetEventsQuery } from "@/app/gql/graphql";
 import { GET_EVENTS_QUERY } from "@/app/actions/graphql-events";
 
