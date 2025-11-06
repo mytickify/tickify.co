@@ -8,6 +8,8 @@ import { Button } from "@/components/ui/button";
 import { QueryProvider } from "@/providers/query";
 import { ApolloProviderWrapper } from "@/providers/apollo";
 
+const SITE_NAME = "Tickify";
+
 export default function Layout({
   children,
 }: {
@@ -34,7 +36,7 @@ export default function Layout({
   return (
     <QueryProvider>
       <ApolloProviderWrapper>
-        <div className="min-h-screen bg-gradient-to-br from-cyan-50 to-amber-50">
+        <div className="min-h-screen bg-linear-to-br from-cyan-50 to-amber-50">
         <style>{`
           :root {
             --primary: 188 94% 43%;
@@ -72,11 +74,11 @@ export default function Layout({
           <div className="flex items-center justify-between h-16 sm:h-20">
             {/* Logo */}
             <Link href="/" className="flex items-center gap-3 group">
-              <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-cyan-600 to-amber-500 flex items-center justify-center shadow-lg group-hover:shadow-cyan-500/50 transition-all duration-300">
+              <div className="w-10 h-10 rounded-xl bg-linear-to-br from-cyan-600 to-amber-500 flex items-center justify-center shadow-lg group-hover:shadow-cyan-500/50 transition-all duration-300">
                 <Ticket className="w-6 h-6 text-white" />
               </div>
-              <span className="text-2xl font-bold bg-gradient-to-r from-cyan-600 to-amber-500 bg-clip-text text-transparent">
-                TicketHub
+              <span className="text-2xl font-bold bg-linear-to-r from-cyan-600 to-amber-500 bg-clip-text text-transparent">
+                {SITE_NAME}
               </span>
             </Link>
 
@@ -90,7 +92,7 @@ export default function Layout({
                       variant={isActive ? "default" : "ghost"}
                       className={
                         isActive
-                          ? "bg-gradient-to-r from-cyan-600 to-amber-500 text-white"
+                          ? "bg-linear-to-r from-cyan-600 to-amber-500 text-white"
                           : "hover:bg-cyan-100/50"
                       }
                     >
@@ -161,7 +163,7 @@ export default function Layout({
                 <div className="w-10 h-10 rounded-xl bg-white/10 flex items-center justify-center">
                   <Ticket className="w-6 h-6" />
                 </div>
-                <span className="text-2xl font-bold">TicketHub</span>
+                <span className="text-2xl font-bold">{SITE_NAME}</span>
               </div>
               <p className="text-cyan-200 max-w-md">
                 Create, discover, and attend amazing events. Your ticket to unforgettable experiences.
@@ -185,7 +187,7 @@ export default function Layout({
             </div>
           </div>
           <div className="border-t border-white/10 mt-8 pt-8 text-center text-cyan-200">
-            <p>&copy; 2025 TicketHub. All rights reserved.</p>
+            <p>&copy; {new Date().getFullYear()} {SITE_NAME}. All rights reserved.</p>
           </div>
         </div>
       </footer>
