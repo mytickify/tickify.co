@@ -1,6 +1,7 @@
 import React from 'react';
 import { useBuilder } from '../../context/BuilderContext';
 import { PageRenderer } from '../Renderer';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import './BuilderCanvas.css';
 
 const BuilderCanvas: React.FC = () => {
@@ -10,10 +11,14 @@ const BuilderCanvas: React.FC = () => {
   if (!page) {
     return (
       <div className="builder-canvas empty">
-        <div className="empty-state">
-          <h2>No hay página cargada</h2>
-          <p>Selecciona una plantilla para comenzar</p>
-        </div>
+        <Card>
+          <CardHeader>
+            <CardTitle>No hay página cargada</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <p className="text-sm text-muted-foreground">Selecciona una plantilla para comenzar</p>
+          </CardContent>
+        </Card>
       </div>
     );
   }
@@ -30,25 +35,29 @@ const BuilderCanvas: React.FC = () => {
     <div className="builder-canvas">
       <div className="canvas-sections">
         {page.sections.length === 0 ? (
-          <div className="empty-canvas">
-            <p>Agrega secciones desde el panel lateral</p>
-          </div>
+          <Card>
+            <CardContent>
+              <p className="py-6 text-center text-sm text-muted-foreground">Agrega secciones desde el panel lateral</p>
+            </CardContent>
+          </Card>
         ) : (
           page.sections.map((section) => (
-            <div key={section.id} className="canvas-section" onClick={() => selectSection(section.id)}>
-              <PageRenderer
-                page={{
-                  id: 'temp',
-                  name: 'temp',
-                  metadata: { title: '' },
-                  sections: [section],
-                  createdAt: '',
-                  updatedAt: ''
-                }}
-                isEditable={true}
-                onSectionEdit={selectSection}
-              />
-            </div>
+            <Card key={section.id} className="canvas-section" onClick={() => selectSection(section.id)}>
+              <CardContent className="pt-6">
+                <PageRenderer
+                  page={{
+                    id: 'temp',
+                    name: 'temp',
+                    metadata: { title: '' },
+                    sections: [section],
+                    createdAt: '',
+                    updatedAt: ''
+                  }}
+                  isEditable={true}
+                  onSectionEdit={selectSection}
+                />
+              </CardContent>
+            </Card>
           ))
         )}
       </div>

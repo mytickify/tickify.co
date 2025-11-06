@@ -3,6 +3,11 @@ import { Template } from '../../types';
 import basicEventTemplate from '../../data/templates/basic-event.json';
 import conferenceTemplate from '../../data/templates/conference.json';
 import concertTemplate from '../../data/templates/concert.json';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
+import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
+import { Badge } from '@/components/ui/badge';
+import { X, FileText } from 'lucide-react';
 import './TemplateGallery.css';
 
 interface TemplateGalleryProps {
@@ -38,50 +43,55 @@ const TemplateGallery: React.FC<TemplateGalleryProps> = ({
       <div className="template-gallery">
         <div className="template-gallery-header">
           <h2>Elige una Plantilla</h2>
-          <button className="close-button" onClick={onClose}>✕</button>
+          <Button variant="ghost" className="close-button" onClick={onClose}>
+            <X className="h-4 w-4" />
+          </Button>
         </div>
 
-        <div className="template-categories">
+        <Tabs defaultValue={selectedCategory} onValueChange={(val) => setSelectedCategory(val)}>
+          <TabsList className="template-categories">
+            {categories.map(cat => (
+              <TabsTrigger key={cat.id} value={cat.id}>{cat.name}</TabsTrigger>
+            ))}
+          </TabsList>
+
           {categories.map(cat => (
-            <button
-              key={cat.id}
-              className={`category-button ${selectedCategory === cat.id ? 'active' : ''}`}
-              onClick={() => setSelectedCategory(cat.id)}
-            >
-              {cat.name}
-            </button>
-          ))}
-        </div>
-
-        <div className="template-grid">
-          {filteredTemplates.map(template => (
-            <div key={template.id} className="template-card">
-              <div className="template-preview">
-                <div className="template-preview-placeholder">
-                  <span className="template-icon">📄</span>
-                  <p>{template.name}</p>
-                </div>
+            <TabsContent key={cat.id} value={cat.id}>
+              <div className="template-grid">
+                {(cat.id === 'all' ? templates : templates.filter(t => t.category === cat.id)).map(template => (
+                  <Card key={template.id} className="template-card">
+                    <CardHeader>
+                      <CardTitle className="flex items-center justify-between">
+                        {template.name}
+                        <Badge variant="secondary">{template.category}</Badge>
+                      </CardTitle>
+                    </CardHeader>
+                    <CardContent>
+                      <div className="template-preview">
+                        <div className="template-preview-placeholder">
+                          <span className="template-icon">
+                            <FileText className="h-5 w-5" />
+                          </span>
+                          <p>{template.name}</p>
+                        </div>
+                      </div>
+                      <p className="mt-2 text-sm text-muted-foreground">{template.description}</p>
+                      <div className="template-meta">
+                        <span className="template-sections">{template.sections.length} secciones</span>
+                      </div>
+                      <Button className="mt-3" onClick={() => onSelectTemplate(template)}>
+                        Usar Plantilla
+                      </Button>
+                    </CardContent>
+                  </Card>
+                ))}
               </div>
-              <div className="template-info">
-                <h3>{template.name}</h3>
-                <p>{template.description}</p>
-                <div className="template-meta">
-                  <span className="template-category">{template.category}</span>
-                  <span className="template-sections">{template.sections.length} secciones</span>
-                </div>
-                <button
-                  className="select-template-button"
-                  onClick={() => onSelectTemplate(template)}
-                >
-                  Usar Plantilla
-                </button>
-              </div>
-            </div>
+            </TabsContent>
           ))}
-        </div>
+        </Tabs>
 
         <div className="template-gallery-footer">
-          <button className="blank-template-button" onClick={() => {
+          <Button variant="outline" onClick={() => {
             const blankTemplate: Template = {
               id: 'blank',
               name: 'Plantilla en Blanco',
@@ -99,7 +109,7 @@ const TemplateGallery: React.FC<TemplateGalleryProps> = ({
             onSelectTemplate(blankTemplate);
           }}>
             Comenzar desde Cero
-          </button>
+          </Button>
         </div>
       </div>
     </div>

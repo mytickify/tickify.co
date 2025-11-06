@@ -1,6 +1,10 @@
 import React from 'react';
 import { useBuilder } from '../../context/BuilderContext';
 import { JsonParser } from '../../utils';
+import { Button } from '@/components/ui/button';
+import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { Pencil, Eye, FileJson, FileCode, Save as SaveIcon, Rocket, Download } from 'lucide-react';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from '@/components/ui/dialog';
 import './BuilderTopBar.css';
 
 interface BuilderTopBarProps {
@@ -12,19 +16,27 @@ const BuilderTopBar: React.FC<BuilderTopBarProps> = ({ onSave, onPublish }) => {
   const { state, setPreviewMode } = useBuilder();
   const { page, isDirty, previewMode } = state;
 
+  const [dialogOpen, setDialogOpen] = React.useState(false);
+  const [dialogTitle, setDialogTitle] = React.useState<string>('');
+  const [dialogDescription, setDialogDescription] = React.useState<string>('');
+
   const handleSave = () => {
     if (page && onSave) {
       onSave(page);
       // Save to localStorage as backup
       localStorage.setItem(`site-builder-${page.id}`, JSON.stringify(page));
-      alert('Página guardada exitosamente');
+      setDialogTitle('Página guardada');
+      setDialogDescription('La página se guardó exitosamente.');
+      setDialogOpen(true);
     }
   };
 
   const handlePublish = () => {
     if (page && onPublish) {
       onPublish(page);
-      alert('Página publicada exitosamente');
+      setDialogTitle('Página publicada');
+      setDialogDescription('La página fue publicada exitosamente.');
+      setDialogOpen(true);
     }
   };
 
@@ -56,62 +68,62 @@ const BuilderTopBar: React.FC<BuilderTopBarProps> = ({ onSave, onPublish }) => {
     <div className="builder-topbar">
       <div className="topbar-left">
         <h1 className="builder-title">Site Builder</h1>
-        {page && (
-          <span className="page-name">{page.name}</span>
-        )}
+        {page && <span className="page-name">{page.name}</span>}
       </div>
 
       <div className="topbar-center">
-        <button
-          className={`topbar-button ${!previewMode ? 'active' : ''}`}
-          onClick={() => setPreviewMode(false)}
+        <Tabs
+          defaultValue={previewMode ? 'preview' : 'edit'}
+          onValueChange={(val) => setPreviewMode(val === 'preview')}
         >
-          ✏️ Editar
-        </button>
-        <button
-          className={`topbar-button ${previewMode ? 'active' : ''}`}
-          onClick={() => setPreviewMode(true)}
-        >
-          👁️ Vista Previa
-        </button>
+          <TabsList>
+            <TabsTrigger value="edit" className="flex items-center gap-2">
+              <Pencil className="h-4 w-4" />
+              Editar
+            </TabsTrigger>
+            <TabsTrigger value="preview" className="flex items-center gap-2">
+              <Eye className="h-4 w-4" />
+              Vista Previa
+            </TabsTrigger>
+          </TabsList>
+        </Tabs>
       </div>
 
       <div className="topbar-right">
         <div className="button-group">
-          <button
-            className="topbar-button secondary"
-            onClick={handleExportJSON}
-            disabled={!page}
-            title="Exportar JSON"
-          >
-            📥 JSON
-          </button>
-          <button
-            className="topbar-button secondary"
-            onClick={handleExportHTML}
-            disabled={!page}
-            title="Exportar HTML"
-          >
-            📥 HTML
-          </button>
+          <Button variant="secondary" onClick={handleExportJSON} disabled={!page} title="Exportar JSON" className="flex items-center gap-2">
+            <FileJson className="h-4 w-4" />
+            JSON
+          </Button>
+          <Button variant="secondary" onClick={handleExportHTML} disabled={!page} title="Exportar HTML" className="flex items-center gap-2">
+            <FileCode className="h-4 w-4" />
+            HTML
+          </Button>
         </div>
 
-        <button
-          className="topbar-button primary"
-          onClick={handleSave}
-          disabled={!page || !isDirty}
-        >
-          💾 Guardar {isDirty && '*'}
-        </button>
+        <Button onClick={handleSave} disabled={!page || !isDirty} className="flex items-center gap-2">
+          <SaveIcon className="h-4 w-4" />
+          Guardar {isDirty && '*'}
+        </Button>
 
-        <button
-          className="topbar-button success"
-          onClick={handlePublish}
-          disabled={!page}
-        >
-          🚀 Publicar
-        </button>
+        <Button className="bg-green-600 hover:bg-green-700 flex items-center gap-2" onClick={handlePublish} disabled={!page}>
+          <Rocket className="h-4 w-4" />
+          Publicar
+        </Button>
       </div>
+
+      {/* Success dialog */}
+      <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>{dialogTitle}</DialogTitle>
+            <DialogDescription>{dialogDescription}</DialogDescription>
+          </DialogHeader>
+          <DialogFooter>
+            <Button onClick={() => setDialogOpen(false)}>Cerrar</Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 };

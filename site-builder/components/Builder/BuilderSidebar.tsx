@@ -18,7 +18,13 @@ import { CSS } from '@dnd-kit/utilities';
 import { useBuilder } from '../../context/BuilderContext';
 import { SectionRegistry } from '../../utils';
 import { SectionProps } from '../../types';
+import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Boxes, Layers as LayersIcon, Settings as SettingsIcon, GripVertical, Trash2, Image, BadgePercent, Images, Info, CalendarDays, Phone } from 'lucide-react';
 import './BuilderSidebar.css';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from '@/components/ui/dialog';
 
 interface SortableLayerItemProps {
   section: SectionProps;
@@ -35,6 +41,7 @@ const SortableLayerItem: React.FC<SortableLayerItemProps> = ({
   onDelete,
   isSelected
 }) => {
+  const [deleteOpen, setDeleteOpen] = React.useState(false);
   const {
     attributes,
     listeners,
@@ -57,7 +64,7 @@ const SortableLayerItem: React.FC<SortableLayerItemProps> = ({
       className={`layer-item ${isSelected ? 'selected' : ''}`}
     >
       <div className="layer-drag-handle" {...attributes} {...listeners}>
-        <span>⋮⋮</span>
+        <GripVertical className="h-4 w-4" />
       </div>
       <div className="layer-content" onClick={() => onSelect(section.id)}>
         <span className="layer-index">{index + 1}</span>
@@ -67,13 +74,24 @@ const SortableLayerItem: React.FC<SortableLayerItemProps> = ({
         className="layer-delete"
         onClick={(e) => {
           e.stopPropagation();
-          if (confirm('¿Eliminar esta sección?')) {
-            onDelete(section.id);
-          }
+          setDeleteOpen(true);
         }}
       >
-        🗑️
+        <Trash2 className="h-4 w-4" />
       </button>
+
+      <Dialog open={deleteOpen} onOpenChange={setDeleteOpen}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Eliminar sección</DialogTitle>
+            <DialogDescription>Esta acción no se puede deshacer.</DialogDescription>
+          </DialogHeader>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setDeleteOpen(false)}>Cancelar</Button>
+            <Button variant="destructive" onClick={() => { setDeleteOpen(false); onDelete(section.id); }}>Eliminar</Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 };
@@ -121,6 +139,8 @@ const BuilderSidebar: React.FC = () => {
     } as Partial<SectionProps>);
   };
 
+  const [editorDeleteOpen, setEditorDeleteOpen] = useState(false);
+
   const renderSectionEditor = () => {
     if (!selectedSection) {
       return (
@@ -138,13 +158,9 @@ const BuilderSidebar: React.FC = () => {
           <h3>{selectedSection.type}</h3>
           <button
             className="delete-button"
-            onClick={() => {
-              if (confirm('¿Eliminar esta sección?')) {
-                deleteSection(selectedSection.id);
-              }
-            }}
+            onClick={() => setEditorDeleteOpen(true)}
           >
-            🗑️
+            <Trash2 className="h-4 w-4" />
           </button>
         </div>
 
@@ -177,70 +193,78 @@ const BuilderSidebar: React.FC = () => {
         <div className="editor-actions">
           <button onClick={() => selectSection(null)}>Cerrar</button>
         </div>
+
+        <Dialog open={editorDeleteOpen} onOpenChange={setEditorDeleteOpen}>
+          <DialogContent>
+            <DialogHeader>
+              <DialogTitle>Eliminar sección</DialogTitle>
+              <DialogDescription>¿Seguro que quieres eliminar esta sección? Esta acción no se puede deshacer.</DialogDescription>
+            </DialogHeader>
+            <DialogFooter>
+              <Button variant="outline" onClick={() => setEditorDeleteOpen(false)}>Cancelar</Button>
+              <Button variant="destructive" onClick={() => { setEditorDeleteOpen(false); deleteSection(selectedSection.id); }}>Eliminar</Button>
+            </DialogFooter>
+          </DialogContent>
+        </Dialog>
       </div>
     );
   };
 
   return (
     <div className="builder-sidebar">
-      <div className="sidebar-tabs">
-        <button
-          className={`tab-button ${activeTab === 'sections' ? 'active' : ''}`}
-          onClick={() => setActiveTab('sections')}
-        >
-          📦 Secciones
-        </button>
-        <button
-          className={`tab-button ${activeTab === 'layers' ? 'active' : ''}`}
-          onClick={() => setActiveTab('layers')}
-        >
-          📑 Capas
-        </button>
-        <button
-          className={`tab-button ${activeTab === 'settings' ? 'active' : ''}`}
-          onClick={() => setActiveTab('settings')}
-        >
-          ⚙️ Configuración
-        </button>
-      </div>
+      <Tabs defaultValue={activeTab} onValueChange={(val) => setActiveTab(val as any)}>
+        <TabsList className="w-full justify-start">
+          <TabsTrigger value="sections" className="flex items-center gap-2">
+            <Boxes className="h-4 w-4" />
+            Secciones
+          </TabsTrigger>
+          <TabsTrigger value="layers" className="flex items-center gap-2">
+            <LayersIcon className="h-4 w-4" />
+            Capas
+          </TabsTrigger>
+          <TabsTrigger value="settings" className="flex items-center gap-2">
+            <SettingsIcon className="h-4 w-4" />
+            Configuración
+          </TabsTrigger>
+        </TabsList>
 
-      <div className="sidebar-content">
-        {activeTab === 'sections' && !selectedSection && (
-          <div className="section-library">
-            <h3>Agregar Sección</h3>
-            <div className="section-list">
-              {sections.map((section) => (
-                <div
-                  key={section.type}
-                  className="section-item"
-                  onClick={() => handleAddSection(section.type)}
-                >
-                  <span className="section-icon">{section.icon}</span>
-                  <div className="section-details">
-                    <h4>{section.name}</h4>
-                    <p>{section.description}</p>
-                  </div>
-                </div>
-              ))}
+        <TabsContent value="sections">
+          {!selectedSection ? (
+            <div className="section-library">
+              <h3>Agregar Sección</h3>
+              <div className="section-list">
+                {sections.map((section) => (
+                  <Card key={section.type} className="mb-2 cursor-pointer" onClick={() => handleAddSection(section.type)}>
+                    <CardHeader className="py-3">
+                      <CardTitle className="text-sm flex items-center gap-2">
+                        {/* Map section.type to lucide icon for consistency */}
+                        {section.type === 'hero' && <Image className="h-4 w-4" />}
+                        {section.type === 'pricing' && <BadgePercent className="h-4 w-4" />}
+                        {section.type === 'gallery' && <Images className="h-4 w-4" />}
+                        {section.type === 'about' && <Info className="h-4 w-4" />}
+                        {section.type === 'schedule' && <CalendarDays className="h-4 w-4" />}
+                        {section.type === 'contact' && <Phone className="h-4 w-4" />}
+                        {section.name}
+                      </CardTitle>
+                    </CardHeader>
+                    <CardContent className="pt-0 text-sm text-muted-foreground">
+                      {section.description}
+                    </CardContent>
+                  </Card>
+                ))}
+              </div>
             </div>
-          </div>
-        )}
+          ) : (
+            renderSectionEditor()
+          )}
+        </TabsContent>
 
-        {activeTab === 'sections' && selectedSection && renderSectionEditor()}
-
-        {activeTab === 'layers' && (
+        <TabsContent value="layers">
           <div className="layers-panel">
             <h3>Capas de Secciones</h3>
             {page && page.sections.length > 0 ? (
-              <DndContext
-                sensors={sensors}
-                collisionDetection={closestCenter}
-                onDragEnd={handleDragEnd}
-              >
-                <SortableContext
-                  items={page.sections.map(s => s.id)}
-                  strategy={verticalListSortingStrategy}
-                >
+              <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
+                <SortableContext items={page.sections.map(s => s.id)} strategy={verticalListSortingStrategy}>
                   <div className="layers-list">
                     {page.sections.map((section, index) => (
                       <SortableLayerItem
@@ -261,17 +285,16 @@ const BuilderSidebar: React.FC = () => {
               </div>
             )}
           </div>
-        )}
+        </TabsContent>
 
-        {activeTab === 'settings' && (
+        <TabsContent value="settings">
           <div className="page-settings">
             <h3>Configuración de Página</h3>
             {page && (
               <div className="settings-fields">
                 <div className="editor-field">
                   <label>Título</label>
-                  <input
-                    type="text"
+                  <Input
                     value={page.metadata.title}
                     onChange={(e) => {
                       updateSection(page.id, {
@@ -280,14 +303,12 @@ const BuilderSidebar: React.FC = () => {
                     }}
                   />
                 </div>
-                <p className="settings-note">
-                  Más opciones de configuración próximamente...
-                </p>
+                <p className="settings-note">Más opciones de configuración próximamente...</p>
               </div>
             )}
           </div>
-        )}
-      </div>
+        </TabsContent>
+      </Tabs>
     </div>
   );
 };
