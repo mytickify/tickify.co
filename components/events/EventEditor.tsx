@@ -1,5 +1,6 @@
 
 import React, { useRef, useState } from "react";
+import { useFormik } from "formik";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
@@ -7,50 +8,66 @@ import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Plus, Trash2, Upload, Palette, Users } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Event } from "@/app/gql/graphql";
+import { Event, EventCategoryType } from "@/app/gql/graphql";
 
-export default function EventEditor({ editorData }: { editorData: Event | null, }) {
-  const [eventData, setEventData] = useState(editorData);
+export default function EventEditor({ editorData, onChange }: { editorData: Event | null, onChange?: (values: Event) => void, }) {
+  const formik = useFormik({
+    initialValues: editorData ?? {
+      title: "",
+      description: "",
+      startDate: "",
+      category: { type: ["other"] } as any,
+      location: { venue: "", city: "" } as any,
+      cover_image: "",
+      primary_color: "#06B6D4",
+      secondary_color: "#F59E0B",
+      collaborators: [],
+      ticketTiers: [],
+    },
+    onSubmit: () => {},
+    enableReinitialize: true,
+  });
+  const eventData = formik.values as any;
   const fileInputRef = useRef<HTMLInputElement>(null);
   const collabAvatarInputRef = useRef<HTMLInputElement>(null);
   const [uploadingCollabIndex, setUploadingCollabIndex] = useState<number | null>(null);
 
+  React.useEffect(() => {
+    if (onChange) {
+      onChange(formik.values as Event);
+    }
+  }, [formik.values, onChange]);
+
   const handleInputChange = (field: keyof Event, value: Event[typeof field]) => {
-    setEventData(prev => prev ? { ...prev, [field]: value } : null);
+    formik.setFieldValue(field as unknown as string, value);
   };
 
   const handleTicketChange = (index: number, field: keyof NonNullable<NonNullable<Event['ticketTiers']>[0]>, value: NonNullable<NonNullable<Event['ticketTiers']>[0]>[typeof field]) => {
     const newTickets = [...(eventData?.ticketTiers || [])];
     newTickets[index] = { ...newTickets[index], [field]: value };
-    setEventData(prev => prev ? { ...prev, ticketTiers: newTickets } : null);
+    formik.setFieldValue('ticketTiers', newTickets);
   };
 
   const addTicketType = () => {
-    setEventData(prev => prev ? {
-      ...prev,
-      ticketTiers: [
-        ...(prev.ticketTiers || []),
-        {
-          name: "New Ticket",
-          description: "",
-          price: 0,
-          currency: "USD",
-          quantity_available: 100,
-          quantity_sold: 0,
-          available: true,
-          id: `temp-${Date.now()}`,
-          quantity: 100,
-          soldCount: 0
-        }
-      ]
-    } : null);
+    formik.setFieldValue('ticketTiers', [
+      ...(eventData?.ticketTiers || []),
+      {
+        name: "New Ticket",
+        description: "",
+        price: 0,
+        currency: "USD",
+        quantity_available: 100,
+        quantity_sold: 0,
+        available: true,
+        id: `temp-${Date.now()}`,
+        quantity: 100,
+        soldCount: 0
+      }
+    ]);
   };
 
   const removeTicketType = (index: number) => {
-    setEventData(prev => prev ? {
-      ...prev,
-      ticketTiers: (prev.ticketTiers || []).filter((_, i) => i !== index)
-    } : null);
+    formik.setFieldValue('ticketTiers', (eventData?.ticketTiers || []).filter((_: any, i: number) => i !== index));
   };
 
   const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement> ) => {
@@ -71,7 +88,7 @@ export default function EventEditor({ editorData }: { editorData: Event | null, 
       }
 
       const { file_url } = await response.json();
-      handleInputChange('cover_image', file_url);
+      handleInputChange('cover_image', file_url as any);
     } catch (error) {
       console.error("Error uploading image:", error);
     }
@@ -80,30 +97,24 @@ export default function EventEditor({ editorData }: { editorData: Event | null, 
   const handleCollabChange = (index: number, field: keyof NonNullable<Event['collaborators']>[0], value: NonNullable<Event['collaborators']>[0][typeof field]) => {
     const newCollabs = [...(eventData?.collaborators || [])];
     newCollabs[index] = { ...newCollabs[index], [field]: value };
-    setEventData(prev => prev ? { ...prev, collaborators: newCollabs } : null);
+    formik.setFieldValue('collaborators', newCollabs);
   };
 
   const addCollaborator = () => {
-    setEventData(prev => prev ? {
-      ...prev,
-      collaborators: [
-        ...(prev.collaborators || []),
-        {
-          name: "",
-          role: "Artist",
-          avatar: "",
-          description: "",
-          type: "Collaborator"
-        }
-      ]
-    } : null);
+    formik.setFieldValue('collaborators', [
+      ...(eventData?.collaborators || []),
+      {
+        name: "",
+        role: "Artist",
+        avatar: "",
+        description: "",
+        type: "Collaborator"
+      }
+    ]);
   };
 
   const removeCollaborator = (index: number) => {
-    setEventData(prev => prev ? {
-      ...prev,
-      collaborators: (prev.collaborators || []).filter((_, i) => i !== index)
-    } : null);
+    formik.setFieldValue('collaborators', (eventData?.collaborators || []).filter((_: any, i: number) => i !== index));
   };
 
   const handleCollabAvatarUpload = async (e: React.ChangeEvent<HTMLInputElement>, index: number) => {
@@ -178,7 +189,7 @@ export default function EventEditor({ editorData }: { editorData: Event | null, 
 
             <div>
               <Label htmlFor="category">Category</Label>
-              <Select value={eventData?.category.type[0] || ''} onValueChange={(value) => handleInputChange('category', value)}>
+              <Select value={eventData?.category?.type?.[0] || ''} onValueChange={(value) => handleInputChange('category', { type: [value as EventCategoryType], description: eventData?.category?.description || '' } as any)}>
                 <SelectTrigger>
                   <SelectValue />
                 </SelectTrigger>
@@ -324,7 +335,10 @@ export default function EventEditor({ editorData }: { editorData: Event | null, 
         </CardHeader>
         <CardContent className="space-y-4">
           {(eventData?.collaborators || []).length > 0 ? (
-            (eventData?.collaborators || []).map((collab, index) => (
+            (eventData?.collaborators || []).map((
+              collab: NonNullable<Event['collaborators']>[0],
+              index: number
+            ) => (
               <div key={index} className="p-4 border rounded-lg space-y-3">
                 <div className="flex items-center justify-between">
                   <h4 className="font-semibold">Collaborator {index + 1}</h4>
@@ -432,7 +446,10 @@ export default function EventEditor({ editorData }: { editorData: Event | null, 
           </div>
         </CardHeader>
         <CardContent className="space-y-4">
-          {(eventData?.ticketTiers || []).map((ticket, index) => (
+          {(eventData?.ticketTiers || []).map((
+            ticket: NonNullable<NonNullable<Event['ticketTiers']>[0]>,
+            index: number
+          ) => (
             <div key={index} className="p-4 border rounded-lg space-y-3">
               <div className="flex items-center justify-between">
                 <h4 className="font-semibold">Ticket {index + 1}</h4>

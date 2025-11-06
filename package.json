@@ -30,6 +30,7 @@
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
     "date-fns": "^4.1.0",
+    "formik": "^2.4.6",
     "graphql": "^16.0.0",
     "graphql-scalars": "^1.25.0",
     "lucide-react": "^0.548.0",

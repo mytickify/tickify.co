@@ -56,6 +56,10 @@ function CreateEventContent() {
   });
 
   const eventData: Event = isEditing ? existingEvent?.event || DEFAULT_EVENT_DATA : DEFAULT_EVENT_DATA;
+  const [previewData, setPreviewData] = useState<Event>(eventData);
+  React.useEffect(() => {
+    setPreviewData(eventData);
+  }, [isEditing, existingEvent?.event]);
 
   const [createEventMutation, { data: createData, loading: createLoading, error: createError }] = useMutation(CREATE_EVENT_MUTATION);
 
@@ -83,10 +87,10 @@ function CreateEventContent() {
 
               title: dataToSave.title || "",
               description: dataToSave.description || "",
-              startDate: new Date(dataToSave.startTime || "").toISOString().split('T')[0],
-              startTime: new Date(dataToSave.startTime || "").toISOString().split('T')[1].slice(0, 5),
-              endDate: new Date(dataToSave.endTime || "").toISOString().split('T')[0],
-              endTime: new Date(dataToSave.endTime || "").toISOString().split('T')[1].slice(0, 5),
+              startDate: new Date(dataToSave.startDate || "").toISOString().split('T')[0],
+              startTime: dataToSave.startTime || "",
+              endDate: new Date(dataToSave.endDate || "").toISOString().split('T')[0],
+              endTime: dataToSave.endTime || "",
               location: dataToSave.location || {
                 address: "",
                 city: "",
@@ -207,7 +211,7 @@ function CreateEventContent() {
         <div className="grid lg:grid-cols-2 gap-0 min-h-[calc(100vh-180px)]">
           {/* Editor Panel */}
           <div className="bg-white border-r overflow-y-auto" style={{ maxHeight: 'calc(100vh - 180px)' }}>
-            <EventEditor editorData={eventData} />
+            <EventEditor editorData={eventData} onChange={setPreviewData} />
           </div>
 
           {/* Preview Panel */}
@@ -221,7 +225,7 @@ function CreateEventContent() {
                 Live Preview
               </p>
             </div>
-            <EventPreview eventData={eventData} />
+            <EventPreview eventData={previewData} />
           </div>
         </div>
       </div>
