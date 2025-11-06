@@ -2,7 +2,7 @@
 "use client";
 
 import React, { useState } from "react";
-import { useRouter, useParams } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { ArrowLeft, Save, Eye } from "lucide-react";
 import EventEditor from "@/components/events/EventEditor";
@@ -41,8 +41,8 @@ const DEFAULT_EVENT_DATA = {
 
 export default function CreateEvent() {
   const router = useRouter();
-  const params = useParams();
-  const editEventId = params.id as string;
+  const searchParams = useSearchParams();
+  const editEventId = (searchParams.get('id') as string) || '';
 
   const [showPreview, setShowPreview] = useState(true);
 

@@ -1,10 +1,12 @@
 "use client";
 
 import Link from "next/link";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
+import { useRouter } from "next/navigation";
+import { useSession } from "@/lib/auth-client";
 import { 
   Sparkles, 
   Palette, 
@@ -26,9 +28,17 @@ import {
 const DEFAULT_SHOW_MAILING_LIST = true;
 
 export default function FeaturesPage() {
+  const router = useRouter();
+  const { data } = useSession();
   const [showMailingList, setShowMailingList] = useState(DEFAULT_SHOW_MAILING_LIST);
   const [email, setEmail] = useState("");
   const [isSubscribed, setIsSubscribed] = useState(false);
+
+  useEffect(() => {
+    if (data?.user) {
+      router.replace("/home");
+    }
+  }, [data?.user, router]);
 
   const handleSubscribe = (e: React.FormEvent) => {
     e.preventDefault();

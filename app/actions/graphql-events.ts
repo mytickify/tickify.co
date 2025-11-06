@@ -44,6 +44,7 @@ export const GET_EVENTS_QUERY = gql`
         gradientEnabled
         gradientDirection
       }
+      
       ticketTiers {
         id
         name
@@ -429,5 +430,25 @@ export async function update(id: string, event: UpdateEventInput) {
   } catch (error) {
     console.error('Error updating event:', error);
     throw new Error('Failed to update event');
+  }
+}
+
+// Delete Event
+export const DELETE_EVENT_MUTATION = gql`
+  mutation DeleteEvent($id: ID!) {
+    deleteEvent(id: $id)
+  }
+`;
+
+export async function deleteEvent(id: string) {
+  try {
+    const { data } = await client.mutate<{ deleteEvent: boolean }>({
+      mutation: DELETE_EVENT_MUTATION,
+      variables: { id },
+    });
+    return data?.deleteEvent || false;
+  } catch (error) {
+    console.error('Error deleting event:', error);
+    throw new Error('Failed to delete event');
   }
 }
