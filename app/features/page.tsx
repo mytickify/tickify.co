@@ -169,10 +169,10 @@ export default function FeaturesPage() {
   ];
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-cyan-50/30 to-amber-50/20">
+    <div className="min-h-screen bg-linear-to-br from-slate-50 via-cyan-50/30 to-amber-50/20">
       {/* Hero Section */}
       <section className="relative overflow-hidden">
-        <div className="absolute inset-0 bg-gradient-to-br from-cyan-600 via-cyan-700 to-amber-600 gradient-animate" />
+        <div className="absolute inset-0 bg-linear-to-br from-cyan-600 via-cyan-700 to-amber-600 gradient-animate" />
         <div className="absolute inset-0 bg-[url('https://images.unsplash.com/photo-1540039155733-5bb30b53aa14?w=1600')] bg-cover bg-center opacity-20 mix-blend-overlay" />
         
         <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20 sm:py-32">
@@ -186,7 +186,7 @@ export default function FeaturesPage() {
             <h1 className="text-4xl sm:text-6xl font-bold mb-6 animate-fade-in">
               Powerful Features for
               <br />
-              <span className="bg-gradient-to-r from-amber-300 to-pink-300 bg-clip-text text-transparent">
+              <span className="bg-linear-to-r from-amber-300 to-pink-300 bg-clip-text text-transparent">
                 Amazing Events
               </span>
             </h1>
@@ -198,12 +198,12 @@ export default function FeaturesPage() {
               {!showMailingList ? (
                 <>
                   <Link href="/create">
-                    <Button size="lg" className="h-14 px-8 bg-gradient-to-r from-cyan-600 to-amber-500 hover:from-cyan-700 hover:to-amber-600 text-white font-semibold">
+                    <Button size="lg" className="h-14 px-8 bg-linear-to-r from-cyan-600 to-amber-500 hover:from-cyan-700 hover:to-amber-600 text-white font-semibold">
                       Start Creating
                       <Sparkles className="ml-2 w-5 h-5" />
                     </Button>
                   </Link>
-                  <Link href="/events">
+                  <Link href="/home">
                     <Button size="lg" variant="outline" className="h-14 px-8 border-white/30 hover:bg-white/10">
                       Browse Events
                       <Eye className="ml-2 w-5 h-5" />
@@ -230,7 +230,7 @@ export default function FeaturesPage() {
                     <Button 
                       type="submit"
                       size="lg" 
-                      className="bg-gradient-to-r from-cyan-600 to-amber-500 hover:from-cyan-700 hover:to-amber-600 text-white font-semibold"
+                      className="bg-linear-to-r from-cyan-600 to-amber-500 hover:from-cyan-700 hover:to-amber-600 text-white font-semibold"
                     >
                       Subscribe
                       <Mail className="ml-2 w-5 h-5" />
@@ -255,7 +255,7 @@ export default function FeaturesPage() {
       {/* Features Grid */}
       <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
         <div className="text-center mb-16">
-          <h2 className="text-3xl sm:text-4xl font-bold bg-gradient-to-r from-cyan-600 to-amber-500 bg-clip-text text-transparent">
+          <h2 className="text-3xl sm:text-4xl font-bold bg-linear-to-r from-cyan-600 to-amber-500 bg-clip-text text-transparent">
             Everything You Need in One Platform
           </h2>
           <p className="text-gray-600 mt-4 max-w-2xl mx-auto">
@@ -271,7 +271,7 @@ export default function FeaturesPage() {
               <Card key={index} className="group hover:shadow-xl transition-all duration-300 border-2 border-transparent hover:border-cyan-200">
                 <CardHeader>
                   <div className="flex items-center gap-3 mb-4">
-                    <div className="p-3 rounded-full bg-gradient-to-r from-cyan-100 to-amber-100">
+                    <div className="p-3 rounded-full bg-linear-to-r from-cyan-100 to-amber-100">
                       <IconComponent className="w-6 h-6 text-cyan-600" />
                     </div>
                     <CardTitle className="text-xl">{feature.title}</CardTitle>
@@ -284,7 +284,7 @@ export default function FeaturesPage() {
                   <ul className="space-y-2">
                     {feature.details.map((detail, i) => (
                       <li key={i} className="flex items-start gap-2 text-sm text-gray-600">
-                        <CheckCircle className="w-4 h-4 text-green-500 mt-0.5 flex-shrink-0" />
+                        <CheckCircle className="w-4 h-4 text-green-500 mt-0.5 shrink-0" />
                         {detail}
                       </li>
                     ))}
@@ -297,10 +297,10 @@ export default function FeaturesPage() {
       </section>
 
       {/* Use Cases Section */}
-      <section className="bg-gradient-to-br from-cyan-50/50 to-amber-50/50 py-16">
+      <section className="bg-linear-to-br from-cyan-50/50 to-amber-50/50 py-16">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-12">
-            <h2 className="text-3xl sm:text-4xl font-bold bg-gradient-to-r from-cyan-600 to-amber-500 bg-clip-text text-transparent">
+            <h2 className="text-3xl sm:text-4xl font-bold bg-linear-to-r from-cyan-600 to-amber-500 bg-clip-text text-transparent">
               Perfect For Any Event Type
             </h2>
             <p className="text-gray-600 mt-4">
@@ -312,7 +312,7 @@ export default function FeaturesPage() {
             {useCases.map((useCase, index) => (
               <div
                 key={index}
-                className={`bg-gradient-to-r ${useCase.color} rounded-2xl p-4 text-center text-white font-semibold text-sm hover:scale-105 transition-transform duration-200`}
+                className={`bg-linear-to-r ${useCase.color} rounded-2xl p-4 text-center text-white font-semibold text-sm hover:scale-105 transition-transform duration-200`}
               >
                 {useCase.type}
               </div>
@@ -334,12 +334,12 @@ export default function FeaturesPage() {
           
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <Link href="/create">
-              <Button size="lg" className="h-14 px-8 bg-gradient-to-r from-cyan-600 to-amber-500 hover:from-cyan-700 hover:to-amber-600 text-white font-semibold">
+              <Button size="lg" className="h-14 px-8 bg-linear-to-r from-cyan-600 to-amber-500 hover:from-cyan-700 hover:to-amber-600 text-white font-semibold">
                 Start Creating Free
                 <Sparkles className="ml-2 w-5 h-5" />
               </Button>
             </Link>
-            <Link href="/events">
+            <Link href="/home">
               <Button size="lg" variant="outline" className="h-14 px-8">
                 See Examples
                 <Eye className="ml-2 w-5 h-5" />
