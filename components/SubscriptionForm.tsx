@@ -68,7 +68,7 @@ export default function SubscriptionForm({ onClose, source = SubscriptionSource.
       <div className="bg-black/30 backdrop-blur-sm border border-white/20 rounded-lg p-6 text-center">
         <CheckCircle className="w-12 h-12 text-green-400 mx-auto mb-4" />
         <p className="text-white font-semibold">Thank you for subscribing!</p>
-        <p className="text-cyan-100">We'll keep you updated on new features.</p>
+        <p className="text-cyan-100">We&apos;ll keep you updated on new features.</p>
       </div>
     );
   }
