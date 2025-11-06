@@ -2,12 +2,12 @@
 
 import { useSession, signIn } from "@/lib/auth-client";
 import { useSearchParams, useRouter } from "next/navigation";
-import { useState } from "react";
+import { Suspense, useState } from "react";
 import { GalleryVerticalEnd } from "lucide-react"
 
 import { LoginForm } from "@/components/login-form"
 
-export default function LoginPage() {
+function LoginFormContainer() {
     const { data: session } = useSession();
     const searchParams = useSearchParams();
     //const router = useRouter();
@@ -57,4 +57,12 @@ export default function LoginPage() {
       </div>
     </div>
   )
+}
+
+export default function LoginPage() {
+  return (
+    <Suspense fallback={<div className="container mx-auto max-w-md p-6">Loading...</div>}>
+      <LoginFormContainer />
+    </Suspense>
+  );
 }
