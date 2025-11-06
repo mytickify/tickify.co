@@ -4,7 +4,13 @@ import { SiteBuilder } from "@/site-builder";
 import { gql } from "@apollo/client";
 import { useMutation } from "@apollo/client/react";
 import { generateSlug } from "@/lib/utils";
-import { useState, useCallback } from "react";
+import { useState, useCallback, useMemo } from "react";
+import { useSession } from "@/lib/auth-client";
+import Link from "next/link";
+import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Loader } from "lucide-react";
+import { Skeleton } from "@/components/ui/skeleton";
 
 const CREATE_PAGE = gql`
   mutation CreatePage($input: CreatePageInput!) {
@@ -37,6 +43,7 @@ const UPDATE_PAGE = gql`
 `;
 
 export default function CreatePage() {
+  const { data: session, isPending } = useSession();
   const [savedPageId, setSavedPageId] = useState<string | null>(null);
 
   const [createPage] = useMutation(CREATE_PAGE);
@@ -78,9 +85,10 @@ export default function CreatePage() {
       ? await updatePage({ variables: { id: savedPageId, input } })
       : await createPage({ variables: { input } });
 
-    const id = savedPageId ? result?.data?.updatePage?.id ?? null : result?.data?.createPage?.id ?? null;
+    const data: any = result?.data ?? {};
+    const id = savedPageId ? data?.updatePage?.id ?? null : data?.createPage?.id ?? null;
     if (id) setSavedPageId(id);
-    return savedPageId ? result?.data?.updatePage : result?.data?.createPage;
+    return savedPageId ? data?.updatePage : data?.createPage;
   }, [createPage, updatePage, savedPageId]);
 
   const handlePublish = useCallback(async (page: any) => {
@@ -91,11 +99,40 @@ export default function CreatePage() {
       if (id) setSavedPageId(id);
     }
     if (!id) return null;
-    const { data } = await publishPage({ variables: { id } });
+    const res = await publishPage({ variables: { id } });
+    const data: any = res?.data ?? {};
     return data?.publishPage;
   }, [savedPageId, handleSave, publishPage]);
 
-  return (
-    <SiteBuilder onSave={handleSave} onPublish={handlePublish} />
-  );
+  if (isPending) {
+    return (
+      <div className="container mx-auto max-w-2xl p-6 flex gap-1">
+          <Skeleton className="h-12 w-full" />
+          <Skeleton className="h-12 w-full" />
+          <Skeleton className="h-12 w-full" />  
+      </div>
+    );
+  }
+
+  if (!session) {
+    return (
+      <div className="container mx-auto max-w-2xl p-6">
+        <Card>
+          <CardHeader>
+            <CardTitle>Sign in required</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <p className="mb-4 text-sm text-muted-foreground">
+              You must be signed in to create and publish pages.
+            </p>
+            <Button asChild>
+              <Link href="/auth">Go to Sign In</Link>
+            </Button>
+          </CardContent>
+        </Card>
+      </div>
+    );
+  }
+
+  return <SiteBuilder onSave={handleSave} onPublish={handlePublish} />;
 }

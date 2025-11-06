@@ -7,20 +7,19 @@ const APOLLO_URI: Route = '/graphql';
 
 const httpLink = new HttpLink({
   uri: APOLLO_URI,
+  // Ensure session cookies are sent with GraphQL requests
+  credentials: 'include',
 });
 
 const authLink = new SetContextLink((prevContext, _) => {
-  // Get the authentication token from local storage if it exists
+  // If you use token-based auth in future, uncomment below and add header
   // const token = localStorage.getItem('token');
-  // Return the headers to the context so httpLink can read them
   return {
     headers: {
-      headers: {
       ...prevContext.headers,
-      //authorization: token ? `Bearer ${token}` : "",
+      // authorization: token ? `Bearer ${token}` : "",
     },
-    }
-  }
+  };
 });
 
 const client = new ApolloClient({
