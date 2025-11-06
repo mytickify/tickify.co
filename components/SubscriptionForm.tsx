@@ -22,12 +22,13 @@ const SUBSCRIBE_MUTATION = gql`
 type Props = {
   onClose?: () => void;
   source?: SubscriptionSource;
+  subscribed?: boolean;
 };
 
-export default function SubscriptionForm({ onClose, source = SubscriptionSource.FORM }: Props) {
+export default function SubscriptionForm({ onClose, source = SubscriptionSource.FORM, subscribed = false }: Props) {
   const [email, setEmail] = useState('');
   const [name, setName] = useState('');
-  const [isSubscribed, setIsSubscribed] = useState(localStorage.getItem('isSubscribed') === 'true');
+  const [isSubscribed, setIsSubscribed] = useState(subscribed || typeof window !== 'undefined' && localStorage.getItem('isSubscribed') === 'true');
 
   const [subscribe, { loading }] = useMutation(SUBSCRIBE_MUTATION);
 
@@ -62,19 +63,18 @@ export default function SubscriptionForm({ onClose, source = SubscriptionSource.
       console.error('Subscription error:', err);
     }
   };
-
   if (isSubscribed) {
     return (
-      <div className="bg-white/10 backdrop-blur-sm border border-white/20 rounded-lg p-6 text-center">
+      <div className="bg-black/30 backdrop-blur-sm border border-white/20 rounded-lg p-6 text-center">
         <CheckCircle className="w-12 h-12 text-green-400 mx-auto mb-4" />
         <p className="text-white font-semibold">Thank you for subscribing!</p>
-        <p className="text-cyan-100">We\'ll keep you updated on new features.</p>
+        <p className="text-cyan-100">We'll keep you updated on new features.</p>
       </div>
     );
   }
 
   return (
-    <form onSubmit={handleSubscribe} className="bg-white/10 backdrop-blur-sm border border-white/20 rounded-lg p-6">
+    <form onSubmit={handleSubscribe} className="bg-black/30 backdrop-blur-sm border border-white/20 rounded-lg p-6">
       <div className="flex flex-col sm:flex-row gap-4 items-center">
         <Input
           type="email"

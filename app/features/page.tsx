@@ -1,44 +1,36 @@
-"use client";
-
 import Link from "next/link";
-import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { useRouter } from "next/navigation";
-import { useSession } from "@/lib/auth-client";
-import { ApolloProviderWrapper } from "@/providers/apollo";
-import SubscriptionForm from "@/components/SubscriptionForm";
-import { 
-  Sparkles, 
-  Palette, 
-  Layout, 
-  Ticket, 
-  Type, 
-  Camera, 
-  Upload, 
-  MessageSquare, 
-  Users,
+import {
+  Sparkles,
+  Palette,
+  Layout,
+  Ticket,
+  Type,
   Eye,
   Zap,
   Smartphone,
   CheckCircle,
   Rocket,
 } from "lucide-react";
+import SubscriptionForm from "@/components/SubscriptionForm";
+import { auth } from "@/lib/auth";
+import { headers } from "next/headers";
+import { redirect } from "next/navigation";
 
-const DEFAULT_SHOW_MAILING_LIST = true;
+export default async function FeaturesPage({ searchParams }: PageProps<'/features'>) {
+  const { subscribed, noredirect = false } = await searchParams
 
-export default function FeaturesPage() {
-  const router = useRouter();
-  const { data } = useSession();
-  const [showMailingList, setShowMailingList] = useState(DEFAULT_SHOW_MAILING_LIST);
+  //get auth user
+  const session = await auth.api.getSession({
+    headers: await headers() // you need to pass the headers object.
+  })
+  const user = session?.user;
 
-  useEffect(() => {
-    if (data?.user) {
-      router.replace("/home");
-    }
-  }, [data?.user, router]);
+  if (user && !noredirect) {
+    redirect('/home')
+  }
 
-  
   const features = [
     {
       title: "Live Split-Screen Editor",
@@ -160,7 +152,7 @@ export default function FeaturesPage() {
       <section className="relative overflow-hidden">
         <div className="absolute inset-0 bg-linear-to-br from-cyan-600 via-cyan-700 to-amber-600 gradient-animate" />
         <div className="absolute inset-0 bg-[url('https://images.unsplash.com/photo-1540039155733-5bb30b53aa14?w=1600')] bg-cover bg-center opacity-20 mix-blend-overlay" />
-        
+
         <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20 sm:py-32">
           <div className="text-center text-white">
             {/* Coming Soon Badge */}
@@ -168,7 +160,7 @@ export default function FeaturesPage() {
               <Rocket className="w-4 h-4 text-amber-300" />
               <span className="text-amber-300 font-semibold text-sm">Coming Soon</span>
             </div>
-            
+
             <h1 className="text-4xl sm:text-6xl font-bold mb-6 animate-fade-in">
               Powerful Features for
               <br />
@@ -179,29 +171,9 @@ export default function FeaturesPage() {
             <p className="text-xl sm:text-2xl text-cyan-100 mb-8 max-w-3xl mx-auto">
               Everything you need to create stunning, professional event pages that convert
             </p>
-            
+
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              {!showMailingList ? (
-                <>
-                  <Link href="/create">
-                    <Button size="lg" className="h-14 px-8 bg-linear-to-r from-cyan-600 to-amber-500 hover:from-cyan-700 hover:to-amber-600 text-white font-semibold">
-                      Start Creating
-                      <Sparkles className="ml-2 w-5 h-5" />
-                    </Button>
-                  </Link>
-                  <Link href="/home">
-                    <Button size="lg" variant="outline" className="h-14 px-8 border-white/30 hover:bg-white/10">
-                      Browse Events
-                      <Eye className="ml-2 w-5 h-5" />
-                    </Button>
-                  </Link>
-                </>
-              ) : (
-                // Wrap the form with ApolloProvider to enable GraphQL mutations
-                <ApolloProviderWrapper>
-                  <SubscriptionForm onClose={() => setShowMailingList(false)} />
-                </ApolloProviderWrapper>
-              )}
+              <SubscriptionForm subscribed={!!subscribed} />
             </div>
           </div>
         </div>
@@ -286,7 +258,7 @@ export default function FeaturesPage() {
             Join thousands of event creators who trust our platform to showcase their events
             with beautiful, professional designs that convert visitors into attendees.
           </p>
-          
+
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <Link href="/create">
               <Button size="lg" className="h-14 px-8 bg-linear-to-r from-cyan-600 to-amber-500 hover:from-cyan-700 hover:to-amber-600 text-white font-semibold">
@@ -301,7 +273,7 @@ export default function FeaturesPage() {
               </Button>
             </Link>
           </div>
-          
+
           <div className="mt-8 flex items-center justify-center gap-6 text-sm text-gray-500">
             <div className="flex items-center gap-2">
               <CheckCircle className="w-4 h-4 text-green-500" />

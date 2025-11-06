@@ -14,7 +14,6 @@ export default function Layout({
 
   return (
     <QueryProvider>
-      <ApolloProviderWrapper>
         <div className="min-h-screen bg-linear-to-br from-cyan-50 to-amber-50">
           <style>{`
           :root {
@@ -87,7 +86,6 @@ export default function Layout({
             </div>
           </footer>
         </div>
-      </ApolloProviderWrapper>
     </QueryProvider>
   );
 }
