@@ -1,5 +1,6 @@
 {
   "$schema": "https://openapi.vercel.sh/vercel.json",
-  "installCommand": "npm install --legacy-peer-deps && npm rebuild lightningcss",
-  "buildCommand": "npm run build"
+  "buildCommand": "bun run build",
+  "installCommand": "bun install",
+  "framework": "nextjs"
 }
