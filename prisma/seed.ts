@@ -1,7 +1,8 @@
 // Simple Prisma seed script to populate sample events
 // Run with: npm run db:seed (requires DATABASE_URL)
 
-const { PrismaClient } = require('../lib/generated/prisma/client');
+import { PrismaClient } from '@/lib/generated/prisma/client';
+import { EventCreateInput } from '@/lib/generated/prisma/models';
 
 const prisma = new PrismaClient();
 
@@ -15,7 +16,7 @@ async function main() {
   const today = nowDate.toISOString().split('T')[0];
   const timeHM = nowDate.toISOString().split('T')[1].slice(0, 5);
 
-  const sampleEvents = [
+  const sampleEvents: EventCreateInput[] = [
     {
       slug: 'summer-music-fest',
       title: 'Summer Music Fest',
