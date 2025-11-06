@@ -125,7 +125,7 @@ export default function EventPreview({ eventData }: { eventData: Event }) {
                       )}
                     </div>
                     <p className="font-semibold text-sm">{collab.name || 'Collaborator'}</p>
-                    <p className="text-xs text-gray-600 mt-1">{collab.role}</p>
+                    <p className="text-xs text-gray-600 mt-1">{collab.type}</p>
                     {collab.description && (
                       <p className="text-xs text-gray-500 mt-2 line-clamp-2">{collab.description}</p>
                     )}

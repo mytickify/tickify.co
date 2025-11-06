@@ -176,9 +176,9 @@ export default function EventDetails() {
                     {event.collaborators.map((collab, index) => (
                       <div key={index} className="text-center group">
                         <div className="mb-4 mx-auto transform transition-transform duration-300 group-hover:scale-110">
-                          {collab.logo ? (
+                          {collab.avatar ? (
                             <img 
-                              src={collab.logo} 
+                              src={collab.avatar} 
                               alt={collab.name}
                               className="w-24 h-24 rounded-full object-cover mx-auto border-4 shadow-xl"
                               style={{ borderColor: primary }}

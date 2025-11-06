@@ -392,8 +392,8 @@ export default function EventEditor({ editorData, onChange }: { editorData: Even
                       <div>
                         <Label>Role</Label>
                         <Select 
-                          value={collab?.role || ''} 
-                          onValueChange={(value) => handleCollabChange(index, 'role', value)}
+                          value={collab?.type || ''} 
+                          onValueChange={(value) => handleCollabChange(index, 'type', value)}
                         >
                           <SelectTrigger>
                             <SelectValue />

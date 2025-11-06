@@ -15,11 +15,21 @@ const typeDefs = /* GraphQL */ `
   type Coordinates { lat: Float!, lng: Float! }
   type Location { venue: String!, address: String!, city: String!, coordinates: Coordinates }
   type Organizer { name: String!, email: String!, phone: String }
-  type EventTheme { primaryColor: String!, secondaryColor: String!, accentColor: String!, textColor: String!, fontFamily: FontFamily!, layout: LayoutType!, gradientEnabled: Boolean!, gradientDirection: GradientDirection! }
+  type EventTheme { 
+    primaryColor: String!, 
+    secondaryColor: String!, 
+    accentColor: String!, 
+    textColor: String!, 
+    fontFamily: FontFamily!, 
+    layout: LayoutType!, 
+    gradientEnabled: Boolean!,
+    gradientDirection: GradientDirection! 
+    backgroundColor: String!
+  }
   type TicketTier { id: ID!, name: String!, price: Float!, currency: String!, quantity: Int!, description: String, soldCount: Int!, available: Boolean! }
   type EventImage { banner: String, gallery: [String!] }
   type EventFeatures { showGallery: Boolean!, allowGuestUploads: Boolean!, showChat: Boolean!, showCollaborators: Boolean! }
-  type Collaborator { name: String!, type: String!, logo: String }
+  type Collaborator { name: String!, type: String!, avatar: String, description: String }
   type Buyer { name: String!, email: String!, phone: String! }
   type Purchase { id: ID!, eventId: ID!, ticketTierId: ID!, quantity: Int!, totalAmount: Float!, buyer: Buyer!, paymentStatus: PaymentStatus!, purchasedAt: DateTime! }
 

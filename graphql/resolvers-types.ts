@@ -18,6 +18,12 @@ export type Scalars = {
   JSON: { input: object; output: object; }
 };
 
+export type AuthPayload = {
+  __typename?: 'AuthPayload';
+  token: Scalars['String']['output'];
+  user: User;
+};
+
 export type Buyer = {
   __typename?: 'Buyer';
   email: Scalars['String']['output'];
@@ -46,9 +52,7 @@ export type Collaborator = {
   __typename?: 'Collaborator';
   avatar?: Maybe<Scalars['String']['output']>;
   description?: Maybe<Scalars['String']['output']>;
-  logo?: Maybe<Scalars['String']['output']>;
   name: Scalars['String']['output'];
-  role?: Maybe<Scalars['String']['output']>;
   type: Scalars['String']['output'];
 };
 
@@ -56,6 +60,10 @@ export type CollaboratorInput = {
   logo?: InputMaybe<Scalars['String']['input']>;
   name: Scalars['String']['input'];
   type: Scalars['String']['input'];
+};
+
+export type ConfirmSubscriptionInput = {
+  token: Scalars['String']['input'];
 };
 
 export type Coordinates = {
@@ -181,7 +189,6 @@ export type EventTheme = {
 
 export type EventThemeInput = {
   accentColor: Scalars['String']['input'];
-  backgroundColor: Scalars['String']['input'];
   fontFamily: FontFamily;
   gradientDirection: GradientDirection;
   gradientEnabled: Scalars['Boolean']['input'];
@@ -227,12 +234,43 @@ export type LocationInput = {
   venue: Scalars['String']['input'];
 };
 
+export type LoginInput = {
+  email: Scalars['String']['input'];
+  password: Scalars['String']['input'];
+};
+
+export type MailSubscription = {
+  __typename?: 'MailSubscription';
+  createdAt: Scalars['DateTime']['output'];
+  email: Scalars['String']['output'];
+  id: Scalars['ID']['output'];
+  name?: Maybe<Scalars['String']['output']>;
+  preferences?: Maybe<Scalars['JSON']['output']>;
+  source?: Maybe<SubscriptionSource>;
+  status: SubscriptionStatus;
+  subscribedAt: Scalars['DateTime']['output'];
+  token?: Maybe<Scalars['String']['output']>;
+  unsubscribedAt?: Maybe<Scalars['DateTime']['output']>;
+  updatedAt: Scalars['DateTime']['output'];
+  verifiedAt?: Maybe<Scalars['DateTime']['output']>;
+};
+
 export type Mutation = {
   __typename?: 'Mutation';
+  confirmSubscription?: Maybe<MailSubscription>;
   createEvent: Event;
   createPurchase: Purchase;
   deleteEvent: Scalars['Boolean']['output'];
+  login: AuthPayload;
+  register: AuthPayload;
+  subscribe: MailSubscription;
+  unsubscribe: MailSubscription;
   updateEvent: Event;
+};
+
+
+export type MutationConfirmSubscriptionArgs = {
+  input: ConfirmSubscriptionInput;
 };
 
 
@@ -248,6 +286,26 @@ export type MutationCreatePurchaseArgs = {
 
 export type MutationDeleteEventArgs = {
   id: Scalars['ID']['input'];
+};
+
+
+export type MutationLoginArgs = {
+  input: LoginInput;
+};
+
+
+export type MutationRegisterArgs = {
+  input: RegisterInput;
+};
+
+
+export type MutationSubscribeArgs = {
+  input: SubscribeInput;
+};
+
+
+export type MutationUnsubscribeArgs = {
+  input: UnsubscribeInput;
 };
 
 
@@ -294,7 +352,10 @@ export type Query = {
   events: Array<Event>;
   eventsByCategory: Array<Event>;
   featuredEvents: Array<Event>;
+  me?: Maybe<User>;
   searchEvents: Array<Event>;
+  subscriptionByEmail?: Maybe<MailSubscription>;
+  subscriptions: Array<MailSubscription>;
 };
 
 
@@ -317,6 +378,37 @@ export type QuerySearchEventsArgs = {
   searchTerm: Scalars['String']['input'];
 };
 
+
+export type QuerySubscriptionByEmailArgs = {
+  email: Scalars['String']['input'];
+};
+
+export type RegisterInput = {
+  email: Scalars['String']['input'];
+  name: Scalars['String']['input'];
+  password: Scalars['String']['input'];
+};
+
+export type SubscribeInput = {
+  email: Scalars['String']['input'];
+  name?: InputMaybe<Scalars['String']['input']>;
+  preferences?: InputMaybe<Scalars['JSON']['input']>;
+  source?: InputMaybe<SubscriptionSource>;
+};
+
+export enum SubscriptionSource {
+  Admin = 'ADMIN',
+  Api = 'API',
+  Form = 'FORM',
+  Import = 'IMPORT'
+}
+
+export enum SubscriptionStatus {
+  Confirmed = 'CONFIRMED',
+  Pending = 'PENDING',
+  Unsubscribed = 'UNSUBSCRIBED'
+}
+
 export type TicketTier = {
   __typename?: 'TicketTier';
   available: Scalars['Boolean']['output'];
@@ -337,6 +429,10 @@ export type TicketTierInput = {
   quantity: Scalars['Int']['input'];
 };
 
+export type UnsubscribeInput = {
+  email: Scalars['String']['input'];
+};
+
 export type UpdateEventInput = {
   category?: InputMaybe<CategoryInput>;
   collaborators?: InputMaybe<Array<CollaboratorInput>>;
@@ -354,6 +450,14 @@ export type UpdateEventInput = {
   theme?: InputMaybe<EventThemeInput>;
   ticketTiers?: InputMaybe<Array<TicketTierInput>>;
   title?: InputMaybe<Scalars['String']['input']>;
+};
+
+export type User = {
+  __typename?: 'User';
+  email: Scalars['String']['output'];
+  id: Scalars['ID']['output'];
+  image?: Maybe<Scalars['String']['output']>;
+  name?: Maybe<Scalars['String']['output']>;
 };
 
 
@@ -429,6 +533,7 @@ export type DirectiveResolverFn<TResult = Record<PropertyKey, never>, TParent = 
 
 /** Mapping between all available schema types and the resolvers types */
 export type ResolversTypes = {
+  AuthPayload: ResolverTypeWrapper<AuthPayload>;
   Boolean: ResolverTypeWrapper<Scalars['Boolean']['output']>;
   Buyer: ResolverTypeWrapper<Buyer>;
   BuyerInput: BuyerInput;
@@ -436,6 +541,7 @@ export type ResolversTypes = {
   CategoryInput: CategoryInput;
   Collaborator: ResolverTypeWrapper<Collaborator>;
   CollaboratorInput: CollaboratorInput;
+  ConfirmSubscriptionInput: ConfirmSubscriptionInput;
   Coordinates: ResolverTypeWrapper<Coordinates>;
   CoordinatesInput: CoordinatesInput;
   CreateEventInput: CreateEventInput;
@@ -459,20 +565,29 @@ export type ResolversTypes = {
   LayoutType: LayoutType;
   Location: ResolverTypeWrapper<Location>;
   LocationInput: LocationInput;
+  LoginInput: LoginInput;
+  MailSubscription: ResolverTypeWrapper<MailSubscription>;
   Mutation: ResolverTypeWrapper<Record<PropertyKey, never>>;
   Organizer: ResolverTypeWrapper<Organizer>;
   OrganizerInput: OrganizerInput;
   PaymentStatus: PaymentStatus;
   Purchase: ResolverTypeWrapper<Purchase>;
   Query: ResolverTypeWrapper<Record<PropertyKey, never>>;
+  RegisterInput: RegisterInput;
   String: ResolverTypeWrapper<Scalars['String']['output']>;
+  SubscribeInput: SubscribeInput;
+  SubscriptionSource: SubscriptionSource;
+  SubscriptionStatus: SubscriptionStatus;
   TicketTier: ResolverTypeWrapper<TicketTier>;
   TicketTierInput: TicketTierInput;
+  UnsubscribeInput: UnsubscribeInput;
   UpdateEventInput: UpdateEventInput;
+  User: ResolverTypeWrapper<User>;
 };
 
 /** Mapping between all available schema types and the resolvers parents */
 export type ResolversParentTypes = {
+  AuthPayload: AuthPayload;
   Boolean: Scalars['Boolean']['output'];
   Buyer: Buyer;
   BuyerInput: BuyerInput;
@@ -480,6 +595,7 @@ export type ResolversParentTypes = {
   CategoryInput: CategoryInput;
   Collaborator: Collaborator;
   CollaboratorInput: CollaboratorInput;
+  ConfirmSubscriptionInput: ConfirmSubscriptionInput;
   Coordinates: Coordinates;
   CoordinatesInput: CoordinatesInput;
   CreateEventInput: CreateEventInput;
@@ -498,15 +614,26 @@ export type ResolversParentTypes = {
   JSON: Scalars['JSON']['output'];
   Location: Location;
   LocationInput: LocationInput;
+  LoginInput: LoginInput;
+  MailSubscription: MailSubscription;
   Mutation: Record<PropertyKey, never>;
   Organizer: Organizer;
   OrganizerInput: OrganizerInput;
   Purchase: Purchase;
   Query: Record<PropertyKey, never>;
+  RegisterInput: RegisterInput;
   String: Scalars['String']['output'];
+  SubscribeInput: SubscribeInput;
   TicketTier: TicketTier;
   TicketTierInput: TicketTierInput;
+  UnsubscribeInput: UnsubscribeInput;
   UpdateEventInput: UpdateEventInput;
+  User: User;
+};
+
+export type AuthPayloadResolvers<ContextType = any, ParentType extends ResolversParentTypes['AuthPayload'] = ResolversParentTypes['AuthPayload']> = {
+  token?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  user?: Resolver<ResolversTypes['User'], ParentType, ContextType>;
 };
 
 export type BuyerResolvers<ContextType = any, ParentType extends ResolversParentTypes['Buyer'] = ResolversParentTypes['Buyer']> = {
@@ -523,9 +650,7 @@ export type CategoryResolvers<ContextType = any, ParentType extends ResolversPar
 export type CollaboratorResolvers<ContextType = any, ParentType extends ResolversParentTypes['Collaborator'] = ResolversParentTypes['Collaborator']> = {
   avatar?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   description?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
-  logo?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   name?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
-  role?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   type?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
 };
 
@@ -599,10 +724,30 @@ export type LocationResolvers<ContextType = any, ParentType extends ResolversPar
   venue?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
 };
 
+export type MailSubscriptionResolvers<ContextType = any, ParentType extends ResolversParentTypes['MailSubscription'] = ResolversParentTypes['MailSubscription']> = {
+  createdAt?: Resolver<ResolversTypes['DateTime'], ParentType, ContextType>;
+  email?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
+  name?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  preferences?: Resolver<Maybe<ResolversTypes['JSON']>, ParentType, ContextType>;
+  source?: Resolver<Maybe<ResolversTypes['SubscriptionSource']>, ParentType, ContextType>;
+  status?: Resolver<ResolversTypes['SubscriptionStatus'], ParentType, ContextType>;
+  subscribedAt?: Resolver<ResolversTypes['DateTime'], ParentType, ContextType>;
+  token?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  unsubscribedAt?: Resolver<Maybe<ResolversTypes['DateTime']>, ParentType, ContextType>;
+  updatedAt?: Resolver<ResolversTypes['DateTime'], ParentType, ContextType>;
+  verifiedAt?: Resolver<Maybe<ResolversTypes['DateTime']>, ParentType, ContextType>;
+};
+
 export type MutationResolvers<ContextType = any, ParentType extends ResolversParentTypes['Mutation'] = ResolversParentTypes['Mutation']> = {
+  confirmSubscription?: Resolver<Maybe<ResolversTypes['MailSubscription']>, ParentType, ContextType, RequireFields<MutationConfirmSubscriptionArgs, 'input'>>;
   createEvent?: Resolver<ResolversTypes['Event'], ParentType, ContextType, RequireFields<MutationCreateEventArgs, 'input'>>;
   createPurchase?: Resolver<ResolversTypes['Purchase'], ParentType, ContextType, RequireFields<MutationCreatePurchaseArgs, 'input'>>;
   deleteEvent?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType, RequireFields<MutationDeleteEventArgs, 'id'>>;
+  login?: Resolver<ResolversTypes['AuthPayload'], ParentType, ContextType, RequireFields<MutationLoginArgs, 'input'>>;
+  register?: Resolver<ResolversTypes['AuthPayload'], ParentType, ContextType, RequireFields<MutationRegisterArgs, 'input'>>;
+  subscribe?: Resolver<ResolversTypes['MailSubscription'], ParentType, ContextType, RequireFields<MutationSubscribeArgs, 'input'>>;
+  unsubscribe?: Resolver<ResolversTypes['MailSubscription'], ParentType, ContextType, RequireFields<MutationUnsubscribeArgs, 'input'>>;
   updateEvent?: Resolver<ResolversTypes['Event'], ParentType, ContextType, RequireFields<MutationUpdateEventArgs, 'id' | 'input'>>;
 };
 
@@ -629,7 +774,10 @@ export type QueryResolvers<ContextType = any, ParentType extends ResolversParent
   events?: Resolver<Array<ResolversTypes['Event']>, ParentType, ContextType>;
   eventsByCategory?: Resolver<Array<ResolversTypes['Event']>, ParentType, ContextType, RequireFields<QueryEventsByCategoryArgs, 'category'>>;
   featuredEvents?: Resolver<Array<ResolversTypes['Event']>, ParentType, ContextType>;
+  me?: Resolver<Maybe<ResolversTypes['User']>, ParentType, ContextType>;
   searchEvents?: Resolver<Array<ResolversTypes['Event']>, ParentType, ContextType, RequireFields<QuerySearchEventsArgs, 'searchTerm'>>;
+  subscriptionByEmail?: Resolver<Maybe<ResolversTypes['MailSubscription']>, ParentType, ContextType, RequireFields<QuerySubscriptionByEmailArgs, 'email'>>;
+  subscriptions?: Resolver<Array<ResolversTypes['MailSubscription']>, ParentType, ContextType>;
 };
 
 export type TicketTierResolvers<ContextType = any, ParentType extends ResolversParentTypes['TicketTier'] = ResolversParentTypes['TicketTier']> = {
@@ -643,7 +791,15 @@ export type TicketTierResolvers<ContextType = any, ParentType extends ResolversP
   soldCount?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
 };
 
+export type UserResolvers<ContextType = any, ParentType extends ResolversParentTypes['User'] = ResolversParentTypes['User']> = {
+  email?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
+  image?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  name?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+};
+
 export type Resolvers<ContextType = any> = {
+  AuthPayload?: AuthPayloadResolvers<ContextType>;
   Buyer?: BuyerResolvers<ContextType>;
   Category?: CategoryResolvers<ContextType>;
   Collaborator?: CollaboratorResolvers<ContextType>;
@@ -655,10 +811,12 @@ export type Resolvers<ContextType = any> = {
   EventTheme?: EventThemeResolvers<ContextType>;
   JSON?: GraphQLScalarType;
   Location?: LocationResolvers<ContextType>;
+  MailSubscription?: MailSubscriptionResolvers<ContextType>;
   Mutation?: MutationResolvers<ContextType>;
   Organizer?: OrganizerResolvers<ContextType>;
   Purchase?: PurchaseResolvers<ContextType>;
   Query?: QueryResolvers<ContextType>;
   TicketTier?: TicketTierResolvers<ContextType>;
+  User?: UserResolvers<ContextType>;
 };
 

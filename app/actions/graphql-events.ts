@@ -68,7 +68,7 @@ export const GET_EVENTS_QUERY = gql`
       collaborators {
         name
         type
-        logo
+        avatar
       }
       status
       createdAt
@@ -141,7 +141,7 @@ export const GET_EVENT_BY_ID_QUERY = gql`
       collaborators {
         name
         type
-        logo
+        avatar
       }
       status
       createdAt
@@ -214,7 +214,7 @@ const GET_EVENT_BY_SLUG_QUERY = gql`
       collaborators {
         name
         type
-        logo
+        avatar
       }
       status
       createdAt
@@ -287,7 +287,7 @@ export const CREATE_EVENT_MUTATION = gql`
       collaborators {
         name
         type
-        logo
+        avatar
       }
       status
       createdAt
@@ -398,7 +398,7 @@ export const UPDATE_EVENT_MUTATION = gql`
       collaborators {
         name
         type
-        logo
+        avatar
       }
       status
       createdAt
