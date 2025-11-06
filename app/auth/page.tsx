@@ -5,13 +5,23 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
+import { useSearchParams, useRouter } from "next/navigation";
+import type { Route } from "next";
 
 export default function AuthPage() {
   const { data: session } = useSession();
+  const searchParams = useSearchParams();
+  const router = useRouter();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+
+  const nextParam = (() => {
+    const raw = searchParams.get("next") || "/dashboard";
+    // Ensure relative path to avoid open redirects
+    return raw.startsWith("/") ? raw : "/dashboard";
+  })();
 
   const handleSignIn = async () => {
     setLoading(true);
@@ -19,7 +29,7 @@ export default function AuthPage() {
     const { error } = await signIn.email({
       email,
       password,
-      callbackURL: "/",
+      callbackURL: nextParam,
     });
     setLoading(false);
     if (error) setError(error.message || "Sign in failed");
@@ -32,7 +42,7 @@ export default function AuthPage() {
       email,
       name: email.split("@")[0],
       password,
-      callbackURL: "/",
+      callbackURL: nextParam,
     });
     setLoading(false);
     if (error) setError(error.message || "Sign up failed");
@@ -48,6 +58,7 @@ export default function AuthPage() {
           {session ? (
             <div className="space-y-2">
               <p className="text-sm">Signed in as: {session.user?.email}</p>
+              <Button onClick={() => router.replace(nextParam as Route)}>Continue</Button>
             </div>
           ) : (
             <div className="space-y-4">
