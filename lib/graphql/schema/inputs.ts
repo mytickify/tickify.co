@@ -1,6 +1,7 @@
 import 'reflect-metadata';
 import { Field, InputType, ID } from 'type-graphql';
-import { EventCategoryType, FontFamily, LayoutType, GradientDirection, EventStatus } from './enums';
+import { JSONResolver } from 'graphql-scalars';
+import { EventCategoryType, FontFamily, LayoutType, GradientDirection, EventStatus, SubscriptionSource } from './enums';
 
 @InputType()
 export class CategoryInput { @Field(() => [EventCategoryType]) type!: EventCategoryType[]; @Field() description!: string; }
@@ -80,3 +81,17 @@ export class RegisterInput { @Field() name!: string; @Field() email!: string; @F
 
 @InputType()
 export class LoginInput { @Field() email!: string; @Field() password!: string; }
+
+@InputType()
+export class SubscribeInput {
+  @Field() email!: string;
+  @Field({ nullable: true }) name?: string;
+  @Field(() => JSONResolver, { nullable: true }) preferences?: any;
+  @Field(() => SubscriptionSource, { nullable: true }) source?: SubscriptionSource;
+}
+
+@InputType()
+export class ConfirmSubscriptionInput { @Field() token!: string; }
+
+@InputType()
+export class UnsubscribeInput { @Field() email!: string; }

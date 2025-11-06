@@ -112,6 +112,20 @@ enum EventCategoryType {
   OTHER
 }
 
+// Mail subscription enums
+enum SubscriptionStatus {
+  PENDING
+  CONFIRMED
+  UNSUBSCRIBED
+}
+
+enum SubscriptionSource {
+  FORM
+  IMPORT
+  ADMIN
+  API
+}
+
 // Event model aligned to GraphQL type, using JSON for nested structures
 model Event {
   id              String      @id @default(cuid())
@@ -139,4 +153,20 @@ model Event {
   images        Json?
   features      Json?
   collaborators Json?
+}
+
+// Mail subscriptions
+model MailSubscription {
+  id              String              @id @default(cuid())
+  email           String              @unique
+  name            String?
+  status          SubscriptionStatus   @default(PENDING)
+  token           String?
+  subscribedAt    DateTime            @default(now())
+  verifiedAt      DateTime?
+  unsubscribedAt  DateTime?
+  preferences     Json?
+  source          SubscriptionSource?
+  createdAt       DateTime            @default(now())
+  updatedAt       DateTime            @updatedAt
 }

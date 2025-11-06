@@ -1,7 +1,7 @@
 import 'reflect-metadata';
 import { Field, ObjectType, ID } from 'type-graphql';
-import { DateTimeResolver } from 'graphql-scalars';
-import { EventCategoryType, EventStatus, PaymentStatus, FontFamily, LayoutType, GradientDirection } from './enums';
+import { DateTimeResolver, JSONResolver } from 'graphql-scalars';
+import { EventCategoryType, EventStatus, PaymentStatus, FontFamily, LayoutType, GradientDirection, SubscriptionStatus, SubscriptionSource } from './enums';
 
 @ObjectType()
 export class EventTheme {
@@ -136,4 +136,20 @@ export class User {
 export class AuthPayload {
   @Field() token!: string;
   @Field(() => User) user!: User;
+}
+
+@ObjectType()
+export class MailSubscription {
+  @Field(() => ID) id!: string;
+  @Field() email!: string;
+  @Field(() => String, { nullable: true }) name?: string | null;
+  @Field(() => SubscriptionStatus) status!: SubscriptionStatus;
+  @Field(() => String, { nullable: true }) token?: string | null;
+  @Field(() => DateTimeResolver) subscribedAt!: Date;
+  @Field(() => DateTimeResolver, { nullable: true }) verifiedAt?: Date | null;
+  @Field(() => DateTimeResolver, { nullable: true }) unsubscribedAt?: Date | null;
+  @Field(() => JSONResolver, { nullable: true }) preferences?: any | null;
+  @Field(() => SubscriptionSource, { nullable: true }) source?: SubscriptionSource | null;
+  @Field(() => DateTimeResolver) createdAt!: Date;
+  @Field(() => DateTimeResolver) updatedAt!: Date;
 }

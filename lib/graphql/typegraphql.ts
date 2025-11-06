@@ -1,2 +1,2 @@
 import 'reflect-metadata';
-export { typeGraphqlSchema } from './schema';
+export { typeGraphqlSchema } from './sdl/schema';

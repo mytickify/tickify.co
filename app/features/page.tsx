@@ -4,9 +4,10 @@ import Link from "next/link";
 import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
 import { useRouter } from "next/navigation";
 import { useSession } from "@/lib/auth-client";
+import { ApolloProviderWrapper } from "@/providers/apollo";
+import SubscriptionForm from "@/components/SubscriptionForm";
 import { 
   Sparkles, 
   Palette, 
@@ -22,7 +23,6 @@ import {
   Smartphone,
   CheckCircle,
   Rocket,
-  Mail
 } from "lucide-react";
 
 const DEFAULT_SHOW_MAILING_LIST = true;
@@ -31,8 +31,6 @@ export default function FeaturesPage() {
   const router = useRouter();
   const { data } = useSession();
   const [showMailingList, setShowMailingList] = useState(DEFAULT_SHOW_MAILING_LIST);
-  const [email, setEmail] = useState("");
-  const [isSubscribed, setIsSubscribed] = useState(false);
 
   useEffect(() => {
     if (data?.user) {
@@ -40,19 +38,7 @@ export default function FeaturesPage() {
     }
   }, [data?.user, router]);
 
-  const handleSubscribe = (e: React.FormEvent) => {
-    e.preventDefault();
-    // Here you would typically send the email to your backend
-    console.log("Subscribed email:", email);
-    setIsSubscribed(true);
-    setEmail("");
-    
-    // Reset after 3 seconds
-    setTimeout(() => {
-      setIsSubscribed(false);
-      setShowMailingList(false);
-    }, 3000);
-  };
+  
   const features = [
     {
       title: "Live Split-Screen Editor",
@@ -210,42 +196,11 @@ export default function FeaturesPage() {
                     </Button>
                   </Link>
                 </>
-              ) : isSubscribed ? (
-                <div className="bg-white/10 backdrop-blur-sm border border-white/20 rounded-lg p-6 text-center">
-                  <CheckCircle className="w-12 h-12 text-green-400 mx-auto mb-4" />
-                  <p className="text-white font-semibold">Thank you for subscribing!</p>
-                  <p className="text-cyan-100">We&apos;ll keep you updated on new features.</p>
-                </div>
               ) : (
-                <form onSubmit={handleSubscribe} className="bg-white/10 backdrop-blur-sm border border-white/20 rounded-lg p-6">
-                  <div className="flex flex-col sm:flex-row gap-4 items-center">
-                    <Input
-                      type="email"
-                      placeholder="Enter your email"
-                      value={email}
-                      onChange={(e) => setEmail(e.target.value)}
-                      required
-                      className="bg-white/20 border-white/30 text-white placeholder:text-white/70"
-                    />
-                    <Button 
-                      type="submit"
-                      size="lg" 
-                      className="bg-linear-to-r from-cyan-600 to-amber-500 hover:from-cyan-700 hover:to-amber-600 text-white font-semibold"
-                    >
-                      Subscribe
-                      <Mail className="ml-2 w-5 h-5" />
-                    </Button>
-                    <Button 
-                      type="button"
-                      variant="outline" 
-                      size="lg"
-                      className="border-white/30 hover:bg-white/10 text-white"
-                      onClick={() => setShowMailingList(false)}
-                    >
-                      Cancel
-                    </Button>
-                  </div>
-                </form>
+                // Wrap the form with ApolloProvider to enable GraphQL mutations
+                <ApolloProviderWrapper>
+                  <SubscriptionForm onClose={() => setShowMailingList(false)} />
+                </ApolloProviderWrapper>
               )}
             </div>
           </div>
