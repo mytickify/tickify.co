@@ -1,7 +1,7 @@
 
 "use client";
 
-import React, { useState } from "react";
+import React, { Suspense, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { ArrowLeft, Save, Eye } from "lucide-react";
@@ -39,7 +39,7 @@ const DEFAULT_EVENT_DATA = {
   },
 }
 
-export default function CreateEvent() {
+function CreateEventContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const editEventId = (searchParams.get('id') as string) || '';
@@ -238,5 +238,22 @@ export default function CreateEvent() {
         </Button>
       </div>
     </div>
+  );
+}
+
+export default function CreateEvent() {
+  return (
+    <Suspense
+      fallback={
+        <div className="min-h-screen bg-linear-to-br from-slate-50 via-purple-50/30 to-orange-50/20 flex items-center justify-center">
+          <div className="text-center">
+            <Skeleton className="w-64 h-8 mx-auto mb-4" />
+            <Skeleton className="w-48 h-4 mx-auto" />
+          </div>
+        </div>
+      }
+    >
+      <CreateEventContent />
+    </Suspense>
   );
 }
