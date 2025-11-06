@@ -99,7 +99,7 @@ export default function DashboardPagesList() {
                         View
                       </Link>
                       <Link
-                        href={("/page/create" as Route)}
+                        href={("/dashboard/pages/" + p.id as Route)}
                         className="rounded px-2 py-1 text-xs text-[#637381] hover:bg-[#F6F7F8] hover:text-[#202223]"
                       >
                         Edit
