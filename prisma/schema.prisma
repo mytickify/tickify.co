@@ -92,3 +92,51 @@ model UserRole {
   @@id([userId, roleId])
   @@index([roleId])
 }
+
+// Event-related enums
+enum EventStatus {
+  DRAFT
+  PUBLISHED
+  ENDED
+}
+
+enum EventCategoryType {
+  MUSIC
+  SPORTS
+  ARTS
+  FESTIVAL
+  CONFERENCE
+  NIGHTLIFE
+  COMEDY
+  THEATRE
+  OTHER
+}
+
+// Event model aligned to GraphQL type, using JSON for nested structures
+model Event {
+  id              String      @id @default(cuid())
+  slug            String      @unique
+  title           String
+  description     String
+  startDate       String
+  startTime       String
+  endDate         String
+  endTime         String
+  is_featured     Boolean     @default(false)
+  cover_image     String?
+  primary_color   String?
+  secondary_color String?
+  status          EventStatus
+  createdAt       DateTime    @default(now())
+  updatedAt       DateTime    @updatedAt
+
+  // Nested objects stored as JSON for simplicity
+  category      Json
+  location      Json
+  organizer     Json
+  theme         Json?
+  ticketTiers   Json?
+  images        Json?
+  features      Json?
+  collaborators Json?
+}

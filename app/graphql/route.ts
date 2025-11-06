@@ -1,16 +1,15 @@
+import 'reflect-metadata';
 import { ApolloServer } from '@apollo/server';
 import { startServerAndCreateNextHandler } from '@as-integrations/next';
-import typeDefs from '@/lib/graphql/typeDefs';
-import resolvers from '@/lib/graphql/resolvers';
-import { NextRequest, NextResponse } from 'next/server';
+import { NextRequest } from 'next/server';
+import { typeGraphqlSchema } from '@/lib/graphql/typegraphql';
 
-const server = new ApolloServer({
-  typeDefs,
-  resolvers,
-});
+const server = new ApolloServer({ schema: typeGraphqlSchema });
 
 // req has the type NextRequest
-const handler = startServerAndCreateNextHandler<NextRequest>(server)
+const handler = startServerAndCreateNextHandler<NextRequest>(server, {
+  context: async (req) => ({ request: req })
+});
 
 // required to open apollo server
 export async function GET(request: NextRequest): Promise<Response> {
