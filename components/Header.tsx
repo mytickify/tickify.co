@@ -3,19 +3,20 @@
 import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Ticket, Plus, Home, Calendar, Menu, X, User } from "lucide-react";
+import { Ticket, Plus, Home, Calendar, Menu, X, User, LucideIcon } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useSession, signOut } from "@/lib/auth-client";
 import { Separator } from "@/components/ui/separator";
+import { Route } from "next";
 
 type HeaderProps = {
   siteName: string;
 };
 
-const navigation = [
+const navigation: { name: string; href: Route; icon: LucideIcon }[] = [
   { name: "Discover", href: "/", icon: Home },
   { name: "Create Event", href: "/create", icon: Plus },
-  { name: "Events", href: "/events", icon: Calendar },
+  { name: "Events", href: "/home", icon: Calendar },
 ];
 
 export default function Header({ siteName }: HeaderProps) {
