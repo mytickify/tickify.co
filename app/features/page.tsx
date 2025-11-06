@@ -260,18 +260,21 @@ export default async function FeaturesPage({ searchParams }: PageProps<'/feature
           </p>
 
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <Link href="/create">
-              <Button size="lg" className="h-14 px-8 bg-linear-to-r from-cyan-600 to-amber-500 hover:from-cyan-700 hover:to-amber-600 text-white font-semibold">
-                Start Creating Free
-                <Sparkles className="ml-2 w-5 h-5" />
-              </Button>
-            </Link>
-            <Link href="/home">
-              <Button size="lg" variant="outline" className="h-14 px-8">
-                See Examples
-                <Eye className="ml-2 w-5 h-5" />
-              </Button>
-            </Link>
+            {user ? (
+              <>
+                <Link href="/create">
+                  <Button size="lg" className="h-14 px-8 bg-linear-to-r from-cyan-600 to-amber-500 hover:from-cyan-700 hover:to-amber-600 text-white font-semibold">
+                    Start Creating Free
+                    <Sparkles className="ml-2 w-5 h-5" />
+                  </Button>
+                </Link>
+                <Link href="/home">
+                  <Button size="lg" variant="outline" className="h-14 px-8">
+                    See Examples
+                    <Eye className="ml-2 w-5 h-5" />
+                  </Button>
+                </Link>
+              </>) : <SubscriptionForm subscribed={!!subscribed} />}
           </div>
 
           <div className="mt-8 flex items-center justify-center gap-6 text-sm text-gray-500">
