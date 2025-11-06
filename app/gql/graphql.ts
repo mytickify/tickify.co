@@ -96,6 +96,16 @@ export type CreateEventInput = {
   title: Scalars['String']['input'];
 };
 
+export type CreatePageInput = {
+  eventId?: InputMaybe<Scalars['ID']['input']>;
+  metadata: Scalars['JSON']['input'];
+  name: Scalars['String']['input'];
+  sectionData?: InputMaybe<Scalars['JSON']['input']>;
+  sections: Array<PageSectionInput>;
+  slug?: InputMaybe<Scalars['String']['input']>;
+  template?: InputMaybe<Scalars['JSON']['input']>;
+};
+
 export type CreatePurchaseInput = {
   buyer: BuyerInput;
   eventId: Scalars['ID']['input'];
@@ -259,13 +269,17 @@ export type Mutation = {
   __typename?: 'Mutation';
   confirmSubscription?: Maybe<MailSubscription>;
   createEvent: Event;
+  createPage: Page;
   createPurchase: Purchase;
   deleteEvent: Scalars['Boolean']['output'];
+  deletePage: Scalars['Boolean']['output'];
   login: AuthPayload;
+  publishPage: Page;
   register: AuthPayload;
   subscribe: MailSubscription;
   unsubscribe: MailSubscription;
   updateEvent: Event;
+  updatePage: Page;
 };
 
 
@@ -279,6 +293,11 @@ export type MutationCreateEventArgs = {
 };
 
 
+export type MutationCreatePageArgs = {
+  input: CreatePageInput;
+};
+
+
 export type MutationCreatePurchaseArgs = {
   input: CreatePurchaseInput;
 };
@@ -289,8 +308,18 @@ export type MutationDeleteEventArgs = {
 };
 
 
+export type MutationDeletePageArgs = {
+  id: Scalars['ID']['input'];
+};
+
+
 export type MutationLoginArgs = {
   input: LoginInput;
+};
+
+
+export type MutationPublishPageArgs = {
+  id: Scalars['ID']['input'];
 };
 
 
@@ -314,6 +343,12 @@ export type MutationUpdateEventArgs = {
   input: UpdateEventInput;
 };
 
+
+export type MutationUpdatePageArgs = {
+  id: Scalars['ID']['input'];
+  input: UpdatePageInput;
+};
+
 export type Organizer = {
   __typename?: 'Organizer';
   email: Scalars['String']['output'];
@@ -325,6 +360,38 @@ export type OrganizerInput = {
   email: Scalars['String']['input'];
   name: Scalars['String']['input'];
   phone?: InputMaybe<Scalars['String']['input']>;
+};
+
+export type Page = {
+  __typename?: 'Page';
+  createdAt: Scalars['DateTime']['output'];
+  eventId?: Maybe<Scalars['ID']['output']>;
+  id: Scalars['ID']['output'];
+  metadata: Scalars['JSON']['output'];
+  name: Scalars['String']['output'];
+  published: Scalars['Boolean']['output'];
+  publishedAt?: Maybe<Scalars['DateTime']['output']>;
+  sectionData?: Maybe<Scalars['JSON']['output']>;
+  sections: Array<PageSection>;
+  slug: Scalars['String']['output'];
+  template?: Maybe<Scalars['JSON']['output']>;
+  updatedAt: Scalars['DateTime']['output'];
+};
+
+export type PageSection = {
+  __typename?: 'PageSection';
+  builderId: Scalars['String']['output'];
+  data: Scalars['JSON']['output'];
+  id: Scalars['ID']['output'];
+  order: Scalars['Int']['output'];
+  type: SectionType;
+};
+
+export type PageSectionInput = {
+  builderId: Scalars['String']['input'];
+  data: Scalars['JSON']['input'];
+  order?: InputMaybe<Scalars['Int']['input']>;
+  type: SectionType;
 };
 
 export enum PaymentStatus {
@@ -353,6 +420,10 @@ export type Query = {
   eventsByCategory: Array<Event>;
   featuredEvents: Array<Event>;
   me?: Maybe<User>;
+  page?: Maybe<Page>;
+  pageBySlug?: Maybe<Page>;
+  pages: Array<Page>;
+  pagesByEvent: Array<Page>;
   searchEvents: Array<Event>;
   subscriptionByEmail?: Maybe<MailSubscription>;
   subscriptions: Array<MailSubscription>;
@@ -374,6 +445,21 @@ export type QueryEventsByCategoryArgs = {
 };
 
 
+export type QueryPageArgs = {
+  id: Scalars['ID']['input'];
+};
+
+
+export type QueryPageBySlugArgs = {
+  slug: Scalars['String']['input'];
+};
+
+
+export type QueryPagesByEventArgs = {
+  eventId: Scalars['ID']['input'];
+};
+
+
 export type QuerySearchEventsArgs = {
   searchTerm: Scalars['String']['input'];
 };
@@ -388,6 +474,15 @@ export type RegisterInput = {
   name: Scalars['String']['input'];
   password: Scalars['String']['input'];
 };
+
+export enum SectionType {
+  About = 'ABOUT',
+  Contact = 'CONTACT',
+  Gallery = 'GALLERY',
+  Hero = 'HERO',
+  Pricing = 'PRICING',
+  Schedule = 'SCHEDULE'
+}
 
 export type SubscribeInput = {
   email: Scalars['String']['input'];
@@ -450,6 +545,16 @@ export type UpdateEventInput = {
   theme?: InputMaybe<EventThemeInput>;
   ticketTiers?: InputMaybe<Array<TicketTierInput>>;
   title?: InputMaybe<Scalars['String']['input']>;
+};
+
+export type UpdatePageInput = {
+  metadata?: InputMaybe<Scalars['JSON']['input']>;
+  name?: InputMaybe<Scalars['String']['input']>;
+  published?: InputMaybe<Scalars['Boolean']['input']>;
+  sectionData?: InputMaybe<Scalars['JSON']['input']>;
+  sections?: InputMaybe<Array<PageSectionInput>>;
+  slug?: InputMaybe<Scalars['String']['input']>;
+  template?: InputMaybe<Scalars['JSON']['input']>;
 };
 
 export type User = {

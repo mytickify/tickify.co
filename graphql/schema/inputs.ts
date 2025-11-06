@@ -1,7 +1,7 @@
 import 'reflect-metadata';
 import { Field, InputType, ID } from 'type-graphql';
 import { JSONResolver } from 'graphql-scalars';
-import { EventCategoryType, FontFamily, LayoutType, GradientDirection, EventStatus, SubscriptionSource } from './enums';
+import { EventCategoryType, FontFamily, LayoutType, GradientDirection, EventStatus, SubscriptionSource, SectionType } from './enums';
 
 @InputType()
 export class CategoryInput { @Field(() => [EventCategoryType]) type!: EventCategoryType[]; @Field() description!: string; }
@@ -95,3 +95,33 @@ export class ConfirmSubscriptionInput { @Field() token!: string; }
 
 @InputType()
 export class UnsubscribeInput { @Field() email!: string; }
+
+@InputType()
+export class PageSectionInput {
+  @Field() builderId!: string;
+  @Field(() => SectionType) type!: SectionType;
+  @Field({ nullable: true }) order?: number;
+  @Field(() => JSONResolver) data!: any;
+}
+
+@InputType()
+export class CreatePageInput {
+  @Field() name!: string;
+  @Field(() => JSONResolver) metadata!: any;
+  @Field(() => JSONResolver, { nullable: true }) template?: any;
+  @Field(() => JSONResolver, { nullable: true }) sectionData?: any;
+  @Field({ nullable: true }) slug?: string;
+  @Field(() => ID, { nullable: true }) eventId?: string;
+  @Field(() => [PageSectionInput]) sections!: PageSectionInput[];
+}
+
+@InputType()
+export class UpdatePageInput {
+  @Field({ nullable: true }) name?: string;
+  @Field(() => JSONResolver, { nullable: true }) metadata?: any;
+  @Field(() => JSONResolver, { nullable: true }) template?: any;
+  @Field(() => JSONResolver, { nullable: true }) sectionData?: any;
+  @Field({ nullable: true }) slug?: string;
+  @Field(() => [PageSectionInput], { nullable: true }) sections?: PageSectionInput[];
+  @Field({ nullable: true }) published?: boolean;
+}

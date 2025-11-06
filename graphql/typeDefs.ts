@@ -10,6 +10,7 @@ const typeDefs = /* GraphQL */ `
   enum GradientDirection { TO_R TO_BR TO_B TO_BL }
   enum SubscriptionStatus { PENDING CONFIRMED UNSUBSCRIBED }
   enum SubscriptionSource { FORM IMPORT ADMIN API }
+  enum SectionType { HERO PRICING GALLERY ABOUT SCHEDULE CONTACT }
 
   type Category { type: [EventCategoryType!]!, description: String! }
   type Coordinates { lat: Float!, lng: Float! }
@@ -77,6 +78,29 @@ const typeDefs = /* GraphQL */ `
     updatedAt: DateTime!
   }
 
+  type PageSection {
+    id: ID!
+    builderId: String!
+    type: SectionType!
+    order: Int!
+    data: JSON!
+  }
+
+  type Page {
+    id: ID!
+    slug: String!
+    name: String!
+    metadata: JSON!
+    template: JSON
+    sectionData: JSON
+    published: Boolean!
+    publishedAt: DateTime
+    createdAt: DateTime!
+    updatedAt: DateTime!
+    eventId: ID
+    sections: [PageSection!]!
+  }
+
   input CategoryInput { type: [EventCategoryType!]!, description: String! }
   input CoordinatesInput { lat: Float!, lng: Float! }
   input LocationInput { venue: String!, address: String!, city: String!, coordinates: CoordinatesInput }
@@ -107,6 +131,33 @@ const typeDefs = /* GraphQL */ `
   input ConfirmSubscriptionInput { token: String! }
   input UnsubscribeInput { email: String! }
 
+  input PageSectionInput {
+    builderId: String!
+    type: SectionType!
+    order: Int
+    data: JSON!
+  }
+
+  input CreatePageInput {
+    name: String!
+    metadata: JSON!
+    template: JSON
+    sectionData: JSON
+    slug: String
+    eventId: ID
+    sections: [PageSectionInput!]!
+  }
+
+  input UpdatePageInput {
+    name: String
+    metadata: JSON
+    template: JSON
+    sectionData: JSON
+    slug: String
+    sections: [PageSectionInput!]
+    published: Boolean
+  }
+
   type Query {
     events: [Event!]!
     event(id: ID!): Event
@@ -117,6 +168,10 @@ const typeDefs = /* GraphQL */ `
     me: User
     subscriptions: [MailSubscription!]!
     subscriptionByEmail(email: String!): MailSubscription
+    pages: [Page!]!
+    page(id: ID!): Page
+    pageBySlug(slug: String!): Page
+    pagesByEvent(eventId: ID!): [Page!]!
   }
 
   type Mutation {
@@ -129,6 +184,10 @@ const typeDefs = /* GraphQL */ `
     subscribe(input: SubscribeInput!): MailSubscription!
     confirmSubscription(input: ConfirmSubscriptionInput!): MailSubscription
     unsubscribe(input: UnsubscribeInput!): MailSubscription!
+    createPage(input: CreatePageInput!): Page!
+    updatePage(id: ID!, input: UpdatePageInput!): Page!
+    deletePage(id: ID!): Boolean!
+    publishPage(id: ID!): Page!
   }
 `;
 

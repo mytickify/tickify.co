@@ -20,6 +20,15 @@ export enum GradientDirection { TO_R = 'TO_R', TO_BR = 'TO_BR', TO_B = 'TO_B', T
 export enum SubscriptionStatus { PENDING = 'PENDING', CONFIRMED = 'CONFIRMED', UNSUBSCRIBED = 'UNSUBSCRIBED' }
 export enum SubscriptionSource { FORM = 'FORM', IMPORT = 'IMPORT', ADMIN = 'ADMIN', API = 'API' }
 
+export enum SectionType {
+  HERO = 'HERO',
+  PRICING = 'PRICING',
+  GALLERY = 'GALLERY',
+  ABOUT = 'ABOUT',
+  SCHEDULE = 'SCHEDULE',
+  CONTACT = 'CONTACT',
+}
+
 registerEnumType(EventCategoryType, { name: 'EventCategoryType' });
 registerEnumType(EventStatus, { name: 'EventStatus' });
 registerEnumType(PaymentStatus, { name: 'PaymentStatus' });
@@ -28,3 +37,4 @@ registerEnumType(LayoutType, { name: 'LayoutType' });
 registerEnumType(GradientDirection, { name: 'GradientDirection' });
 registerEnumType(SubscriptionStatus, { name: 'SubscriptionStatus' });
 registerEnumType(SubscriptionSource, { name: 'SubscriptionSource' });
+registerEnumType(SectionType, { name: 'SectionType' });

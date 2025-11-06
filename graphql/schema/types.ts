@@ -1,7 +1,7 @@
 import 'reflect-metadata';
 import { Field, ObjectType, ID } from 'type-graphql';
 import { DateTimeResolver, JSONResolver } from 'graphql-scalars';
-import { EventCategoryType, EventStatus, PaymentStatus, FontFamily, LayoutType, GradientDirection, SubscriptionStatus, SubscriptionSource } from './enums';
+import { EventCategoryType, EventStatus, PaymentStatus, FontFamily, LayoutType, GradientDirection, SubscriptionStatus, SubscriptionSource, SectionType } from './enums';
 
 @ObjectType()
 export class EventTheme {
@@ -152,4 +152,29 @@ export class MailSubscription {
   @Field(() => SubscriptionSource, { nullable: true }) source?: SubscriptionSource | null;
   @Field(() => DateTimeResolver) createdAt!: Date;
   @Field(() => DateTimeResolver) updatedAt!: Date;
+}
+
+@ObjectType()
+export class PageSection {
+  @Field(() => ID) id!: string;
+  @Field() builderId!: string;
+  @Field(() => SectionType) type!: SectionType;
+  @Field() order!: number;
+  @Field(() => JSONResolver) data!: any;
+}
+
+@ObjectType()
+export class Page {
+  @Field(() => ID) id!: string;
+  @Field() slug!: string;
+  @Field() name!: string;
+  @Field(() => JSONResolver) metadata!: any;
+  @Field(() => JSONResolver, { nullable: true }) template?: any | null;
+  @Field(() => JSONResolver, { nullable: true }) sectionData?: any | null;
+  @Field() published!: boolean;
+  @Field(() => DateTimeResolver, { nullable: true }) publishedAt?: Date | null;
+  @Field(() => DateTimeResolver) createdAt!: Date;
+  @Field(() => DateTimeResolver) updatedAt!: Date;
+  @Field(() => ID, { nullable: true }) eventId?: string | null;
+  @Field(() => [PageSection]) sections!: PageSection[];
 }

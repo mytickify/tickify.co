@@ -10,21 +10,18 @@ import { generateId } from '@/lib/utils';
 export class SubscriptionResolver {
   @Query(() => [MailSubscription])
   async subscriptions(): Promise<any[]> {
-    const db = prisma as any;
-    return db.mailSubscription.findMany({ orderBy: { createdAt: 'desc' } });
+    return prisma.mailSubscription.findMany({ orderBy: { createdAt: 'desc' } });
   }
 
   @Query(() => MailSubscription, { nullable: true })
   async subscriptionByEmail(@Arg('email') email: string): Promise<any | null> {
-    const db = prisma as any;
-    return db.mailSubscription.findUnique({ where: { email } });
+    return prisma.mailSubscription.findUnique({ where: { email } });
   }
 
   @Mutation(() => MailSubscription)
   async subscribe(@Arg('input') input: SubscribeInput): Promise<any> {
-    const db = prisma as any;
     const token = generateId();
-    return db.mailSubscription.upsert({
+    return prisma.mailSubscription.upsert({
       where: { email: input.email },
       update: {
         name: input.name ?? undefined,
@@ -48,13 +45,12 @@ export class SubscriptionResolver {
 
   @Mutation(() => MailSubscription)
   async confirmSubscription(@Arg('input') input: ConfirmSubscriptionInput): Promise<any> {
-    const db = prisma as any;
-    const existing = await db.mailSubscription.findFirst({ where: { token: input.token } });
+    const existing = await prisma.mailSubscription.findFirst({ where: { token: input.token } });
     if (!existing) {
       // No-op; return null to indicate not found
       return null;
     }
-    return db.mailSubscription.update({
+    return prisma.mailSubscription.update({
       where: { email: existing.email },
       data: {
         status: SubscriptionStatus.CONFIRMED,
@@ -66,8 +62,7 @@ export class SubscriptionResolver {
 
   @Mutation(() => MailSubscription)
   async unsubscribe(@Arg('input') input: UnsubscribeInput): Promise<any> {
-    const db = prisma as any;
-    return db.mailSubscription.update({
+    return prisma.mailSubscription.update({
       where: { email: input.email },
       data: {
         status: SubscriptionStatus.UNSUBSCRIBED,

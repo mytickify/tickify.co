@@ -96,6 +96,16 @@ export type CreateEventInput = {
   title: Scalars['String']['input'];
 };
 
+export type CreatePageInput = {
+  eventId?: InputMaybe<Scalars['ID']['input']>;
+  metadata: Scalars['JSON']['input'];
+  name: Scalars['String']['input'];
+  sectionData?: InputMaybe<Scalars['JSON']['input']>;
+  sections: Array<PageSectionInput>;
+  slug?: InputMaybe<Scalars['String']['input']>;
+  template?: InputMaybe<Scalars['JSON']['input']>;
+};
+
 export type CreatePurchaseInput = {
   buyer: BuyerInput;
   eventId: Scalars['ID']['input'];
@@ -259,13 +269,17 @@ export type Mutation = {
   __typename?: 'Mutation';
   confirmSubscription?: Maybe<MailSubscription>;
   createEvent: Event;
+  createPage: Page;
   createPurchase: Purchase;
   deleteEvent: Scalars['Boolean']['output'];
+  deletePage: Scalars['Boolean']['output'];
   login: AuthPayload;
+  publishPage: Page;
   register: AuthPayload;
   subscribe: MailSubscription;
   unsubscribe: MailSubscription;
   updateEvent: Event;
+  updatePage: Page;
 };
 
 
@@ -279,6 +293,11 @@ export type MutationCreateEventArgs = {
 };
 
 
+export type MutationCreatePageArgs = {
+  input: CreatePageInput;
+};
+
+
 export type MutationCreatePurchaseArgs = {
   input: CreatePurchaseInput;
 };
@@ -289,8 +308,18 @@ export type MutationDeleteEventArgs = {
 };
 
 
+export type MutationDeletePageArgs = {
+  id: Scalars['ID']['input'];
+};
+
+
 export type MutationLoginArgs = {
   input: LoginInput;
+};
+
+
+export type MutationPublishPageArgs = {
+  id: Scalars['ID']['input'];
 };
 
 
@@ -314,6 +343,12 @@ export type MutationUpdateEventArgs = {
   input: UpdateEventInput;
 };
 
+
+export type MutationUpdatePageArgs = {
+  id: Scalars['ID']['input'];
+  input: UpdatePageInput;
+};
+
 export type Organizer = {
   __typename?: 'Organizer';
   email: Scalars['String']['output'];
@@ -325,6 +360,38 @@ export type OrganizerInput = {
   email: Scalars['String']['input'];
   name: Scalars['String']['input'];
   phone?: InputMaybe<Scalars['String']['input']>;
+};
+
+export type Page = {
+  __typename?: 'Page';
+  createdAt: Scalars['DateTime']['output'];
+  eventId?: Maybe<Scalars['ID']['output']>;
+  id: Scalars['ID']['output'];
+  metadata: Scalars['JSON']['output'];
+  name: Scalars['String']['output'];
+  published: Scalars['Boolean']['output'];
+  publishedAt?: Maybe<Scalars['DateTime']['output']>;
+  sectionData?: Maybe<Scalars['JSON']['output']>;
+  sections: Array<PageSection>;
+  slug: Scalars['String']['output'];
+  template?: Maybe<Scalars['JSON']['output']>;
+  updatedAt: Scalars['DateTime']['output'];
+};
+
+export type PageSection = {
+  __typename?: 'PageSection';
+  builderId: Scalars['String']['output'];
+  data: Scalars['JSON']['output'];
+  id: Scalars['ID']['output'];
+  order: Scalars['Int']['output'];
+  type: SectionType;
+};
+
+export type PageSectionInput = {
+  builderId: Scalars['String']['input'];
+  data: Scalars['JSON']['input'];
+  order?: InputMaybe<Scalars['Int']['input']>;
+  type: SectionType;
 };
 
 export enum PaymentStatus {
@@ -353,6 +420,10 @@ export type Query = {
   eventsByCategory: Array<Event>;
   featuredEvents: Array<Event>;
   me?: Maybe<User>;
+  page?: Maybe<Page>;
+  pageBySlug?: Maybe<Page>;
+  pages: Array<Page>;
+  pagesByEvent: Array<Page>;
   searchEvents: Array<Event>;
   subscriptionByEmail?: Maybe<MailSubscription>;
   subscriptions: Array<MailSubscription>;
@@ -374,6 +445,21 @@ export type QueryEventsByCategoryArgs = {
 };
 
 
+export type QueryPageArgs = {
+  id: Scalars['ID']['input'];
+};
+
+
+export type QueryPageBySlugArgs = {
+  slug: Scalars['String']['input'];
+};
+
+
+export type QueryPagesByEventArgs = {
+  eventId: Scalars['ID']['input'];
+};
+
+
 export type QuerySearchEventsArgs = {
   searchTerm: Scalars['String']['input'];
 };
@@ -388,6 +474,15 @@ export type RegisterInput = {
   name: Scalars['String']['input'];
   password: Scalars['String']['input'];
 };
+
+export enum SectionType {
+  About = 'ABOUT',
+  Contact = 'CONTACT',
+  Gallery = 'GALLERY',
+  Hero = 'HERO',
+  Pricing = 'PRICING',
+  Schedule = 'SCHEDULE'
+}
 
 export type SubscribeInput = {
   email: Scalars['String']['input'];
@@ -450,6 +545,16 @@ export type UpdateEventInput = {
   theme?: InputMaybe<EventThemeInput>;
   ticketTiers?: InputMaybe<Array<TicketTierInput>>;
   title?: InputMaybe<Scalars['String']['input']>;
+};
+
+export type UpdatePageInput = {
+  metadata?: InputMaybe<Scalars['JSON']['input']>;
+  name?: InputMaybe<Scalars['String']['input']>;
+  published?: InputMaybe<Scalars['Boolean']['input']>;
+  sectionData?: InputMaybe<Scalars['JSON']['input']>;
+  sections?: InputMaybe<Array<PageSectionInput>>;
+  slug?: InputMaybe<Scalars['String']['input']>;
+  template?: InputMaybe<Scalars['JSON']['input']>;
 };
 
 export type User = {
@@ -545,6 +650,7 @@ export type ResolversTypes = {
   Coordinates: ResolverTypeWrapper<Coordinates>;
   CoordinatesInput: CoordinatesInput;
   CreateEventInput: CreateEventInput;
+  CreatePageInput: CreatePageInput;
   CreatePurchaseInput: CreatePurchaseInput;
   DateTime: ResolverTypeWrapper<Scalars['DateTime']['output']>;
   Event: ResolverTypeWrapper<Event>;
@@ -570,10 +676,14 @@ export type ResolversTypes = {
   Mutation: ResolverTypeWrapper<Record<PropertyKey, never>>;
   Organizer: ResolverTypeWrapper<Organizer>;
   OrganizerInput: OrganizerInput;
+  Page: ResolverTypeWrapper<Page>;
+  PageSection: ResolverTypeWrapper<PageSection>;
+  PageSectionInput: PageSectionInput;
   PaymentStatus: PaymentStatus;
   Purchase: ResolverTypeWrapper<Purchase>;
   Query: ResolverTypeWrapper<Record<PropertyKey, never>>;
   RegisterInput: RegisterInput;
+  SectionType: SectionType;
   String: ResolverTypeWrapper<Scalars['String']['output']>;
   SubscribeInput: SubscribeInput;
   SubscriptionSource: SubscriptionSource;
@@ -582,6 +692,7 @@ export type ResolversTypes = {
   TicketTierInput: TicketTierInput;
   UnsubscribeInput: UnsubscribeInput;
   UpdateEventInput: UpdateEventInput;
+  UpdatePageInput: UpdatePageInput;
   User: ResolverTypeWrapper<User>;
 };
 
@@ -599,6 +710,7 @@ export type ResolversParentTypes = {
   Coordinates: Coordinates;
   CoordinatesInput: CoordinatesInput;
   CreateEventInput: CreateEventInput;
+  CreatePageInput: CreatePageInput;
   CreatePurchaseInput: CreatePurchaseInput;
   DateTime: Scalars['DateTime']['output'];
   Event: Event;
@@ -619,6 +731,9 @@ export type ResolversParentTypes = {
   Mutation: Record<PropertyKey, never>;
   Organizer: Organizer;
   OrganizerInput: OrganizerInput;
+  Page: Page;
+  PageSection: PageSection;
+  PageSectionInput: PageSectionInput;
   Purchase: Purchase;
   Query: Record<PropertyKey, never>;
   RegisterInput: RegisterInput;
@@ -628,6 +743,7 @@ export type ResolversParentTypes = {
   TicketTierInput: TicketTierInput;
   UnsubscribeInput: UnsubscribeInput;
   UpdateEventInput: UpdateEventInput;
+  UpdatePageInput: UpdatePageInput;
   User: User;
 };
 
@@ -742,19 +858,46 @@ export type MailSubscriptionResolvers<ContextType = any, ParentType extends Reso
 export type MutationResolvers<ContextType = any, ParentType extends ResolversParentTypes['Mutation'] = ResolversParentTypes['Mutation']> = {
   confirmSubscription?: Resolver<Maybe<ResolversTypes['MailSubscription']>, ParentType, ContextType, RequireFields<MutationConfirmSubscriptionArgs, 'input'>>;
   createEvent?: Resolver<ResolversTypes['Event'], ParentType, ContextType, RequireFields<MutationCreateEventArgs, 'input'>>;
+  createPage?: Resolver<ResolversTypes['Page'], ParentType, ContextType, RequireFields<MutationCreatePageArgs, 'input'>>;
   createPurchase?: Resolver<ResolversTypes['Purchase'], ParentType, ContextType, RequireFields<MutationCreatePurchaseArgs, 'input'>>;
   deleteEvent?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType, RequireFields<MutationDeleteEventArgs, 'id'>>;
+  deletePage?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType, RequireFields<MutationDeletePageArgs, 'id'>>;
   login?: Resolver<ResolversTypes['AuthPayload'], ParentType, ContextType, RequireFields<MutationLoginArgs, 'input'>>;
+  publishPage?: Resolver<ResolversTypes['Page'], ParentType, ContextType, RequireFields<MutationPublishPageArgs, 'id'>>;
   register?: Resolver<ResolversTypes['AuthPayload'], ParentType, ContextType, RequireFields<MutationRegisterArgs, 'input'>>;
   subscribe?: Resolver<ResolversTypes['MailSubscription'], ParentType, ContextType, RequireFields<MutationSubscribeArgs, 'input'>>;
   unsubscribe?: Resolver<ResolversTypes['MailSubscription'], ParentType, ContextType, RequireFields<MutationUnsubscribeArgs, 'input'>>;
   updateEvent?: Resolver<ResolversTypes['Event'], ParentType, ContextType, RequireFields<MutationUpdateEventArgs, 'id' | 'input'>>;
+  updatePage?: Resolver<ResolversTypes['Page'], ParentType, ContextType, RequireFields<MutationUpdatePageArgs, 'id' | 'input'>>;
 };
 
 export type OrganizerResolvers<ContextType = any, ParentType extends ResolversParentTypes['Organizer'] = ResolversParentTypes['Organizer']> = {
   email?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   name?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   phone?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+};
+
+export type PageResolvers<ContextType = any, ParentType extends ResolversParentTypes['Page'] = ResolversParentTypes['Page']> = {
+  createdAt?: Resolver<ResolversTypes['DateTime'], ParentType, ContextType>;
+  eventId?: Resolver<Maybe<ResolversTypes['ID']>, ParentType, ContextType>;
+  id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
+  metadata?: Resolver<ResolversTypes['JSON'], ParentType, ContextType>;
+  name?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  published?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
+  publishedAt?: Resolver<Maybe<ResolversTypes['DateTime']>, ParentType, ContextType>;
+  sectionData?: Resolver<Maybe<ResolversTypes['JSON']>, ParentType, ContextType>;
+  sections?: Resolver<Array<ResolversTypes['PageSection']>, ParentType, ContextType>;
+  slug?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  template?: Resolver<Maybe<ResolversTypes['JSON']>, ParentType, ContextType>;
+  updatedAt?: Resolver<ResolversTypes['DateTime'], ParentType, ContextType>;
+};
+
+export type PageSectionResolvers<ContextType = any, ParentType extends ResolversParentTypes['PageSection'] = ResolversParentTypes['PageSection']> = {
+  builderId?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  data?: Resolver<ResolversTypes['JSON'], ParentType, ContextType>;
+  id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
+  order?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
+  type?: Resolver<ResolversTypes['SectionType'], ParentType, ContextType>;
 };
 
 export type PurchaseResolvers<ContextType = any, ParentType extends ResolversParentTypes['Purchase'] = ResolversParentTypes['Purchase']> = {
@@ -775,6 +918,10 @@ export type QueryResolvers<ContextType = any, ParentType extends ResolversParent
   eventsByCategory?: Resolver<Array<ResolversTypes['Event']>, ParentType, ContextType, RequireFields<QueryEventsByCategoryArgs, 'category'>>;
   featuredEvents?: Resolver<Array<ResolversTypes['Event']>, ParentType, ContextType>;
   me?: Resolver<Maybe<ResolversTypes['User']>, ParentType, ContextType>;
+  page?: Resolver<Maybe<ResolversTypes['Page']>, ParentType, ContextType, RequireFields<QueryPageArgs, 'id'>>;
+  pageBySlug?: Resolver<Maybe<ResolversTypes['Page']>, ParentType, ContextType, RequireFields<QueryPageBySlugArgs, 'slug'>>;
+  pages?: Resolver<Array<ResolversTypes['Page']>, ParentType, ContextType>;
+  pagesByEvent?: Resolver<Array<ResolversTypes['Page']>, ParentType, ContextType, RequireFields<QueryPagesByEventArgs, 'eventId'>>;
   searchEvents?: Resolver<Array<ResolversTypes['Event']>, ParentType, ContextType, RequireFields<QuerySearchEventsArgs, 'searchTerm'>>;
   subscriptionByEmail?: Resolver<Maybe<ResolversTypes['MailSubscription']>, ParentType, ContextType, RequireFields<QuerySubscriptionByEmailArgs, 'email'>>;
   subscriptions?: Resolver<Array<ResolversTypes['MailSubscription']>, ParentType, ContextType>;
@@ -814,6 +961,8 @@ export type Resolvers<ContextType = any> = {
   MailSubscription?: MailSubscriptionResolvers<ContextType>;
   Mutation?: MutationResolvers<ContextType>;
   Organizer?: OrganizerResolvers<ContextType>;
+  Page?: PageResolvers<ContextType>;
+  PageSection?: PageSectionResolvers<ContextType>;
   Purchase?: PurchaseResolvers<ContextType>;
   Query?: QueryResolvers<ContextType>;
   TicketTier?: TicketTierResolvers<ContextType>;
