@@ -60,7 +60,7 @@ const typeDefs = /* GraphQL */ `
     collaborators: [Collaborator!]
   }
 
-  type User { id: ID!, name: String, email: String!, image: String }
+  type User { id: ID!, name: String, email: String!, image: String, createdAt: DateTime!, updatedAt: DateTime! }
   type AuthPayload { token: String!, user: User! }
 
   type MailSubscription {
@@ -166,6 +166,7 @@ const typeDefs = /* GraphQL */ `
     eventsByCategory(category: EventCategoryType!): [Event!]!
     searchEvents(searchTerm: String!): [Event!]!
     me: User
+    users: [User!]!
     subscriptions: [MailSubscription!]!
     subscriptionByEmail(email: String!): MailSubscription
     pages: [Page!]!

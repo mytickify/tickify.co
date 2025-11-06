@@ -427,6 +427,7 @@ export type Query = {
   searchEvents: Array<Event>;
   subscriptionByEmail?: Maybe<MailSubscription>;
   subscriptions: Array<MailSubscription>;
+  users: Array<User>;
 };
 
 
@@ -559,10 +560,12 @@ export type UpdatePageInput = {
 
 export type User = {
   __typename?: 'User';
+  createdAt: Scalars['DateTime']['output'];
   email: Scalars['String']['output'];
   id: Scalars['ID']['output'];
   image?: Maybe<Scalars['String']['output']>;
   name?: Maybe<Scalars['String']['output']>;
+  updatedAt: Scalars['DateTime']['output'];
 };
 
 
@@ -925,6 +928,7 @@ export type QueryResolvers<ContextType = any, ParentType extends ResolversParent
   searchEvents?: Resolver<Array<ResolversTypes['Event']>, ParentType, ContextType, RequireFields<QuerySearchEventsArgs, 'searchTerm'>>;
   subscriptionByEmail?: Resolver<Maybe<ResolversTypes['MailSubscription']>, ParentType, ContextType, RequireFields<QuerySubscriptionByEmailArgs, 'email'>>;
   subscriptions?: Resolver<Array<ResolversTypes['MailSubscription']>, ParentType, ContextType>;
+  users?: Resolver<Array<ResolversTypes['User']>, ParentType, ContextType>;
 };
 
 export type TicketTierResolvers<ContextType = any, ParentType extends ResolversParentTypes['TicketTier'] = ResolversParentTypes['TicketTier']> = {
@@ -939,10 +943,12 @@ export type TicketTierResolvers<ContextType = any, ParentType extends ResolversP
 };
 
 export type UserResolvers<ContextType = any, ParentType extends ResolversParentTypes['User'] = ResolversParentTypes['User']> = {
+  createdAt?: Resolver<ResolversTypes['DateTime'], ParentType, ContextType>;
   email?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
   image?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   name?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  updatedAt?: Resolver<ResolversTypes['DateTime'], ParentType, ContextType>;
 };
 
 export type Resolvers<ContextType = any> = {
