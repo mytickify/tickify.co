@@ -17,6 +17,11 @@ const geistMono = Geist_Mono({
 export const metadata: Metadata = {
   title: "Tickify",
   description: "Tickify is a platform that helps you create and manage events and pages easily.",
+  openGraph: {
+    title: "Tickify",
+    description: "Tickify is a platform that helps you create and manage events and pages easily.",
+    images: [{ url: "https://images.unsplash.com/photo-1540039155733-5bb30b53aa14?w=1600", width: 1600, height: 900 }],
+  },
 };
 
 export default function RootLayout({
