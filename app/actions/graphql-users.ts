@@ -1,5 +1,6 @@
 import { gql } from '@apollo/client';
 import client from '@/lib/apollo-client';
+import { GetUsersQuery } from '../gql/graphql';
 
 export const GET_USERS_QUERY = gql`
   query GetUsers {
@@ -15,6 +16,6 @@ export const GET_USERS_QUERY = gql`
 `;
 
 export async function fetchUsers() {
-  const { data } = await client.query({ query: GET_USERS_QUERY });
+  const { data } = await client.query<GetUsersQuery>({ query: GET_USERS_QUERY });
   return data?.users ?? [];
 }
