@@ -9,7 +9,7 @@ import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import type { Route } from "next";
 
-import { GetPageDocument, PublishPageDocument, UpdatePageDocument } from "@/graphql/operations";
+import { GetPageDocument, PublishPageDocument, UpdatePageDocument } from "@/graphql/types";
 
 export default function EditPage() {
   const params = useParams<{ id: string }>();

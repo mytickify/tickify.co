@@ -12,7 +12,7 @@ import { format } from "date-fns";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useMutation, useQuery } from "@apollo/client/react";
 import { useSession } from "@/lib/auth-client";
-import { DeleteEventDocument,GetEventsDocument, GetEventsQuery } from "@/graphql/operations";
+import { DeleteEventDocument,GetEventsDocument, GetEventsQuery } from "@/graphql/types";
 import { EventStatus} from "@/graphql/types";
 
 export default function MyEvents() {

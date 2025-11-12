@@ -11,7 +11,7 @@ import { Calendar, MapPin, Users, Ticket, Clock, Share2, Heart, ArrowLeft } from
 import { format } from "date-fns";
 import { Skeleton } from "@/components/ui/skeleton";
 import Link from "next/link";
-import { GetEventByIdDocument, GetEventByIdQuery } from "@/graphql/operations";
+import { GetEventByIdDocument, GetEventByIdQuery } from "@/graphql/types";
 
 export default function EventDetails() {
   const router = useRouter();

@@ -1,7 +1,7 @@
 "use client";
 import { useMemo, useState } from "react";
 import { useQuery } from "@apollo/client/react";
-import { GetUsersDocument, GetUsersQuery } from "@/graphql/operations";
+import { GetUsersDocument, GetUsersQuery } from "@/graphql/types";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 
