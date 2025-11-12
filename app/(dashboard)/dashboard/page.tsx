@@ -1,7 +1,7 @@
 "use client";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { useQuery } from "@apollo/client/react";
-import { GetEventsDocument, GetEventsQuery, GetPagesDocument, GetPagesQuery, GetUsersDocument, GetUsersQuery } from "@/graphql/operations";
+import { GetEventsDocument, GetEventsQuery, GetPagesDocument, GetPagesQuery, GetUsersDocument, GetUsersQuery } from "@/graphql/types";
 
 // Generated types from codegen are used for events and pages
 
