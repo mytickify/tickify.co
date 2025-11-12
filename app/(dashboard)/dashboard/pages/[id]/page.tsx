@@ -9,16 +9,15 @@ import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import type { Route } from "next";
 
-import { GET_PAGE_QUERY, PUBLISH_PAGE, UPDATE_PAGE } from "@/app/actions/graphql-pages";
-import { GetPageQuery, PublishPageMutation, UpdatePageMutation } from "@/app/gql/graphql";
+import { GetPageDocument, PublishPageDocument, UpdatePageDocument } from "@/graphql/operations";
 
 export default function EditPage() {
   const params = useParams<{ id: string }>();
   const pageId = useMemo(() => String(params?.id || ""), [params]);
 
-  const { data, loading } = useQuery<GetPageQuery>(GET_PAGE_QUERY, { variables: { id: pageId }, skip: !pageId });
-  const [publishPage] = useMutation<PublishPageMutation>(PUBLISH_PAGE);
-  const [updatePage] = useMutation<UpdatePageMutation>(UPDATE_PAGE);
+  const { data, loading } = useQuery(GetPageDocument, { variables: { id: pageId }, skip: !pageId });
+  const [publishPage] = useMutation(PublishPageDocument);
+  const [updatePage] = useMutation(UpdatePageDocument);
   const [savedPageId, setSavedPageId] = useState<string | null>(pageId || null);
 
   const buildSectionData = (page: any) => {

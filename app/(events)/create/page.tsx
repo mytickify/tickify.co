@@ -8,8 +8,8 @@ import { ArrowLeft, Save, Eye } from "lucide-react";
 import EventEditor from "@/components/events/EventEditor";
 import EventPreview from "@/components/events/EventPreview";
 import { Skeleton } from "@/components/ui/skeleton";
-import { CREATE_EVENT_MUTATION, UPDATE_EVENT_MUTATION, GET_EVENT_BY_ID_QUERY } from "@/app/actions/graphql-events";
-import { Event, EventCategoryType, EventStatus, GetEventByIdQuery } from "@/app/gql/graphql";
+import { CreateEventDocument, GetEventByIdDocument, GetEventByIdQuery, UpdateEventDocument } from "@/graphql/operations";
+import { Event, EventCategoryType, EventStatus } from "@/graphql/types";
 import { useMutation, useQuery } from "@apollo/client/react";
 
 const DEFAULT_EVENT_DATA = {
@@ -50,7 +50,7 @@ function CreateEventContent() {
   const isEditing = !!editEventId;
 
   // Load event data if editing
-  const { data: existingEvent, loading: isLoading } = useQuery<GetEventByIdQuery>(GET_EVENT_BY_ID_QUERY, {
+  const { data: existingEvent, loading: isLoading } = useQuery<GetEventByIdQuery>(GetEventByIdDocument, {
     variables: { id: editEventId },
     skip: !isEditing,
   });
@@ -61,9 +61,9 @@ function CreateEventContent() {
     setPreviewData(eventData);
   }, [isEditing, existingEvent?.event]);
 
-  const [createEventMutation, { data: createData, loading: createLoading, error: createError }] = useMutation(CREATE_EVENT_MUTATION);
+  const [createEventMutation, { data: createData, loading: createLoading, error: createError }] = useMutation(CreateEventDocument);
 
-  const [updateEventMutation, { data: updateData, loading: updateLoading, error: updateError }] = useMutation(UPDATE_EVENT_MUTATION);
+  const [updateEventMutation, { data: updateData, loading: updateLoading, error: updateError }] = useMutation(UpdateEventDocument);
 
   const handleSave = async (status?: EventStatus) => {
     const dataToSave: Event = {

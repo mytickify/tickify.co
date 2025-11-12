@@ -1,0 +1,3 @@
+mutation PublishPage($id: ID!) {
+  publishPage(id: $id) { id slug published publishedAt }
+}

@@ -4,7 +4,7 @@ import Link from "next/link";
 import { Badge } from "@/components/ui/badge";
 import { Calendar, MapPin, Ticket, Star } from "lucide-react";
 import { format } from "date-fns";
-import { Event } from "@/app/gql/graphql";
+import { Event } from "@/graphql/types";
 
 export default function EventCard({ event, featured = false } : { event: Event, featured?: boolean }) {
   const categoryColors = {

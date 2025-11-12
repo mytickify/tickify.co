@@ -1,10 +1,9 @@
 "use client";
 import { useMemo, useState } from "react";
 import { useQuery } from "@apollo/client/react";
-import { GetUsersDocument, GetUsersQuery } from "@/app/gql/graphql";
+import { GetUsersDocument, GetUsersQuery } from "@/graphql/operations";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
-import { Separator } from "@/components/ui/separator";
 
 export default function UsersListPage() {
   const { data, loading } = useQuery<GetUsersQuery>(GetUsersDocument);

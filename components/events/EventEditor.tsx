@@ -8,7 +8,7 @@ import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Plus, Trash2, Upload, Palette, Users } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Event, EventCategoryType } from "@/app/gql/graphql";
+import { Event, EventCategoryType } from "@/graphql/types";
 
 export default function EventEditor({ editorData, onChange }: { editorData: Event | null, onChange?: (values: Event) => void, }) {
   const formik = useFormik({

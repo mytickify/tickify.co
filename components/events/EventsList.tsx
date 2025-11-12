@@ -5,7 +5,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import { Calendar, LucideIcon } from "lucide-react";
-import { Event, EventCategoryType, GetEventsQuery } from "@/app/gql/graphql";
+import { Event, EventCategoryType, GetEventsQuery } from "@/graphql/types";
 
 interface EventsListProps {
   events?: GetEventsQuery["events"];

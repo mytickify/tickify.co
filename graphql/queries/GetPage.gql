@@ -1,0 +1,11 @@
+ query GetPage($id: ID!) {
+    page(id: $id) {
+      id
+      slug
+      name
+      published
+      publishedAt
+      createdAt
+      updatedAt
+    }
+  }

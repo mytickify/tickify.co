@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Calendar, MapPin, Users, Ticket, Clock } from "lucide-react";
 import { format } from "date-fns";
-import { Event } from "@/app/gql/graphql";
+import { Event } from "@/graphql/types";
 
 export default function EventPreview({ eventData }: { eventData: Event }) {
   return (

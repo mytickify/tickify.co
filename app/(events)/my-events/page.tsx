@@ -12,8 +12,8 @@ import { format } from "date-fns";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useMutation, useQuery } from "@apollo/client/react";
 import { useSession } from "@/lib/auth-client";
-import { GET_EVENTS_QUERY, DELETE_EVENT_MUTATION } from "@/app/actions/graphql-events";
-import { EventStatus, GetEventsQuery } from "@/app/gql/graphql";
+import { DeleteEventDocument,GetEventsDocument, GetEventsQuery } from "@/graphql/operations";
+import { EventStatus} from "@/graphql/types";
 
 export default function MyEvents() {
   const { data: session } = useSession();
@@ -21,10 +21,10 @@ export default function MyEvents() {
 
   const [activeTab, setActiveTab] = useState<'all' | EventStatus>("all");
 
-  const { data: eventsData, loading: isLoading } = useQuery<GetEventsQuery>(GET_EVENTS_QUERY);
+  const { data: eventsData, loading: isLoading } = useQuery<GetEventsQuery>(GetEventsDocument);
 
-  const [deleteEvent] = useMutation(DELETE_EVENT_MUTATION, {
-    refetchQueries: [{ query: GET_EVENTS_QUERY }],
+  const [deleteEvent] = useMutation(DeleteEventDocument, {
+    refetchQueries: [{ query: GetEventsDocument }],
   });
 
   const myEvents = (eventsData?.events || []).filter(e => e.organizer?.email === userEmail);

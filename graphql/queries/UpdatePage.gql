@@ -1,0 +1,9 @@
+  mutation UpdatePage($id: ID!, $input: UpdatePageInput!) {
+    updatePage(id: $id, input: $input) {
+      id
+      slug
+      name
+      published
+      sections { id builderId type order }
+    }
+  }

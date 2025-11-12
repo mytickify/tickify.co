@@ -1,0 +1,70 @@
+query GetEventById($id: ID!) {
+    event(id: $id) {
+      id
+      slug
+      title
+      description
+      startDate
+      startTime
+      endDate
+      endTime
+      category {
+        type
+        description
+      }
+      is_featured
+      location {
+        venue
+        address
+        city
+        coordinates {
+          lat
+          lng
+        }
+      }
+      organizer {
+        name
+        email
+        phone
+      }
+      theme {
+        primaryColor
+        secondaryColor
+        accentColor
+        backgroundColor
+        textColor
+        fontFamily
+        layout
+        gradientEnabled
+        gradientDirection
+      }
+      ticketTiers {
+        id
+        name
+        price
+        currency
+        quantity
+        soldCount
+        description
+        available
+      }
+      images {
+        banner
+        gallery
+      }
+      features {
+        showGallery
+        allowGuestUploads
+        showChat
+        showCollaborators
+      }
+      collaborators {
+        name
+        type
+        avatar
+      }
+      status
+      createdAt
+      updatedAt
+    }
+  }

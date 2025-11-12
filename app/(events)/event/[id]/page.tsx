@@ -11,15 +11,14 @@ import { Calendar, MapPin, Users, Ticket, Clock, Share2, Heart, ArrowLeft } from
 import { format } from "date-fns";
 import { Skeleton } from "@/components/ui/skeleton";
 import Link from "next/link";
-import { GET_EVENT_BY_ID_QUERY } from "@/app/actions/graphql-events";
-import { GetEventByIdQuery } from "@/app/gql/graphql";
+import { GetEventByIdDocument, GetEventByIdQuery } from "@/graphql/operations";
 
 export default function EventDetails() {
   const router = useRouter();
   const params = useParams();
   const eventId = params?.id as string;
 
-  const { data, loading } = useQuery<GetEventByIdQuery>(GET_EVENT_BY_ID_QUERY, {
+  const { data, loading } = useQuery<GetEventByIdQuery>(GetEventByIdDocument, {
     variables: { id: eventId },
     skip: !eventId,
   });

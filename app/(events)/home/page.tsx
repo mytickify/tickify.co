@@ -10,14 +10,13 @@ import { Search, ArrowRight, Sparkles, TrendingUp, LucideIcon } from "lucide-rea
 import EventCard from "@/components/events/EventCard";
 import EventsList from "@/components/events/EventsList";
 
-import { EventCategoryType, GetEventsQuery } from "@/app/gql/graphql";
-import { GET_EVENTS_QUERY } from "@/app/actions/graphql-events";
+import { EventCategoryType, GetEventsDocument, GetEventsQuery } from "@/graphql/types";
 
 export default function Home() {
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedCategory, setSelectedCategory] = useState<EventCategoryType|"all">("all");
 
- const {data: events, loading: isLoading } = useQuery<GetEventsQuery>(GET_EVENTS_QUERY);
+ const {data: events, loading: isLoading } = useQuery<GetEventsQuery>(GetEventsDocument);
 
   const categories: { id: EventCategoryType | "all"; label: string; icon: LucideIcon }[] = [
     { id: "all", label: "All Events", icon: Sparkles },

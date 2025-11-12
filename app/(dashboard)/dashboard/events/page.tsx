@@ -2,7 +2,7 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { useQuery } from "@apollo/client/react";
-import { GetEventsDocument, GetEventsQuery } from "@/app/gql/graphql";
+import { GetEventsDocument, GetEventsQuery } from "@/graphql/operations";
 import { useMemo, useState } from "react";
 import Link from "next/link";
 import type { Route } from "next";
