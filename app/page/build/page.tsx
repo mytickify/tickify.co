@@ -4,12 +4,11 @@ import { Editor as SiteBuilder } from "@/editor";
 import { gql } from "@apollo/client";
 import { useMutation } from "@apollo/client/react";
 import { generateSlug } from "@/lib/utils";
-import { useState, useCallback, useMemo } from "react";
+import { useState, useCallback } from "react";
 import { useSession } from "@/lib/auth-client";
 import Link from "next/link";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Loader } from "lucide-react";
 import { Skeleton } from "@/components/ui/skeleton";
 
 const CREATE_PAGE = gql`
@@ -126,7 +125,7 @@ export default function CreatePage() {
               You must be signed in to create and publish pages.
             </p>
             <Button asChild>
-              <Link href="/auth">Go to Sign In</Link>
+              <Link href="/login">Go to Sign In</Link>
             </Button>
           </CardContent>
         </Card>
