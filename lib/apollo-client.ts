@@ -1,7 +1,8 @@
-import { ApolloClient, InMemoryCache } from '@apollo/client';
+import { ApolloClient, InMemoryCache, ApolloLink } from '@apollo/client';
 import { SetContextLink } from '@apollo/client/link/context';
 import { HttpLink } from '@apollo/client/link/http';
 import { Route } from 'next';
+import { RemoveTypenameFromVariablesLink } from "@apollo/client/link/remove-typename";
 
 const APOLLO_URI: Route = '/graphql';
 
@@ -10,10 +11,11 @@ const httpLink = new HttpLink({
   // Ensure session cookies are sent with GraphQL requests
   credentials: 'include',
 });
+const removeTypenameLink = new RemoveTypenameFromVariablesLink();
+const link = ApolloLink.from([removeTypenameLink, httpLink]);
 
 const authLink = new SetContextLink((prevContext, _) => {
   // If you use token-based auth in future, uncomment below and add header
-  // const token = localStorage.getItem('token');
   return {
     headers: {
       ...prevContext.headers,
@@ -23,7 +25,7 @@ const authLink = new SetContextLink((prevContext, _) => {
 });
 
 const client = new ApolloClient({
-  link: authLink.concat(httpLink),
+  link: authLink.concat(link),
   cache: new InMemoryCache(),
 });
 
