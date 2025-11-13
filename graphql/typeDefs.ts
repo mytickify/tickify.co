@@ -58,6 +58,8 @@ const typeDefs = /* GraphQL */ `
     images: EventImage
     features: EventFeatures
     collaborators: [Collaborator!]
+    userId: ID
+    user: User
   }
 
   type User { id: ID!, name: String, email: String!, image: String, createdAt: DateTime!, updatedAt: DateTime! }
@@ -115,12 +117,14 @@ const typeDefs = /* GraphQL */ `
   input CreateEventInput {
     title: String!, description: String!, startDate: String!, startTime: String!, endDate: String!, endTime: String!,
     category: CategoryInput!, is_featured: Boolean, location: LocationInput!, organizer: OrganizerInput!, theme: EventThemeInput,
-    ticketTiers: [TicketTierInput!], images: EventImageInput, features: EventFeaturesInput, collaborators: [CollaboratorInput!], status: EventStatus
+    ticketTiers: [TicketTierInput!], images: EventImageInput, features: EventFeaturesInput, collaborators: [CollaboratorInput!], status: EventStatus,
+    userId: ID
   }
   input UpdateEventInput {
     title: String, description: String, startDate: String, startTime: String, endDate: String, endTime: String,
     category: CategoryInput, is_featured: Boolean, location: LocationInput, organizer: OrganizerInput, theme: EventThemeInput,
-    ticketTiers: [TicketTierInput!], images: EventImageInput, features: EventFeaturesInput, collaborators: [CollaboratorInput!], status: EventStatus
+    ticketTiers: [TicketTierInput!], images: EventImageInput, features: EventFeaturesInput, collaborators: [CollaboratorInput!], status: EventStatus,
+    userId: ID
   }
   input CreatePurchaseInput { eventId: ID!, ticketTierId: ID!, quantity: Int!, buyer: BuyerInput! }
 

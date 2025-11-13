@@ -240,6 +240,8 @@ export type EventResolvers<ContextType = any, ParentType extends ResolversParent
   ticketTiers?: Resolver<Types.Maybe<Array<ResolversTypes['TicketTier']>>, ParentType, ContextType>;
   title?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   updatedAt?: Resolver<Types.Maybe<ResolversTypes['DateTime']>, ParentType, ContextType>;
+  user?: Resolver<Types.Maybe<ResolversTypes['User']>, ParentType, ContextType>;
+  userId?: Resolver<Types.Maybe<ResolversTypes['ID']>, ParentType, ContextType>;
 };
 
 export type EventFeaturesResolvers<ContextType = any, ParentType extends ResolversParentTypes['EventFeatures'] = ResolversParentTypes['EventFeatures']> = {

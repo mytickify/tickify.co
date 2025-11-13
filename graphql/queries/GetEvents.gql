@@ -53,19 +53,21 @@ query GetEvents {
         banner
         gallery
       }
-      features {
-        showGallery
-        allowGuestUploads
-        showChat
-        showCollaborators
-      }
-      collaborators {
-        name
-        type
-        avatar
-      }
-      status
-      createdAt
-      updatedAt
-    }
+  features {
+    showGallery
+    allowGuestUploads
+    showChat
+    showCollaborators
+  }
+  collaborators {
+    name
+    type
+    avatar
+  }
+  userId
+  user { id name email image createdAt updatedAt }
+  status
+  createdAt
+  updatedAt
+}
   }

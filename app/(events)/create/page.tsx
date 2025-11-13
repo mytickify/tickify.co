@@ -11,6 +11,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { CreateEventDocument, GetEventByIdDocument, GetEventByIdQuery, UpdateEventDocument } from "@/graphql/types";
 import { Event, EventCategoryType, EventStatus } from "@/graphql/types";
 import { useMutation, useQuery } from "@apollo/client/react";
+import { useSession } from "@/lib/auth-client";
 
 const DEFAULT_EVENT_DATA = {
   title: "Event Name",
@@ -43,6 +44,7 @@ function CreateEventContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const editEventId = (searchParams.get('id') as string) || '';
+  const { data: session } = useSession();
 
   const [showPreview, setShowPreview] = useState(true);
 
@@ -120,7 +122,7 @@ function CreateEventContent() {
                 email: dataToSave.organizer?.email || "",
                 phone: dataToSave.organizer?.phone || "",
               },
-
+              userId: session?.user?.id,
             }
           }
         }

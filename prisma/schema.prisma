@@ -26,6 +26,7 @@ model User {
   sessions Session[]
   accounts Account[]
   roles    UserRole[]
+  events   Event[]
 }
 
 model Session {
@@ -164,6 +165,9 @@ model Event {
   features      Json?
   collaborators Json?
   pages         Page[]
+
+  userId String?
+  user   User? @relation(fields: [userId], references: [id], onDelete: SetNull)
 }
 
 // Mail subscriptions

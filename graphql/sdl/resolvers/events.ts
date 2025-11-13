@@ -2,6 +2,7 @@ import prisma from '@/lib/prisma';
 import { generateSlug } from '@/lib/utils';
 import { PaymentStatus, EventCategoryType } from '../../schema/enums';
 import { EventCreateArgs } from '@/lib/generated/prisma/models';
+import { EventStatus } from '@/lib/generated/prisma/enums';
 
 function withDefaultsForTicketTiers(tiers?: any[] | null) {
   if (!tiers) return undefined;
@@ -60,7 +61,7 @@ export const eventsResolvers = {
         cover_image: images?.banner ?? null,
         primary_color: theme?.primaryColor ?? null,
         secondary_color: theme?.secondaryColor ?? null,
-        status: input.status ?? 'DRAFT',
+        status: input.status ?? EventStatus.DRAFT,
         category: input.category,
         location: input.location,
         organizer: input.organizer,
@@ -69,6 +70,7 @@ export const eventsResolvers = {
         ticketTiers,
         features: input.features ?? null,
         collaborators: input.collaborators ?? null,
+        userId: input.userId,
       }
       
       console.log({ data });
@@ -99,6 +101,10 @@ export const eventsResolvers = {
         data.ticketTiers = withDefaultsForTicketTiers(input.ticketTiers || null);
       }
 
+      if (input.userId !== undefined) {
+        data.userId = input.userId;
+      }
+
       const db = prisma as any;
       return db.event.update({ where: { id }, data });
     },
@@ -118,6 +124,12 @@ export const eventsResolvers = {
         paymentStatus: PaymentStatus.PENDING,
         purchasedAt: new Date(),
       };
+    },
+  },
+  Event: {
+    user: async (parent: any) => {
+      if (!parent?.userId) return null;
+      return prisma.user.findUnique({ where: { id: parent.userId } });
     },
   },
 };
