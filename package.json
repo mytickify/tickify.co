@@ -22,6 +22,7 @@
     "@dnd-kit/utilities": "^3.2.2",
     "@graphql-tools/load-files": "^7.0.1",
     "@graphql-tools/schema": "^10.0.27",
+    "@measured/puck": "^0.20.2",
     "@prisma/client": "^6.19.0",
     "@prisma/extension-accelerate": "^2.0.2",
     "@radix-ui/react-avatar": "^1.1.11",

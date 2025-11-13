@@ -1,6 +1,6 @@
 "use client";
 
-import { SiteBuilder } from "@/site-builder";
+import { Editor as SiteBuilder } from "@/editor";
 import { useMutation, useQuery } from "@apollo/client/react";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { useParams } from "next/navigation";
