@@ -39,7 +39,7 @@ query GetEventBySlug($slug: String!) {
         gradientDirection
       }
       ticketTiers {
-        id
+        #id
         name
         price
         currency

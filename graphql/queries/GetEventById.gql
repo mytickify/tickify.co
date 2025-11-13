@@ -39,7 +39,7 @@ query GetEventById($id: ID!) {
         gradientDirection
       }
       ticketTiers {
-        id
+        #id
         name
         price
         currency

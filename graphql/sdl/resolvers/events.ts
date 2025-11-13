@@ -1,6 +1,7 @@
 import prisma from '@/lib/prisma';
 import { generateSlug } from '@/lib/utils';
 import { PaymentStatus, EventCategoryType } from '../../schema/enums';
+import { EventCreateArgs } from '@/lib/generated/prisma/models';
 
 function withDefaultsForTicketTiers(tiers?: any[] | null) {
   if (!tiers) return undefined;
@@ -46,33 +47,33 @@ export const eventsResolvers = {
       const slug = generateSlug(input.title || 'event');
       const theme = input.theme ?? null;
       const images = input.images ?? null;
-      const ticketTiers = withDefaultsForTicketTiers(input.ticketTiers) ?? null;
+      const ticketTiers = withDefaultsForTicketTiers(input.ticketTiers) ?? undefined;
+      const data: EventCreateArgs['data'] = {
+        slug,
+        title: input.title,
+        description: input.description,
+        startDate: input.startDate,
+        startTime: input.startTime,
+        endDate: input.endDate,
+        endTime: input.endTime,
+        is_featured: Boolean(input.is_featured),
+        cover_image: images?.banner ?? null,
+        primary_color: theme?.primaryColor ?? null,
+        secondary_color: theme?.secondaryColor ?? null,
+        status: input.status ?? 'DRAFT',
+        category: input.category,
+        location: input.location,
+        organizer: input.organizer,
+        theme,
+        images,
+        ticketTiers,
+        features: input.features ?? null,
+        collaborators: input.collaborators ?? null,
+      }
+      
+      console.log({ data });
 
-      const db = prisma as any;
-      return db.event.create({
-        data: {
-          slug,
-          title: input.title,
-          description: input.description,
-          startDate: input.startDate,
-          startTime: input.startTime,
-          endDate: input.endDate,
-          endTime: input.endTime,
-          is_featured: Boolean(input.is_featured),
-          cover_image: images?.banner ?? null,
-          primary_color: theme?.primaryColor ?? null,
-          secondary_color: theme?.secondaryColor ?? null,
-          status: input.status ?? 'DRAFT',
-          category: input.category,
-          location: input.location,
-          organizer: input.organizer,
-          theme,
-          images,
-          ticketTiers,
-          features: input.features ?? null,
-          collaborators: input.collaborators ?? null,
-        },
-      });
+      return prisma.event.create({ data });
     },
     updateEvent: async (_: any, { id, input }: { id: string; input: any }) => {
       const data: any = {};

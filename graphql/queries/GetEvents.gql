@@ -40,7 +40,7 @@ query GetEvents {
       }
       
       ticketTiers {
-        id
+        #id
         name
         price
         currency

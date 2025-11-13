@@ -39,7 +39,7 @@ mutation UpdateEvent($id: ID!, $input: UpdateEventInput!) {
         gradientDirection
       }
       ticketTiers {
-        id
+        #id
         name
         price
         currency

@@ -67,15 +67,29 @@ function CreateEventContent() {
 
   const handleSave = async (status?: EventStatus) => {
     const dataToSave: Event = {
-      ...eventData,
+      ...previewData,
       status: status || eventData?.status // Keep current status if not specified
     };
 
     if (isEditing) {
+      const { id, updatedAt, createdAt, slug, ...input } = dataToSave;
+
       updateEventMutation({
         variables: {
           id: editEventId,
-          input: dataToSave,
+          input: {
+            ...input,
+            ticketTiers: input.ticketTiers?.map(tier => {
+              const { currency, description, name, price, quantity } = tier;
+              return {
+                currency: currency,
+                name: name,
+                description: description,
+                price: Number(price),
+                quantity: Number(quantity),
+              }
+            }) || [],
+          }
         },
         refetchQueries: "active",
       });
@@ -84,7 +98,6 @@ function CreateEventContent() {
         {
           variables: {
             input: {
-
               title: dataToSave.title || "",
               description: dataToSave.description || "",
               startDate: new Date(dataToSave.startDate || "").toISOString().split('T')[0],

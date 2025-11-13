@@ -27,7 +27,7 @@ const typeDefs = /* GraphQL */ `
     gradientDirection: GradientDirection! 
     backgroundColor: String!
   }
-  type TicketTier { id: ID!, name: String!, price: Float!, currency: String!, quantity: Int!, description: String, soldCount: Int!, available: Boolean! }
+  type TicketTier { name: String!, price: Float!, currency: String!, quantity: Int!, description: String, soldCount: Int!, available: Boolean! }
   type EventImage { banner: String, gallery: [String!] }
   type EventFeatures { showGallery: Boolean!, allowGuestUploads: Boolean!, showChat: Boolean!, showCollaborators: Boolean! }
   type Collaborator { name: String!, type: String!, avatar: String, description: String }
