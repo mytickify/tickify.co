@@ -1,24 +1,21 @@
 // Editor.jsx
-import { AutoField, FieldLabel, Puck } from "@measured/puck";
-import "@measured/puck/puck.css";
+import { Puck } from "@measured/puck";
 import React from "react";
 import type { Config } from "@measured/puck";
-import { HeroSection, PricingSection, GallerySection, AboutSection, ScheduleSection, ContactSection } from "@/site-builder/components/Sections";
-import { HeroSectionProps, PricingSectionProps, GallerySectionProps, AboutSectionProps, ScheduleSectionProps, ContactSectionProps } from "@/site-builder";
+import { HeroSection, GallerySection, AboutSection, ScheduleSection, ContactSection } from "@/site-builder/components/Sections";
+import { HeroSectionProps, GallerySectionProps, AboutSectionProps, ScheduleSectionProps, ContactSectionProps } from "@/site-builder";
 import basicEvent from "@/site-builder/data/templates/basic-event.json";
 import concert from "@/site-builder/data/templates/concert.json";
 import conference from "@/site-builder/data/templates/conference.json";
 import { Button } from "@/components/ui/button";
-import { Link2 } from "lucide-react";
+import { PricingSectionComponentProps } from "./blocks/PricingSection/PricingSection";
+import { PricingSectionBlock } from "./blocks/PricingSection/client";
+
+import "@measured/puck/puck.css";
 
 type ComponentData = {
-  HeroSection: HeroSectionProps['data'] & {
-    image: {
-      url: string;
-      mode: "inline" | "background" | "custom";
-    };
-  };
-  PricingSection: PricingSectionProps['data'];
+  HeroSection: HeroSectionProps['data'] 
+  PricingSection: PricingSectionComponentProps;
   GallerySection: GallerySectionProps['data'];
   AboutSection: AboutSectionProps['data'];
   ScheduleSection: ScheduleSectionProps['data'];
@@ -27,6 +24,7 @@ type ComponentData = {
 
 const config: Config<ComponentData> = {
   components: {
+    PricingSection: PricingSectionBlock,
     HeroSection: {
       label: "Hero",
       fields: {
@@ -35,36 +33,36 @@ const config: Config<ComponentData> = {
         backgroundImage: { type: "text" },
         ctaText: { type: "text" },
         ctaLink: { type: "text" },
-        image: {
-          type: "object",
-          objectFields: {
-            url: {
-              type: "custom",
-              render: ({ value, field, name, onChange, readOnly }) => (
-                <FieldLabel
-                  label={field.label || name}
-                  readOnly={readOnly}
-                  icon={<Link2 size="16" />}
-                >
-                  <AutoField
-                    field={{ type: "text" }}
-                    value={value}
-                    onChange={onChange}
-                    readOnly={readOnly}
-                  />
-                </FieldLabel>
-              ),
-            },
-            mode: {
-              type: "radio",
-              options: [
-                { label: "inline", value: "inline" },
-                { label: "bg", value: "background" },
-                { label: "custom", value: "custom" },
-              ],
-            },
-          },
-        },
+        // image: {
+        //   type: "object",
+        //   objectFields: {
+        //     url: {
+        //       type: "custom",
+        //       render: ({ value, field, name, onChange, readOnly }) => (
+        //         <FieldLabel
+        //           label={field.label || name}
+        //           readOnly={readOnly}
+        //           icon={<Link2 size="16" />}
+        //         >
+        //           <AutoField
+        //             field={{ type: "text" }}
+        //             value={value}
+        //             onChange={onChange}
+        //             readOnly={readOnly}
+        //           />
+        //         </FieldLabel>
+        //       ),
+        //     },
+        //     mode: {
+        //       type: "radio",
+        //       options: [
+        //         { label: "inline", value: "inline" },
+        //         { label: "bg", value: "background" },
+        //         { label: "custom", value: "custom" },
+        //       ],
+        //     },
+        //   },
+        // },
         layout: { type: "radio", options: [{ value: "centered", label: "Centered" }, { value: "left", label: "Left" }, { value: "right", label: "Right" }] },
         overlay: { type: "radio", options: [{ value: true, label: "True" }, { value: false, label: "False" }] },
       },
@@ -76,12 +74,12 @@ const config: Config<ComponentData> = {
         ctaLink: "#pricing-1",
         layout: "left",
         overlay: true,
-        image: {
-          url: "https://images.unsplash.com/photo-1492684223066-81342ee5ff30?w=1920",
-          mode: "inline",
-        },
+        // image: {
+        //   url: "https://images.unsplash.com/photo-1492684223066-81342ee5ff30?w=1920",
+        //   mode: "inline",
+        // },
       },
-      render: ({ title, subtitle, backgroundImage, ctaText, ctaLink, layout, overlay, image }) => {
+      render: ({ title, subtitle, backgroundImage, ctaText, ctaLink, layout, overlay,  }) => {
         const data: HeroSectionProps['data'] = {
           title,
           subtitle,
@@ -94,56 +92,120 @@ const config: Config<ComponentData> = {
         return <HeroSection section={{ data, id: '', type: "hero", order: 0 }} />;
       },
     },
-    PricingSection: {
-      fields: {
-        title: { type: "text" },
-        description: { type: "text" },
-        columns: { type: "select", options: [{ value: 2, label: "2" }, { value: 3, label: "3" }, { value: 4, label: "4" }] },
-        tickets: {
-          type: "array",
-          arrayFields: {
-            id: { type: "text" },
-            name: { type: "text" },
-            price: { type: "number" },
-            currency: { type: "text" },
-            description: { type: "text" },
-            features: { type: "array", arrayFields: { type: "text" } },
-            available: { type: "radio", options: [{ value: true, label: "True" }, { value: false, label: "False" }] },
-          }
+    // PricingSection: {
+    //   fields: {
+    //     quote: {
+    //       type: "external",
+    //       placeholder: "Select a quote",
+    //       showSearch: false,
+    //       renderFooter: ({ items }) => {
+    //         return (
+    //           <div>
+    //             {items.length} result{items.length === 1 ? "" : "s"}
+    //           </div>
+    //         );
+    //       },
+    //       filterFields: {
+    //         author: {
+    //           type: "select",
+    //           options: [
+    //             { value: "", label: "Select an author" },
+    //             { value: "Mark Twain", label: "Mark Twain" },
+    //             { value: "Henry Ford", label: "Henry Ford" },
+    //             { value: "Kurt Vonnegut", label: "Kurt Vonnegut" },
+    //             { value: "Andrew Carnegie", label: "Andrew Carnegie" },
+    //             { value: "C. S. Lewis", label: "C. S. Lewis" },
+    //             { value: "Confucius", label: "Confucius" },
+    //             { value: "Eleanor Roosevelt", label: "Eleanor Roosevelt" },
+    //             { value: "Samuel Ullman", label: "Samuel Ullman" },
+    //           ],
+    //         },
+    //       },
+    //       fetchList: async ({ query, filters }) => {
+    //         // Simulate delay
+    //         await new Promise((res) => setTimeout(res, 500));
 
-        }
-      },
-      defaultProps: {
-        title: "Entradas",
-        description: "Elige tu entrada",
-        columns: 3,
-        tickets: [
-          { id: "general", name: "General", price: 20, currency: "$", description: "Acceso general", features: ["Ingreso", "Soporte"], available: true },
-          { id: "vip", name: "VIP", price: 50, currency: "$", description: "Asientos premium", features: ["Ingreso", "Bebidas"], available: true },
-          { id: "student", name: "Estudiante", price: 15, currency: "$", description: "Requiere credencial", features: ["Ingreso"], available: false }
-        ]
-      },
-      render: ({ title, description, columns, tickets }) => {
-        let parsed: any[] = [];
-        try { parsed = typeof tickets === 'string' ? JSON.parse(tickets) : Array.isArray(tickets) ? tickets : []; } catch { }
-        const normalizedTickets = (parsed || []).map((t: any) => ({
-          id: t.id,
-          name: t.name,
-          price: Number(t.price ?? 0),
-          currency: t.currency ?? "$",
-          description: t.description,
-          features: Array.isArray(t.features) ? t.features.map((f: any) => (typeof f === 'string' ? f : f?.value)).filter(Boolean) : [],
-          available: Boolean(t.available)
-        }));
-        const data: PricingSectionProps['data'] = {
-          title,
-          description,
-          columns,
-          tickets: normalizedTickets
-        };
-        return <PricingSection section={{ data, id: '', type: 'pricing', order: 0 }} />;
-      }
-    },
+    //         return quotes
+    //           .map((quote, idx) => ({
+    //             index: idx,
+    //             title: quote.author,
+    //             description: quote.content,
+    //           }))
+    //           .filter((item) => {
+    //             if (filters?.author && item.title !== filters?.author) {
+    //               return false;
+    //             }
+
+    //             if (!query) return true;
+
+    //             const queryLowercase = query.toLowerCase();
+
+    //             if (item.title.toLowerCase().indexOf(queryLowercase) > -1) {
+    //               return true;
+    //             }
+
+    //             if (item.description.toLowerCase().indexOf(queryLowercase) > -1) {
+    //               return true;
+    //             }
+    //           });
+    //       },
+    //       mapRow: (item) => ({
+    //         title: item.title,
+    //         description: <span>{item.description}</span>,
+    //       }),
+    //       mapProp: (result) => {
+    //         return { index: result.index, label: result.description };
+    //       },
+    //       getItemSummary: (item) => item.label,
+    //     },
+    //     title: { type: "text" },
+    //     description: { type: "text" },
+    //     columns: { type: "select", options: [{ value: 2, label: "2" }, { value: 3, label: "3" }, { value: 4, label: "4" }] },
+    //     tickets: {
+    //       type: "array",
+    //       arrayFields: {
+    //         id: { type: "text" },
+    //         name: { type: "text" },
+    //         price: { type: "number" },
+    //         currency: { type: "text" },
+    //         description: { type: "text" },
+    //         features: { type: "array", arrayFields: { type: "text" } },
+    //         available: { type: "radio", options: [{ value: true, label: "True" }, { value: false, label: "False" }] },
+    //       }
+
+    //     }
+    //   },
+    //   defaultProps: {
+    //     title: "Entradas",
+    //     description: "Elige tu entrada",
+    //     columns: 3,
+    //     tickets: [
+    //       { id: "general", name: "General", price: 20, currency: "$", description: "Acceso general", features: ["Ingreso", "Soporte"], available: true },
+    //       { id: "vip", name: "VIP", price: 50, currency: "$", description: "Asientos premium", features: ["Ingreso", "Bebidas"], available: true },
+    //       { id: "student", name: "Estudiante", price: 15, currency: "$", description: "Requiere credencial", features: ["Ingreso"], available: false }
+    //     ]
+    //   },
+    //   render: ({ title, description, columns, tickets }) => {
+    //     let parsed: any[] = [];
+    //     try { parsed = typeof tickets === 'string' ? JSON.parse(tickets) : Array.isArray(tickets) ? tickets : []; } catch { }
+    //     const normalizedTickets = (parsed || []).map((t: any) => ({
+    //       id: t.id,
+    //       name: t.name,
+    //       price: Number(t.price ?? 0),
+    //       currency: t.currency ?? "$",
+    //       description: t.description,
+    //       features: Array.isArray(t.features) ? t.features.map((f: any) => (typeof f === 'string' ? f : f?.value)).filter(Boolean) : [],
+    //       available: Boolean(t.available)
+    //     }));
+    //     const data: PricingSectionProps['data'] = {
+    //       title,
+    //       description,
+    //       columns,
+    //       tickets: normalizedTickets
+    //     };
+    //     return <PricingSection section={{ data, id: '', type: 'pricing', order: 0 }} />;
+    //   }
+    // },
     GallerySection: {
       fields: {
         title: { type: "text" },
