@@ -99,6 +99,7 @@ export type ResolversTypes = {
   EventStatus: Types.EventStatus;
   EventTheme: ResolverTypeWrapper<Types.EventTheme>;
   EventThemeInput: Types.EventThemeInput;
+  EventsFilterInput: Types.EventsFilterInput;
   Float: ResolverTypeWrapper<Types.Scalars['Float']['output']>;
   FontFamily: Types.FontFamily;
   GradientDirection: Types.GradientDirection;
@@ -157,6 +158,7 @@ export type ResolversParentTypes = {
   EventImageInput: Types.EventImageInput;
   EventTheme: Types.EventTheme;
   EventThemeInput: Types.EventThemeInput;
+  EventsFilterInput: Types.EventsFilterInput;
   Float: Types.Scalars['Float']['output'];
   ID: Types.Scalars['ID']['output'];
   Int: Types.Scalars['Int']['output'];
@@ -225,11 +227,15 @@ export type EventResolvers<ContextType = any, ParentType extends ResolversParent
   endDate?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   endTime?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   features?: Resolver<Types.Maybe<ResolversTypes['EventFeatures']>, ParentType, ContextType>;
+  featuresId?: Resolver<Types.Maybe<ResolversTypes['ID']>, ParentType, ContextType>;
   id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
   images?: Resolver<Types.Maybe<ResolversTypes['EventImage']>, ParentType, ContextType>;
+  imagesId?: Resolver<Types.Maybe<ResolversTypes['ID']>, ParentType, ContextType>;
   is_featured?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
   location?: Resolver<ResolversTypes['Location'], ParentType, ContextType>;
+  locationId?: Resolver<Types.Maybe<ResolversTypes['ID']>, ParentType, ContextType>;
   organizer?: Resolver<Types.Maybe<ResolversTypes['Organizer']>, ParentType, ContextType>;
+  organizerId?: Resolver<Types.Maybe<ResolversTypes['ID']>, ParentType, ContextType>;
   primary_color?: Resolver<Types.Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   secondary_color?: Resolver<Types.Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   slug?: Resolver<Types.Maybe<ResolversTypes['String']>, ParentType, ContextType>;
@@ -237,6 +243,7 @@ export type EventResolvers<ContextType = any, ParentType extends ResolversParent
   startTime?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   status?: Resolver<ResolversTypes['EventStatus'], ParentType, ContextType>;
   theme?: Resolver<Types.Maybe<ResolversTypes['EventTheme']>, ParentType, ContextType>;
+  themeId?: Resolver<Types.Maybe<ResolversTypes['ID']>, ParentType, ContextType>;
   ticketTiers?: Resolver<Types.Maybe<Array<ResolversTypes['TicketTier']>>, ParentType, ContextType>;
   title?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   updatedAt?: Resolver<Types.Maybe<ResolversTypes['DateTime']>, ParentType, ContextType>;
@@ -353,7 +360,7 @@ export type PurchaseResolvers<ContextType = any, ParentType extends ResolversPar
 export type QueryResolvers<ContextType = any, ParentType extends ResolversParentTypes['Query'] = ResolversParentTypes['Query']> = {
   event?: Resolver<Types.Maybe<ResolversTypes['Event']>, ParentType, ContextType, RequireFields<Types.QueryEventArgs, 'id'>>;
   eventBySlug?: Resolver<Types.Maybe<ResolversTypes['Event']>, ParentType, ContextType, RequireFields<Types.QueryEventBySlugArgs, 'slug'>>;
-  events?: Resolver<Array<ResolversTypes['Event']>, ParentType, ContextType>;
+  events?: Resolver<Array<ResolversTypes['Event']>, ParentType, ContextType, Partial<Types.QueryEventsArgs>>;
   eventsByCategory?: Resolver<Array<ResolversTypes['Event']>, ParentType, ContextType, RequireFields<Types.QueryEventsByCategoryArgs, 'category'>>;
   featuredEvents?: Resolver<Array<ResolversTypes['Event']>, ParentType, ContextType>;
   me?: Resolver<Types.Maybe<ResolversTypes['User']>, ParentType, ContextType>;

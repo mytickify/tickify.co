@@ -155,19 +155,116 @@ model Event {
   createdAt       DateTime    @default(now())
   updatedAt       DateTime    @updatedAt
 
-  // Nested objects stored as JSON for simplicity
-  category      Json
-  location      Json
-  organizer     Json
-  theme         Json?
-  ticketTiers   Json?
-  images        Json?
-  features      Json?
-  collaborators Json?
-  pages         Page[]
+  categoryTypes      EventCategoryType[]
+  categoryDescription String @default("")
+  pages               Page[]
+
+  locationId String? @unique
+  location   Location?   @relation(fields: [locationId], references: [id], onDelete: SetNull)
+
+  organizerId String? @unique
+  organizer   Organizer?  @relation(fields: [organizerId], references: [id], onDelete: SetNull)
+
+  themeId String? @unique
+  theme   EventTheme? @relation(fields: [themeId], references: [id], onDelete: SetNull)
+
+  imagesId String? @unique
+  images   EventImage?  @relation(fields: [imagesId], references: [id], onDelete: SetNull)
+
+  featuresId String? @unique
+  features   EventFeatures? @relation(fields: [featuresId], references: [id], onDelete: SetNull)
+
+  ticketTiers  TicketTier[]
+  collaborators Collaborator[]
 
   userId String?
   user   User? @relation(fields: [userId], references: [id], onDelete: SetNull)
+}
+
+model Location {
+  id        String   @id @default(cuid())
+  venue     String
+  address   String
+  city      String
+  lat       Float?
+  lng       Float?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  event     Event?
+}
+
+model Organizer {
+  id        String   @id @default(cuid())
+  name      String
+  email     String
+  phone     String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  event     Event?
+}
+
+model EventTheme {
+  id               String   @id @default(cuid())
+  primaryColor     String
+  secondaryColor   String
+  accentColor      String
+  textColor        String
+  fontFamily       String
+  layout           String
+  gradientEnabled  Boolean
+  gradientDirection String
+  backgroundColor  String?
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
+  event            Event?
+}
+
+model EventImage {
+  id        String   @id @default(cuid())
+  banner    String?
+  gallery   String[]
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  event     Event?
+}
+
+model EventFeatures {
+  id                String   @id @default(cuid())
+  showGallery       Boolean
+  allowGuestUploads Boolean
+  showChat          Boolean
+  showCollaborators Boolean
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+  event             Event?
+}
+
+model TicketTier {
+  id          String  @id @default(cuid())
+  name        String
+  price       Float
+  currency    String
+  quantity    Int
+  description String?
+  available   Boolean
+  soldCount   Int
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  eventId     String
+  event       Event   @relation(fields: [eventId], references: [id], onDelete: Cascade)
+}
+
+model Collaborator {
+  id          String  @id @default(cuid())
+  name        String
+  type        String
+  avatar      String?
+  role        String?
+  description String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  eventId     String
+  event       Event   @relation(fields: [eventId], references: [id], onDelete: Cascade)
 }
 
 // Mail subscriptions

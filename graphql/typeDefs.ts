@@ -60,6 +60,11 @@ const typeDefs = /* GraphQL */ `
     collaborators: [Collaborator!]
     userId: ID
     user: User
+    locationId: ID
+    organizerId: ID
+    themeId: ID
+    imagesId: ID
+    featuresId: ID
   }
 
   type User { id: ID!, name: String, email: String!, image: String, createdAt: DateTime!, updatedAt: DateTime! }
@@ -114,6 +119,18 @@ const typeDefs = /* GraphQL */ `
   input CollaboratorInput { name: String!, type: String!, logo: String }
   input BuyerInput { name: String!, email: String!, phone: String! }
 
+  input EventsFilterInput {
+    category: EventCategoryType
+    status: EventStatus
+    is_featured: Boolean
+    userId: ID
+    city: String
+    venue: String
+    fromDate: String
+    toDate: String
+    searchTerm: String
+  }
+
   input CreateEventInput {
     title: String!, description: String!, startDate: String!, startTime: String!, endDate: String!, endTime: String!,
     category: CategoryInput!, is_featured: Boolean, location: LocationInput!, organizer: OrganizerInput!, theme: EventThemeInput,
@@ -163,7 +180,7 @@ const typeDefs = /* GraphQL */ `
   }
 
   type Query {
-    events: [Event!]!
+    events(filter: EventsFilterInput): [Event!]!
     event(id: ID!): Event
     eventBySlug(slug: String!): Event
     featuredEvents: [Event!]!

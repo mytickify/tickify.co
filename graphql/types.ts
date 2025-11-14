@@ -197,11 +197,15 @@ export type Event = {
   endDate: Scalars['String']['output'];
   endTime: Scalars['String']['output'];
   features?: Maybe<EventFeatures>;
+  featuresId?: Maybe<Scalars['ID']['output']>;
   id: Scalars['ID']['output'];
   images?: Maybe<EventImage>;
+  imagesId?: Maybe<Scalars['ID']['output']>;
   is_featured: Scalars['Boolean']['output'];
   location: Location;
+  locationId?: Maybe<Scalars['ID']['output']>;
   organizer?: Maybe<Organizer>;
+  organizerId?: Maybe<Scalars['ID']['output']>;
   primary_color?: Maybe<Scalars['String']['output']>;
   secondary_color?: Maybe<Scalars['String']['output']>;
   slug?: Maybe<Scalars['String']['output']>;
@@ -209,6 +213,7 @@ export type Event = {
   startTime: Scalars['String']['output'];
   status: EventStatus;
   theme?: Maybe<EventTheme>;
+  themeId?: Maybe<Scalars['ID']['output']>;
   ticketTiers?: Maybe<Array<TicketTier>>;
   title: Scalars['String']['output'];
   updatedAt?: Maybe<Scalars['DateTime']['output']>;
@@ -279,6 +284,18 @@ export type EventThemeInput = {
   primaryColor: Scalars['String']['input'];
   secondaryColor: Scalars['String']['input'];
   textColor: Scalars['String']['input'];
+};
+
+export type EventsFilterInput = {
+  category?: InputMaybe<EventCategoryType>;
+  city?: InputMaybe<Scalars['String']['input']>;
+  fromDate?: InputMaybe<Scalars['String']['input']>;
+  is_featured?: InputMaybe<Scalars['Boolean']['input']>;
+  searchTerm?: InputMaybe<Scalars['String']['input']>;
+  status?: InputMaybe<EventStatus>;
+  toDate?: InputMaybe<Scalars['String']['input']>;
+  userId?: InputMaybe<Scalars['ID']['input']>;
+  venue?: InputMaybe<Scalars['String']['input']>;
 };
 
 export enum FontFamily {
@@ -503,6 +520,11 @@ export type QueryEventArgs = {
 
 export type QueryEventBySlugArgs = {
   slug: Scalars['String']['input'];
+};
+
+
+export type QueryEventsArgs = {
+  filter?: InputMaybe<EventsFilterInput>;
 };
 
 

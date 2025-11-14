@@ -1,7 +1,7 @@
 import prisma from '@/lib/prisma';
 import { generateSlug } from '@/lib/utils';
 import { PaymentStatus, EventCategoryType } from '../../schema/enums';
-import { EventCreateArgs } from '@/lib/generated/prisma/models';
+import { Prisma } from '@/lib/generated/prisma/client';
 import { EventStatus } from '@/lib/generated/prisma/enums';
 
 function withDefaultsForTicketTiers(tiers?: any[] | null) {
@@ -16,31 +16,54 @@ function withDefaultsForTicketTiers(tiers?: any[] | null) {
 
 export const eventsResolvers = {
   Query: {
-    events: async () => {
-      return prisma.event.findMany({ orderBy: { createdAt: 'desc' } });
+    events: async (_: any, { filter }: { filter?: any }) => {
+      const where: any = {};
+      if (filter?.status) where.status = filter.status;
+      if (filter?.is_featured !== undefined) where.is_featured = filter.is_featured;
+      if (filter?.userId) where.userId = filter.userId;
+      if (filter?.category) where.categoryTypes = { has: filter.category };
+      const locationWhere: any = {};
+      if (filter?.city) locationWhere.city = { equals: filter.city, mode: Prisma.QueryMode.insensitive };
+      if (filter?.venue) locationWhere.venue = { contains: filter.venue, mode: Prisma.QueryMode.insensitive };
+      if (Object.keys(locationWhere).length) where.location = { is: locationWhere };
+      if (filter?.fromDate) where.startDate = { gte: filter.fromDate };
+      if (filter?.toDate) where.endDate = { lte: filter.toDate };
+      const s = filter?.searchTerm ? { contains: filter.searchTerm, mode: Prisma.QueryMode.insensitive } : null;
+      if (s) {
+        where.OR = [
+          { title: s },
+          { description: s },
+          { location: { is: { venue: s } } },
+          { location: { is: { city: s } } },
+        ];
+      }
+      return prisma.event.findMany({ where, orderBy: { createdAt: 'desc' }, include: { location: true, organizer: true, theme: true, images: true, features: true, ticketTiers: true, collaborators: true } });
     },
     event: async (_: any, { id }: { id: string }) => {
-      return prisma.event.findUnique({ where: { id } });
+      return prisma.event.findUnique({ where: { id }, include: { location: true, organizer: true, theme: true, images: true, features: true, ticketTiers: true, collaborators: true } });
     },
     eventBySlug: async (_: any, { slug }: { slug: string }) => {
-      return prisma.event.findUnique({ where: { slug } });
+      return prisma.event.findUnique({ where: { slug }, include: { location: true, organizer: true, theme: true, images: true, features: true, ticketTiers: true, collaborators: true } });
     },
     featuredEvents: async () => {
-      return prisma.event.findMany({ where: { is_featured: true } });
+      return prisma.event.findMany({ where: { is_featured: true }, include: { location: true, organizer: true, theme: true, images: true, features: true, ticketTiers: true, collaborators: true } });
     },
     eventsByCategory: async (_: any, { category }: { category: EventCategoryType }) => {
-      const events = await prisma.event.findMany();
-      return events.filter((event: any) => Array.isArray(event?.category?.type) && event.category.type.includes(category));
+      return prisma.event.findMany({ where: { categoryTypes: { has: category } }, include: { location: true, organizer: true, theme: true, images: true, features: true, ticketTiers: true, collaborators: true } });
     },
     searchEvents: async (_: any, { searchTerm }: { searchTerm: string }) => {
-      const events = await prisma.event.findMany();
-      const term = searchTerm.toLowerCase();
-      return events.filter((event: any) =>
-        (event.title && event.title.toLowerCase().includes(term)) ||
-        (event.description && event.description.toLowerCase().includes(term)) ||
-        (event.location?.venue && event.location.venue.toLowerCase().includes(term)) ||
-        (event.location?.city && event.location.city.toLowerCase().includes(term))
-      );
+      const s = { contains: searchTerm, mode: Prisma.QueryMode.insensitive };
+      return prisma.event.findMany({
+        where: {
+          OR: [
+            { title: s },
+            { description: s },
+            { location: { is: { venue: s } } },
+            { location: { is: { city: s } } },
+          ],
+        },
+        include: { location: true, organizer: true, theme: true, images: true, features: true, ticketTiers: true, collaborators: true },
+      });
     },
   },
   Mutation: {
@@ -49,7 +72,7 @@ export const eventsResolvers = {
       const theme = input.theme ?? null;
       const images = input.images ?? null;
       const ticketTiers = withDefaultsForTicketTiers(input.ticketTiers) ?? undefined;
-      const data: EventCreateArgs['data'] = {
+      const data: any = {
         slug,
         title: input.title,
         description: input.description,
@@ -62,14 +85,34 @@ export const eventsResolvers = {
         primary_color: theme?.primaryColor ?? null,
         secondary_color: theme?.secondaryColor ?? null,
         status: input.status ?? EventStatus.DRAFT,
-        category: input.category,
-        location: input.location,
-        organizer: input.organizer,
-        theme,
-        images,
-        ticketTiers,
-        features: input.features ?? null,
-        collaborators: input.collaborators ?? null,
+        categoryTypes: input.category?.type ?? [],
+        categoryDescription: input.category?.description ?? '',
+        location: input.location ? { create: {
+          venue: input.location.venue,
+          address: input.location.address,
+          city: input.location.city,
+          lat: input.location.coordinates?.lat ?? null,
+          lng: input.location.coordinates?.lng ?? null,
+        } } : undefined,
+        organizer: input.organizer ? { create: input.organizer } : undefined,
+        theme: theme ? { create: {
+          primaryColor: theme.primaryColor,
+          secondaryColor: theme.secondaryColor,
+          accentColor: theme.accentColor,
+          textColor: theme.textColor,
+          fontFamily: String(theme.fontFamily),
+          layout: String(theme.layout),
+          gradientEnabled: theme.gradientEnabled,
+          gradientDirection: String(theme.gradientDirection),
+          backgroundColor: (theme as any).backgroundColor ?? '#FFFFFF',
+        } } : undefined,
+        images: images ? { create: {
+          banner: images.banner ?? null,
+          gallery: images.gallery ?? [],
+        } } : undefined,
+        features: input.features ? { create: input.features } : undefined,
+        ticketTiers: ticketTiers ? { create: ticketTiers } : undefined,
+        collaborators: input.collaborators ? { create: input.collaborators } : undefined,
         userId: input.userId,
       }
       
@@ -81,32 +124,83 @@ export const eventsResolvers = {
       const data: any = {};
       for (const key of [
         'title', 'description', 'startDate', 'startTime', 'endDate', 'endTime',
-        'is_featured', 'status', 'category', 'location', 'organizer', 'features', 'collaborators'
+        'is_featured', 'status'
       ]) {
         if (input[key] !== undefined) data[key] = input[key];
       }
 
-      if (input.theme !== undefined) {
-        data.theme = input.theme;
-        data.primary_color = input.theme?.primaryColor ?? null;
-        data.secondary_color = input.theme?.secondaryColor ?? null;
-      }
-
       if (input.images !== undefined) {
-        data.images = input.images;
         data.cover_image = input.images?.banner ?? null;
+        data.images = input.images ? { upsert: { create: { banner: input.images.banner ?? null, gallery: input.images.gallery ?? [] }, update: { banner: input.images.banner ?? null, gallery: input.images.gallery ?? [] } } } : { delete: true };
       }
 
       if (input.ticketTiers !== undefined) {
-        data.ticketTiers = withDefaultsForTicketTiers(input.ticketTiers || null);
+        const tiers = withDefaultsForTicketTiers(input.ticketTiers || null);
+        data.ticketTiers = tiers ? { deleteMany: {}, create: tiers } : { deleteMany: {} };
       }
 
       if (input.userId !== undefined) {
         data.userId = input.userId;
       }
 
-      const db = prisma as any;
-      return db.event.update({ where: { id }, data });
+      if (input.category !== undefined) {
+        data.categoryTypes = input.category?.type ?? [];
+        data.categoryDescription = input.category?.description ?? '';
+      }
+
+      if (input.location !== undefined) {
+        data.location = input.location ? { upsert: { create: {
+          venue: input.location.venue,
+          address: input.location.address,
+          city: input.location.city,
+          lat: input.location.coordinates?.lat ?? null,
+          lng: input.location.coordinates?.lng ?? null,
+        }, update: {
+          venue: input.location.venue,
+          address: input.location.address,
+          city: input.location.city,
+          lat: input.location.coordinates?.lat ?? null,
+          lng: input.location.coordinates?.lng ?? null,
+        } } } : { delete: true };
+      }
+
+      if (input.organizer !== undefined) {
+        data.organizer = input.organizer ? { upsert: { create: input.organizer, update: input.organizer } } : { delete: true };
+      }
+
+      if (input.theme !== undefined) {
+        const t = input.theme;
+        data.primary_color = t?.primaryColor ?? null;
+        data.secondary_color = t?.secondaryColor ?? null;
+        data.theme = t ? { upsert: { create: {
+          primaryColor: t.primaryColor,
+          secondaryColor: t.secondaryColor,
+          accentColor: t.accentColor,
+          textColor: t.textColor,
+          fontFamily: String(t.fontFamily),
+          layout: String(t.layout),
+          gradientEnabled: t.gradientEnabled,
+          gradientDirection: String(t.gradientDirection),
+          backgroundColor: (t as any).backgroundColor ?? '#FFFFFF',
+        }, update: {
+          primaryColor: t.primaryColor,
+          secondaryColor: t.secondaryColor,
+          accentColor: t.accentColor,
+          textColor: t.textColor,
+          fontFamily: String(t.fontFamily),
+          layout: String(t.layout),
+          gradientEnabled: t.gradientEnabled,
+          gradientDirection: String(t.gradientDirection),
+          backgroundColor: (t as any).backgroundColor ?? '#FFFFFF',
+        } } } : { delete: true };
+      }
+
+      if (input.features !== undefined) {
+        const f = input.features;
+        data.features = f ? { upsert: { create: f, update: f } } : { delete: true };
+      }
+
+      return prisma.event.update({ where: { id }, data });
     },
     deleteEvent: async (_: any, { id }: { id: string }) => {
       const db = prisma as any;
@@ -127,9 +221,21 @@ export const eventsResolvers = {
     },
   },
   Event: {
+    category: async (parent: any) => {
+      return {
+        type: parent.categoryTypes ?? [],
+        description: parent.categoryDescription ?? '',
+      };
+    },
     user: async (parent: any) => {
       if (!parent?.userId) return null;
       return prisma.user.findUnique({ where: { id: parent.userId } });
+    },
+  },
+  Location: {
+    coordinates: (parent: any) => {
+      if (parent?.lat == null && parent?.lng == null) return null;
+      return { lat: parent.lat ?? 0, lng: parent.lng ?? 0 };
     },
   },
 };

@@ -2,7 +2,6 @@
 // Run with: npm run db:seed (requires DATABASE_URL)
 
 import { PrismaClient } from '@/lib/generated/prisma/client';
-import { EventCreateInput } from '@/lib/generated/prisma/models';
 
 const prisma = new PrismaClient();
 
@@ -16,7 +15,7 @@ async function main() {
   const today = nowDate.toISOString().split('T')[0];
   const timeHM = nowDate.toISOString().split('T')[1].slice(0, 5);
 
-  const sampleEvents: EventCreateInput[] = [
+  const sampleEvents = [
     {
       slug: 'summer-music-fest',
       title: 'Summer Music Fest',
@@ -131,16 +130,60 @@ async function main() {
   for (const ev of sampleEvents) {
     const normalizedTiers = Array.isArray(ev.ticketTiers)
       ? ev.ticketTiers.map((t) => ({
-          ...t,
+          name: t.name,
+          price: t.price,
+          currency: t.currency,
+          quantity: t.quantity,
+          description: t.description,
           soldCount: 0,
           available: (typeof t.quantity === 'number' ? t.quantity > 0 : true),
         }))
-      : undefined;
+      : [];
 
     await prisma.event.create({
       data: {
-        ...ev,
-        ticketTiers: normalizedTiers,
+        slug: ev.slug,
+        title: ev.title,
+        description: ev.description,
+        startDate: ev.startDate,
+        startTime: ev.startTime,
+        endDate: ev.endDate,
+        endTime: ev.endTime,
+        is_featured: ev.is_featured,
+        status: ev.status as any,
+        cover_image: ev.cover_image ?? ev.images?.banner ?? null,
+        primary_color: ev.primary_color ?? ev.theme?.primaryColor ?? null,
+        secondary_color: ev.secondary_color ?? ev.theme?.secondaryColor ?? null,
+        categoryTypes: { set: (ev.category?.type as any) ?? [] },
+        categoryDescription: ev.category?.description ?? '',
+        location: ev.location ? { create: {
+          venue: ev.location.venue,
+          address: ev.location.address,
+          city: ev.location.city,
+        } } : undefined,
+        organizer: ev.organizer ? { create: ev.organizer } : undefined,
+        theme: ev.theme ? { create: {
+          primaryColor: ev.theme.primaryColor,
+          secondaryColor: ev.theme.secondaryColor,
+          accentColor: ev.theme.accentColor,
+          textColor: ev.theme.textColor,
+          fontFamily: String(ev.theme.fontFamily),
+          layout: String(ev.theme.layout),
+          gradientEnabled: ev.theme.gradientEnabled,
+          gradientDirection: String(ev.theme.gradientDirection),
+          backgroundColor: (ev.theme as any).backgroundColor ?? null,
+        } } : undefined,
+        images: ev.images ? { create: {
+          banner: (ev.images as any).banner ?? null,
+          gallery: (ev.images as any).gallery ?? [],
+        } } : undefined,
+        features: ev.features ? { create: ev.features } : undefined,
+        ticketTiers: { create: normalizedTiers },
+        collaborators: { create: (ev.collaborators ?? []).map((c: any) => ({
+          name: c.name,
+          type: c.type,
+          avatar: c.logo ?? null,
+        })) },
       },
     });
   }
