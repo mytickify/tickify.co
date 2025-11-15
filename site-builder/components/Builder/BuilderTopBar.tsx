@@ -3,7 +3,7 @@ import { useBuilder } from '../../context/BuilderContext';
 import { JsonParser } from '../../utils';
 import { Button } from '@/components/ui/button';
 import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Pencil, Eye, FileJson, FileCode, Save as SaveIcon, Rocket, Download } from 'lucide-react';
+import { Pencil, Eye, FileJson, FileCode, Save as SaveIcon, Rocket } from 'lucide-react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from '@/components/ui/dialog';
 import './BuilderTopBar.css';
 
