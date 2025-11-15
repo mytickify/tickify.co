@@ -12,9 +12,8 @@ const typeDefs = /* GraphQL */ `
   enum SubscriptionSource { FORM IMPORT ADMIN API }
   enum SectionType { HERO PRICING GALLERY ABOUT SCHEDULE CONTACT }
 
-  type Category { type: [EventCategoryType!]!, description: String! }
-  type Coordinates { lat: Float!, lng: Float! }
-  type Location { venue: String!, address: String!, city: String!, coordinates: Coordinates }
+  type Location { venue: String!, address: String!, city: String!, lat: Float, lng: Float }
+  type Category { id: ID!, type: EventCategoryType!, description: String! }
   type Organizer { name: String!, email: String!, phone: String }
   type EventTheme { 
     primaryColor: String!, 
@@ -50,7 +49,7 @@ const typeDefs = /* GraphQL */ `
     status: EventStatus!
     createdAt: DateTime
     updatedAt: DateTime
-    category: Category!
+    categories: [Category!]!
     location: Location!
     organizer: Organizer
     theme: EventTheme
@@ -108,9 +107,7 @@ const typeDefs = /* GraphQL */ `
     sections: [PageSection!]!
   }
 
-  input CategoryInput { type: [EventCategoryType!]!, description: String! }
-  input CoordinatesInput { lat: Float!, lng: Float! }
-  input LocationInput { venue: String!, address: String!, city: String!, coordinates: CoordinatesInput }
+  input LocationInput { venue: String!, address: String!, city: String!, lat: Float, lng: Float }
   input OrganizerInput { name: String!, email: String!, phone: String }
   input EventThemeInput { primaryColor: String!, secondaryColor: String!, accentColor: String!, textColor: String!, fontFamily: FontFamily!, layout: LayoutType!, gradientEnabled: Boolean!, gradientDirection: GradientDirection! }
   input TicketTierInput { name: String!, price: Float!, currency: String!, quantity: Int!, description: String }
@@ -133,13 +130,13 @@ const typeDefs = /* GraphQL */ `
 
   input CreateEventInput {
     title: String!, description: String!, startDate: String!, startTime: String!, endDate: String!, endTime: String!,
-    category: CategoryInput!, is_featured: Boolean, location: LocationInput!, organizer: OrganizerInput!, theme: EventThemeInput,
+    categoryTypes: [EventCategoryType!]!, categoryIds: [ID!], is_featured: Boolean, location: LocationInput!, organizer: OrganizerInput!, theme: EventThemeInput,
     ticketTiers: [TicketTierInput!], images: EventImageInput, features: EventFeaturesInput, collaborators: [CollaboratorInput!], status: EventStatus,
     userId: ID
   }
   input UpdateEventInput {
     title: String, description: String, startDate: String, startTime: String, endDate: String, endTime: String,
-    category: CategoryInput, is_featured: Boolean, location: LocationInput, organizer: OrganizerInput, theme: EventThemeInput,
+    categoryTypes: [EventCategoryType!], categoryIds: [ID!], is_featured: Boolean, location: LocationInput, organizer: OrganizerInput, theme: EventThemeInput,
     ticketTiers: [TicketTierInput!], images: EventImageInput, features: EventFeaturesInput, collaborators: [CollaboratorInput!], status: EventStatus,
     userId: ID
   }

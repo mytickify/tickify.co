@@ -90,7 +90,7 @@ export default function EventDetails() {
         <div className="absolute bottom-0 left-0 right-0">
           <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 pb-12 text-white">
             <Badge className="mb-4 bg-white/20 backdrop-blur-sm text-white border-white/30 text-sm">
-              {event.category.type[0] || "Event"}
+              {event.categories?.[0]?.type || "Event"}
             </Badge>
             <h1 className="text-4xl sm:text-6xl font-bold mb-4">{event.title}</h1>
             <div className="flex flex-wrap items-center gap-6 text-lg">

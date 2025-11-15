@@ -8,19 +8,14 @@ query GetEventBySlug($slug: String!) {
       startTime
       endDate
       endTime
-      category {
-        type
-        description
-      }
+      categories { id type description }
       is_featured
       location {
         venue
         address
         city
-        coordinates {
-          lat
-          lng
-        }
+        lat
+        lng
       }
       organizer {
         name

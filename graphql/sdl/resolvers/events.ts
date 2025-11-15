@@ -21,7 +21,7 @@ export const eventsResolvers = {
       if (filter?.status) where.status = filter.status;
       if (filter?.is_featured !== undefined) where.is_featured = filter.is_featured;
       if (filter?.userId) where.userId = filter.userId;
-      if (filter?.category) where.categoryTypes = { has: filter.category };
+      if (filter?.category) where.categories = { some: { type: filter.category } };
       const locationWhere: any = {};
       if (filter?.city) locationWhere.city = { equals: filter.city, mode: Prisma.QueryMode.insensitive };
       if (filter?.venue) locationWhere.venue = { contains: filter.venue, mode: Prisma.QueryMode.insensitive };
@@ -37,19 +37,19 @@ export const eventsResolvers = {
           { location: { is: { city: s } } },
         ];
       }
-      return prisma.event.findMany({ where, orderBy: { createdAt: 'desc' }, include: { location: true, organizer: true, theme: true, images: true, features: true, ticketTiers: true, collaborators: true } });
+      return prisma.event.findMany({ where, orderBy: { createdAt: 'desc' }, include: { location: true, organizer: true, theme: true, images: true, features: true, ticketTiers: true, collaborators: true, categories: true } });
     },
     event: async (_: any, { id }: { id: string }) => {
-      return prisma.event.findUnique({ where: { id }, include: { location: true, organizer: true, theme: true, images: true, features: true, ticketTiers: true, collaborators: true } });
+      return prisma.event.findUnique({ where: { id }, include: { location: true, organizer: true, theme: true, images: true, features: true, ticketTiers: true, collaborators: true, categories: true } });
     },
     eventBySlug: async (_: any, { slug }: { slug: string }) => {
-      return prisma.event.findUnique({ where: { slug }, include: { location: true, organizer: true, theme: true, images: true, features: true, ticketTiers: true, collaborators: true } });
+      return prisma.event.findUnique({ where: { slug }, include: { location: true, organizer: true, theme: true, images: true, features: true, ticketTiers: true, collaborators: true, categories: true } });
     },
     featuredEvents: async () => {
-      return prisma.event.findMany({ where: { is_featured: true }, include: { location: true, organizer: true, theme: true, images: true, features: true, ticketTiers: true, collaborators: true } });
+      return prisma.event.findMany({ where: { is_featured: true }, include: { location: true, organizer: true, theme: true, images: true, features: true, ticketTiers: true, collaborators: true, categories: true } });
     },
     eventsByCategory: async (_: any, { category }: { category: EventCategoryType }) => {
-      return prisma.event.findMany({ where: { categoryTypes: { has: category } }, include: { location: true, organizer: true, theme: true, images: true, features: true, ticketTiers: true, collaborators: true } });
+      return prisma.event.findMany({ where: { categories: { some: { type: category } } }, include: { location: true, organizer: true, theme: true, images: true, features: true, ticketTiers: true, collaborators: true, categories: true } });
     },
     searchEvents: async (_: any, { searchTerm }: { searchTerm: string }) => {
       const s = { contains: searchTerm, mode: Prisma.QueryMode.insensitive };
@@ -62,7 +62,7 @@ export const eventsResolvers = {
             { location: { is: { city: s } } },
           ],
         },
-        include: { location: true, organizer: true, theme: true, images: true, features: true, ticketTiers: true, collaborators: true },
+        include: { location: true, organizer: true, theme: true, images: true, features: true, ticketTiers: true, collaborators: true, categories: true },
       });
     },
   },
@@ -85,14 +85,20 @@ export const eventsResolvers = {
         primary_color: theme?.primaryColor ?? null,
         secondary_color: theme?.secondaryColor ?? null,
         status: input.status ?? EventStatus.DRAFT,
-        categoryTypes: input.category?.type ?? [],
-        categoryDescription: input.category?.description ?? '',
+        categories: input.categoryIds?.length ? {
+          connect: (input.categoryIds as any[]).map((id: any) => ({ id })),
+        } : (input.categoryTypes?.length ? {
+          connectOrCreate: (input.categoryTypes as any[]).map((type: any) => ({
+            where: { type },
+            create: { type, description: '' },
+          })),
+        } : undefined),
         location: input.location ? { create: {
           venue: input.location.venue,
           address: input.location.address,
           city: input.location.city,
-          lat: input.location.coordinates?.lat ?? null,
-          lng: input.location.coordinates?.lng ?? null,
+          lat: (input.location as any).lat ?? null,
+          lng: (input.location as any).lng ?? null,
         } } : undefined,
         organizer: input.organizer ? { create: input.organizer } : undefined,
         theme: theme ? { create: {
@@ -143,9 +149,17 @@ export const eventsResolvers = {
         data.userId = input.userId;
       }
 
-      if (input.category !== undefined) {
-        data.categoryTypes = input.category?.type ?? [];
-        data.categoryDescription = input.category?.description ?? '';
+      if (input.categoryIds !== undefined) {
+        const ids = input.categoryIds ?? [];
+        data.categories = { set: ids.map((cid: any) => ({ id: cid })) };
+      } else if (input.categoryTypes !== undefined) {
+        const types = input.categoryTypes ?? [];
+        const cats = await Promise.all(types.map(async (type: any) => prisma.category.upsert({
+          where: { type },
+          update: { description: '' },
+          create: { type, description: '' },
+        })));
+        data.categories = { set: cats.map((c) => ({ id: c.id })) };
       }
 
       if (input.location !== undefined) {
@@ -153,14 +167,14 @@ export const eventsResolvers = {
           venue: input.location.venue,
           address: input.location.address,
           city: input.location.city,
-          lat: input.location.coordinates?.lat ?? null,
-          lng: input.location.coordinates?.lng ?? null,
+          lat: (input.location as any).lat ?? null,
+          lng: (input.location as any).lng ?? null,
         }, update: {
           venue: input.location.venue,
           address: input.location.address,
           city: input.location.city,
-          lat: input.location.coordinates?.lat ?? null,
-          lng: input.location.coordinates?.lng ?? null,
+          lat: (input.location as any).lat ?? null,
+          lng: (input.location as any).lng ?? null,
         } } } : { delete: true };
       }
 
@@ -221,12 +235,6 @@ export const eventsResolvers = {
     },
   },
   Event: {
-    category: async (parent: any) => {
-      return {
-        type: parent.categoryTypes ?? [],
-        description: parent.categoryDescription ?? '',
-      };
-    },
     user: async (parent: any) => {
       if (!parent?.userId) return null;
       return prisma.user.findUnique({ where: { id: parent.userId } });

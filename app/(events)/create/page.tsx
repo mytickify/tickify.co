@@ -13,7 +13,7 @@ import { Event, EventCategoryType, EventStatus } from "@/graphql/types";
 import { useMutation, useQuery } from "@apollo/client/react";
 import { useSession } from "@/lib/auth-client";
 
-const DEFAULT_EVENT_DATA = {
+  const DEFAULT_EVENT_DATA = {
   title: "Event Name",
   description: "Description of the event",
   location: {
@@ -21,10 +21,7 @@ const DEFAULT_EVENT_DATA = {
     city: "Paris",
     venue: "Parc des Princes",
   },
-  category: {
-    type: [EventCategoryType.Music,],
-    description: "",
-  },
+  categories: [{ id: "temp", type: EventCategoryType.Music, description: "" }] as any,
   status: EventStatus.Draft,
   is_featured: false,
   createdAt: new Date().toISOString(),
@@ -81,6 +78,8 @@ function CreateEventContent() {
           id: editEventId,
           input: {
             ...input,
+            categoryIds: (input as any).categories?.map((c: any) => c.id).filter((id: string) => id && id !== 'temp') || undefined,
+            categoryTypes: (input as any).categories?.map((c: any) => c.type) || [],
             ticketTiers: input.ticketTiers?.map(tier => {
               const { currency, description, name, price, quantity } = tier;
               return {
@@ -111,10 +110,8 @@ function CreateEventContent() {
                 city: "",
                 venue: "",
               },
-              category: dataToSave.category || {
-                type: [],
-                description: "",
-              },
+              categoryIds: dataToSave.categories?.map((c: any) => c.id).filter((id: string) => id && id !== 'temp') || undefined,
+              categoryTypes: dataToSave.categories?.map((c: any) => c.type) || [],
               status: dataToSave.status || EventStatus.Draft,
               is_featured: dataToSave.is_featured || false,
               organizer: {

@@ -16,7 +16,7 @@ export default function EventEditor({ editorData, onChange }: { editorData: Even
       title: "",
       description: "",
       startDate: "",
-      category: { type: ["other"] } as any,
+      categoryTypes: ["other"] as any,
       location: { venue: "", city: "" } as any,
       cover_image: "",
       primary_color: "#06B6D4",
@@ -189,7 +189,7 @@ export default function EventEditor({ editorData, onChange }: { editorData: Even
 
             <div>
               <Label htmlFor="category">Category</Label>
-              <Select value={eventData?.category?.type?.[0] || ''} onValueChange={(value) => handleInputChange('category', { type: [value as EventCategoryType], description: eventData?.category?.description || '' } as any)}>
+              <Select value={eventData?.categories?.[0]?.type || ''} onValueChange={(value) => handleInputChange('categories', [{ id: 'temp', type: value as EventCategoryType, description: eventData?.categories?.[0]?.description || '' }] as any)}>
                 <SelectTrigger>
                   <SelectValue />
                 </SelectTrigger>

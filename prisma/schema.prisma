@@ -155,8 +155,7 @@ model Event {
   createdAt       DateTime    @default(now())
   updatedAt       DateTime    @updatedAt
 
-  categoryTypes      EventCategoryType[]
-  categoryDescription String @default("")
+  categories          Category[]
   pages               Page[]
 
   locationId String? @unique
@@ -179,6 +178,16 @@ model Event {
 
   userId String?
   user   User? @relation(fields: [userId], references: [id], onDelete: SetNull)
+}
+
+model Category {
+  id          String             @id @default(cuid())
+  type        EventCategoryType  @unique
+  description String             @default("")
+  createdAt   DateTime           @default(now())
+  updatedAt   DateTime           @updatedAt
+
+  events      Event[]
 }
 
 model Location {

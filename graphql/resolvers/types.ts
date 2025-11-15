@@ -80,12 +80,9 @@ export type ResolversTypes = {
   Buyer: ResolverTypeWrapper<Types.Buyer>;
   BuyerInput: Types.BuyerInput;
   Category: ResolverTypeWrapper<Types.Category>;
-  CategoryInput: Types.CategoryInput;
   Collaborator: ResolverTypeWrapper<Types.Collaborator>;
   CollaboratorInput: Types.CollaboratorInput;
   ConfirmSubscriptionInput: Types.ConfirmSubscriptionInput;
-  Coordinates: ResolverTypeWrapper<Types.Coordinates>;
-  CoordinatesInput: Types.CoordinatesInput;
   CreateEventInput: Types.CreateEventInput;
   CreatePageInput: Types.CreatePageInput;
   CreatePurchaseInput: Types.CreatePurchaseInput;
@@ -141,12 +138,9 @@ export type ResolversParentTypes = {
   Buyer: Types.Buyer;
   BuyerInput: Types.BuyerInput;
   Category: Types.Category;
-  CategoryInput: Types.CategoryInput;
   Collaborator: Types.Collaborator;
   CollaboratorInput: Types.CollaboratorInput;
   ConfirmSubscriptionInput: Types.ConfirmSubscriptionInput;
-  Coordinates: Types.Coordinates;
-  CoordinatesInput: Types.CoordinatesInput;
   CreateEventInput: Types.CreateEventInput;
   CreatePageInput: Types.CreatePageInput;
   CreatePurchaseInput: Types.CreatePurchaseInput;
@@ -199,7 +193,8 @@ export type BuyerResolvers<ContextType = any, ParentType extends ResolversParent
 
 export type CategoryResolvers<ContextType = any, ParentType extends ResolversParentTypes['Category'] = ResolversParentTypes['Category']> = {
   description?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
-  type?: Resolver<Array<ResolversTypes['EventCategoryType']>, ParentType, ContextType>;
+  id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
+  type?: Resolver<ResolversTypes['EventCategoryType'], ParentType, ContextType>;
 };
 
 export type CollaboratorResolvers<ContextType = any, ParentType extends ResolversParentTypes['Collaborator'] = ResolversParentTypes['Collaborator']> = {
@@ -209,17 +204,12 @@ export type CollaboratorResolvers<ContextType = any, ParentType extends Resolver
   type?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
 };
 
-export type CoordinatesResolvers<ContextType = any, ParentType extends ResolversParentTypes['Coordinates'] = ResolversParentTypes['Coordinates']> = {
-  lat?: Resolver<ResolversTypes['Float'], ParentType, ContextType>;
-  lng?: Resolver<ResolversTypes['Float'], ParentType, ContextType>;
-};
-
 export interface DateTimeScalarConfig extends GraphQLScalarTypeConfig<ResolversTypes['DateTime'], any> {
   name: 'DateTime';
 }
 
 export type EventResolvers<ContextType = any, ParentType extends ResolversParentTypes['Event'] = ResolversParentTypes['Event']> = {
-  category?: Resolver<ResolversTypes['Category'], ParentType, ContextType>;
+  categories?: Resolver<Array<ResolversTypes['Category']>, ParentType, ContextType>;
   collaborators?: Resolver<Types.Maybe<Array<ResolversTypes['Collaborator']>>, ParentType, ContextType>;
   cover_image?: Resolver<Types.Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   createdAt?: Resolver<Types.Maybe<ResolversTypes['DateTime']>, ParentType, ContextType>;
@@ -282,7 +272,8 @@ export interface JsonScalarConfig extends GraphQLScalarTypeConfig<ResolversTypes
 export type LocationResolvers<ContextType = any, ParentType extends ResolversParentTypes['Location'] = ResolversParentTypes['Location']> = {
   address?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   city?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
-  coordinates?: Resolver<Types.Maybe<ResolversTypes['Coordinates']>, ParentType, ContextType>;
+  lat?: Resolver<Types.Maybe<ResolversTypes['Float']>, ParentType, ContextType>;
+  lng?: Resolver<Types.Maybe<ResolversTypes['Float']>, ParentType, ContextType>;
   venue?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
 };
 
@@ -398,7 +389,6 @@ export type Resolvers<ContextType = any> = {
   Buyer?: BuyerResolvers<ContextType>;
   Category?: CategoryResolvers<ContextType>;
   Collaborator?: CollaboratorResolvers<ContextType>;
-  Coordinates?: CoordinatesResolvers<ContextType>;
   DateTime?: GraphQLScalarType;
   Event?: EventResolvers<ContextType>;
   EventFeatures?: EventFeaturesResolvers<ContextType>;

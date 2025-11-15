@@ -140,6 +140,14 @@ async function main() {
         }))
       : [];
 
+    // Ensure categories exist and get their ids
+    const catTypes = (ev.category?.type ?? []) as any[];
+    const cats = await Promise.all(catTypes.map(async (type) => prisma.category.upsert({
+      where: { type },
+      update: { description: ev.category?.description ?? '' },
+      create: { type, description: ev.category?.description ?? '' },
+    })));
+
     await prisma.event.create({
       data: {
         slug: ev.slug,
@@ -154,8 +162,7 @@ async function main() {
         cover_image: ev.cover_image ?? ev.images?.banner ?? null,
         primary_color: ev.primary_color ?? ev.theme?.primaryColor ?? null,
         secondary_color: ev.secondary_color ?? ev.theme?.secondaryColor ?? null,
-        categoryTypes: { set: (ev.category?.type as any) ?? [] },
-        categoryDescription: ev.category?.description ?? '',
+        categories: { connect: cats.map((c) => ({ id: c.id })) },
         location: ev.location ? { create: {
           venue: ev.location.venue,
           address: ev.location.address,

@@ -26,7 +26,7 @@ export default function EventPreview({ eventData }: { eventData: Event }) {
         
         <div className="absolute bottom-0 left-0 right-0 p-8 text-white">
           <Badge className="mb-4 bg-white/20 backdrop-blur-sm text-white border-white/30">
-            {eventData.category?.description || 'General'}
+            {eventData.categories?.[0]?.description || 'General'}
           </Badge>
           <h1 className="text-4xl font-bold mb-2">{eventData.title}</h1>
           <div className="flex flex-wrap items-center gap-4 text-sm">
