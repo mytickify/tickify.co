@@ -22,7 +22,7 @@ import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { Boxes, Layers as LayersIcon, Settings as SettingsIcon, GripVertical, Trash2, Image, BadgePercent, Images, Info, CalendarDays, Phone } from 'lucide-react';
+import { Boxes, Layers as LayersIcon, Settings as SettingsIcon, GripVertical, Trash2, BadgePercent, Images, Info, CalendarDays, Phone } from 'lucide-react';
 import './BuilderSidebar.css';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from '@/components/ui/dialog';
 
@@ -238,7 +238,7 @@ const BuilderSidebar: React.FC = () => {
                     <CardHeader className="py-3">
                       <CardTitle className="text-sm flex items-center gap-2">
                         {/* Map section.type to lucide icon for consistency */}
-                        {section.type === 'hero' && <Image className="h-4 w-4" />}
+                        {section.type === 'hero' && <Boxes className="h-4 w-4" />}
                         {section.type === 'pricing' && <BadgePercent className="h-4 w-4" />}
                         {section.type === 'gallery' && <Images className="h-4 w-4" />}
                         {section.type === 'about' && <Info className="h-4 w-4" />}
