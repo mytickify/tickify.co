@@ -27,7 +27,8 @@ export const PricingSectionBlock: ComponentConfig<{
                 );
             },
             fetchList: async ({ query, filters }) => {
-                // Simulate delay
+                // log query and filters
+                console.log(query, filters);
                 const { data } = await client.query<{ events: Pick<Event, 'id' | 'title' | 'description' | 'ticketTiers'>[] }>({
                     query: gql`
                         query GetEvents {
