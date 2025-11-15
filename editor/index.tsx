@@ -334,16 +334,11 @@ function templateToInitialData(template: any) {
   };
 }
 
-// Save the data to your database
-const save = (data: any) => { };
-
 interface EditorProps {
-  initialPageId?: any;
-  onSave?: (data: any) => void;
   onPublish: (data: any) => void;
   templateId?: string;
 }
-export function Editor({ initialPageId, onSave, onPublish, templateId }: EditorProps) {
+export function Editor({ onPublish, templateId }: EditorProps) {
   const [data, setData] = React.useState<any>({});
   React.useEffect(() => {
     const map: Record<string, any> = {
