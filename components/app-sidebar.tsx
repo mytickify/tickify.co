@@ -6,7 +6,6 @@ import {
   BookOpen,
   Calendar,
   Command,
-  HelpCircle,
   LayoutDashboard,
   LifeBuoy,
   Send,
@@ -15,7 +14,6 @@ import {
 } from "lucide-react"
 
 import { NavMain } from "@/components/nav-main"
-import { NavProjects } from "@/components/nav-projects"
 import { NavSecondary } from "@/components/nav-secondary"
 import { NavUser } from "@/components/nav-user"
 import {
