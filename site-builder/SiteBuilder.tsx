@@ -28,7 +28,8 @@ const SiteBuilderContent: React.FC<SiteBuilderContentProps> = ({
         try {
           const page = JSON.parse(savedPage);
           setPage(page);
-          setShowTemplateGallery(false);
+          // Use setTimeout to avoid calling setState synchronously within effect
+          setTimeout(() => setShowTemplateGallery(false), 0);
         } catch (error) {
           console.error('Error loading saved page:', error);
         }
