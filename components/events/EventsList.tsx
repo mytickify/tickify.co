@@ -16,7 +16,6 @@ interface EventsListProps {
 }
 
 export default function EventsList({
-  events,
   filteredEvents,
   isLoading,
   selectedCategory,
