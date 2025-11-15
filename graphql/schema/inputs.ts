@@ -43,7 +43,7 @@ export class CreateEventInput {
   @Field() endTime!: string;
   @Field(() => CategoryInput) category!: CategoryInput;
   @Field({ nullable: true }) is_featured?: boolean;
-  @Field(() => LocationInput) location!: LocationInput;
+  @Field(() => LocationInput, { nullable: true }) location?: LocationInput;
   @Field(() => OrganizerInput) organizer!: OrganizerInput;
   @Field(() => EventThemeInput, { nullable: true }) theme?: EventThemeInput;
   @Field(() => [TicketTierInput], { nullable: true }) ticketTiers?: TicketTierInput[];

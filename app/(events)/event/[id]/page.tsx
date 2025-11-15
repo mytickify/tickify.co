@@ -104,7 +104,7 @@ export default function EventDetails() {
               </div>
               <div className="flex items-center gap-2">
                 <MapPin className="w-5 h-5" />
-                {event.location.venue}
+                {event.location?.venue || 'Virtual Event'}
               </div>
             </div>
           </div>
@@ -134,8 +134,8 @@ export default function EventDetails() {
                     </div>
                     <div>
                       <p className="text-sm text-gray-600">Venue</p>
-                      <p className="font-semibold text-lg">{event.location.venue}</p>
-                      <p className="text-sm text-gray-600">{event.location.address}, {event.location.city}</p>
+                      <p className="font-semibold text-lg">{event.location?.venue || 'Virtual Event'}</p>
+                      <p className="text-sm text-gray-600">{event.location ? `${event.location.address}, ${event.location.city}` : 'Online Event'}</p>
                     </div>
                   </div>
 

@@ -6,6 +6,7 @@ import { GetEventsDocument, GetEventsQuery } from "@/graphql/types";
 import { useMemo, useState } from "react";
 import Link from "next/link";
 import type { Route } from "next";
+import { useSession } from "@/lib/auth-client";
 
 function formatDate(dt?: string | any | null) {
   try {
@@ -24,7 +25,8 @@ function formatDate(dt?: string | any | null) {
 }
 
 export default function DashboardEventsList() {
-  const { data, loading } = useQuery<GetEventsQuery>(GetEventsDocument);
+  const { data: session } = useSession();
+  const { data, loading, error, } = useQuery<GetEventsQuery>(GetEventsDocument);
   const [search, setSearch] = useState<string>("");
 
   const events = Array.isArray(data?.events) ? data!.events : [];
@@ -37,6 +39,11 @@ export default function DashboardEventsList() {
     });
   }, [events, search]);
 
+  console.log('DashboardEventsList', data);
+  if (!loading && error) {
+    console.error('DashboardEventsList error', error);
+    return <p className="text-sm text-[#637381]">Error loading events. {error.message}</p>;
+  }
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">

@@ -93,7 +93,7 @@ export class Event {
   @Field(() => String, { nullable: true }) cover_image?: string | null;
   @Field(() => String, { nullable: true }) primary_color?: string | null;
   @Field(() => String, { nullable: true }) secondary_color?: string | null;
-  @Field(() => Location) location!: Location;
+  @Field(() => Location, { nullable: true }) location?: Location | null;
   @Field(() => Organizer, { nullable: true }) organizer?: Organizer | null;
   @Field(() => EventTheme, { nullable: true }) theme?: EventTheme | null;
   @Field(() => [TicketTier], { nullable: true }) ticketTiers?: TicketTier[] | null;

@@ -147,7 +147,7 @@ export type CreateEventInput = {
   features?: InputMaybe<EventFeaturesInput>;
   images?: InputMaybe<EventImageInput>;
   is_featured?: InputMaybe<Scalars['Boolean']['input']>;
-  location: LocationInput;
+  location?: InputMaybe<LocationInput>;
   organizer: OrganizerInput;
   startDate: Scalars['String']['input'];
   startTime: Scalars['String']['input'];
@@ -189,7 +189,7 @@ export type Event = {
   images?: Maybe<EventImage>;
   imagesId?: Maybe<Scalars['ID']['output']>;
   is_featured: Scalars['Boolean']['output'];
-  location: Location;
+  location?: Maybe<Location>;
   locationId?: Maybe<Scalars['ID']['output']>;
   organizer?: Maybe<Organizer>;
   organizerId?: Maybe<Scalars['ID']['output']>;
