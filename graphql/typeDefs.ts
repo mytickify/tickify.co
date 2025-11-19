@@ -49,7 +49,7 @@ const typeDefs = /* GraphQL */ `
     status: EventStatus!
     createdAt: DateTime
     updatedAt: DateTime
-    categories: [Category!]!
+    categories: [Category]
     location: Location
     organizer: Organizer
     theme: EventTheme

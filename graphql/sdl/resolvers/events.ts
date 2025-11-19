@@ -68,6 +68,7 @@ export const eventsResolvers = {
   },
   Mutation: {
     createEvent: async (_: any, { input }: { input: any }) => {
+      console.log({ input }, 'createEvent');
       const slug = generateSlug(input.title || 'event');
       const theme = input.theme ?? null;
       const images = input.images ?? null;
@@ -135,7 +136,7 @@ export const eventsResolvers = {
         if (input[key] !== undefined) data[key] = input[key];
       }
 
-      if (input.images !== undefined) {
+      if (!!input.images) {
         data.cover_image = input.images?.banner ?? null;
         data.images = input.images ? { upsert: { create: { banner: input.images.banner ?? null, gallery: input.images.gallery ?? [] }, update: { banner: input.images.banner ?? null, gallery: input.images.gallery ?? [] } } } : { delete: true };
       }
@@ -148,7 +149,7 @@ export const eventsResolvers = {
       if (input.userId !== undefined) {
         data.userId = input.userId;
       }
-
+      console.log({ data }, 'updateEvent');
       if (input.categoryIds !== undefined) {
         const ids = input.categoryIds ?? [];
         data.categories = { set: ids.map((cid: any) => ({ id: cid })) };
@@ -162,7 +163,7 @@ export const eventsResolvers = {
         data.categories = { set: cats.map((c) => ({ id: c.id })) };
       }
 
-      if (input.location !== undefined) {
+      if (!!input.location) {
         data.location = input.location ? { upsert: { create: {
           venue: input.location.venue,
           address: input.location.address,
@@ -178,11 +179,11 @@ export const eventsResolvers = {
         } } } : { delete: true };
       }
 
-      if (input.organizer !== undefined) {
+      if (!!input.organizer) {
         data.organizer = input.organizer ? { upsert: { create: input.organizer, update: input.organizer } } : { delete: true };
       }
 
-      if (input.theme !== undefined) {
+      if (!!input.theme) {
         const t = input.theme;
         data.primary_color = t?.primaryColor ?? null;
         data.secondary_color = t?.secondaryColor ?? null;
@@ -209,11 +210,11 @@ export const eventsResolvers = {
         } } } : { delete: true };
       }
 
-      if (input.features !== undefined) {
+      if (!!input.features) {
         const f = input.features;
         data.features = f ? { upsert: { create: f, update: f } } : { delete: true };
       }
-
+      console.log({ data });
       return prisma.event.update({ where: { id }, data });
     },
     deleteEvent: async (_: any, { id }: { id: string }) => {
