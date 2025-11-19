@@ -222,7 +222,7 @@ export type EventResolvers<ContextType = any, ParentType extends ResolversParent
   images?: Resolver<Types.Maybe<ResolversTypes['EventImage']>, ParentType, ContextType>;
   imagesId?: Resolver<Types.Maybe<ResolversTypes['ID']>, ParentType, ContextType>;
   is_featured?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
-  location?: Resolver<ResolversTypes['Location'], ParentType, ContextType>;
+  location?: Resolver<Types.Maybe<ResolversTypes['Location']>, ParentType, ContextType>;
   locationId?: Resolver<Types.Maybe<ResolversTypes['ID']>, ParentType, ContextType>;
   organizer?: Resolver<Types.Maybe<ResolversTypes['Organizer']>, ParentType, ContextType>;
   organizerId?: Resolver<Types.Maybe<ResolversTypes['ID']>, ParentType, ContextType>;
