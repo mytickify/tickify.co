@@ -4,7 +4,10 @@ import { startServerAndCreateNextHandler } from '@as-integrations/next';
 import { NextRequest } from 'next/server';
 import { typeGraphqlSchema } from '@/graphql/typegraphql';
 
-const server = new ApolloServer({ schema: typeGraphqlSchema });
+const server = new ApolloServer({ 
+  schema: typeGraphqlSchema,
+  status400ForVariableCoercionErrors: true,
+});
 
 // req has the type NextRequest
 const handler = startServerAndCreateNextHandler<NextRequest>(server, {
