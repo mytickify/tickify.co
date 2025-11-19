@@ -86,7 +86,7 @@ export default function EventCard({ event, featured = false } : { event: Event, 
             
             <div className="flex items-center gap-2">
               <MapPin className="w-4 h-4 text-orange-500" />
-              <span className="line-clamp-1">{event.location.venue || 'Location not specified'}</span>
+              <span className="line-clamp-1">{event.location?.venue || 'Location not specified'}</span>
             </div>
 
             {event.ticketTiers && event.ticketTiers.length > 0 && (
