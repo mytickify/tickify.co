@@ -1,19 +1,38 @@
 import React from 'react';
 import './PricingSection.css';
 import { Event } from '@/graphql/types';
+import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
+import { AlertCircle } from 'lucide-react';
 
 export interface PricingSectionComponentProps {
   event?: Pick<Event, 'id' | 'title' | 'description' | 'ticketTiers'>;
   columns?: 2 | 3 | 4;
 }
+const WarningAlert = ({ children }: { children: React.ReactNode }) => (
+  <Alert variant="destructive">
+    <AlertCircle />
+    <AlertTitle>Warning</AlertTitle>
+    <AlertDescription>{children}</AlertDescription>
+  </Alert>
+);
 
 const PricingSection: React.FC<PricingSectionComponentProps> = ({
   event,
   columns = 3,
 }) => {
-
+  if (!event)
+    return (
+      <WarningAlert>
+        <p>Please select the event data to display the pricing section.</p>
+      </WarningAlert>
+    );
   const { ticketTiers } = event || {};
-  if (!ticketTiers || ticketTiers.length === 0 || !event) return <pre>{JSON.stringify(event, null, 2)}</pre>;
+  if (!ticketTiers || ticketTiers.length === 0)
+    return (
+      <WarningAlert>
+        <p>No ticket tiers available</p>
+      </WarningAlert>
+    );
   return (
     <section
       className="pricing-section"
