@@ -67,7 +67,7 @@ export default function Layout({
                   <h3 className="font-semibold mb-4">Platform</h3>
                   <ul className="space-y-2 text-cyan-200">
                     <li><Link href="/home" className="hover:text-white transition-colors">Discover Events</Link></li>
-                    <li><Link href="/create" className="hover:text-white transition-colors">Create Event</Link></li>
+                    <li><Link href="/events/create" className="hover:text-white transition-colors">Create Event</Link></li>
                     <li><Link href="/" className="hover:text-white transition-colors">Home</Link></li>
                   </ul>
                 </div>
