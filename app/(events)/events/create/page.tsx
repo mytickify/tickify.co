@@ -72,15 +72,15 @@ function CreateEventContent() {
     };
 
     if (isEditing) {
-      const { id, updatedAt, createdAt, slug, ...input } = dataToSave;
+      const { id, updatedAt, createdAt, slug, categories, ...input } = dataToSave;
 
       updateEventMutation({
         variables: {
           id: editEventId,
           input: {
             ...input,
-            categoryIds: (input as any).categories?.map((c: any) => c.id).filter((id: string) => id && id !== 'temp') || undefined,
-            categoryTypes: (input as any).categories?.map((c: any) => c.type) || [],
+            categoryIds: categories?.map((c: any) => c.id).filter((id: string) => id && id !== 'temp') || undefined,
+            categoryTypes: categories?.map((c: any) => c.type) || [],
             ticketTiers: input.ticketTiers?.map(tier => {
               const { currency, description, name, price, quantity } = tier;
               return {
