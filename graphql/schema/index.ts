@@ -6,5 +6,6 @@ import { SubscriptionResolver } from './resolvers/subscription';
 import { PageResolver } from './resolvers/page';
 
 export const typeGraphqlSchema = buildSchemaSync({ 
-    resolvers: [EventResolver, SubscriptionResolver, AuthResolver, PageResolver]
+    resolvers: [EventResolver, SubscriptionResolver, AuthResolver, PageResolver],
+    emitSchemaFile: true,
  });
