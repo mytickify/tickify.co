@@ -10,6 +10,7 @@ import conference from "@/site-builder/data/templates/conference.json";
 import { Button } from "@/components/ui/button";
 import { PricingSectionComponentProps } from "./blocks/PricingSection/PricingSection";
 import { PricingSectionBlock } from "./blocks/PricingSection/client";
+import JsonView from '@uiw/react-json-view';
 
 import "@measured/puck/puck.css";
 
@@ -336,9 +337,12 @@ function templateToInitialData(template: any) {
 
 interface EditorProps {
   onPublish: (data: any) => void;
+  onChange?: (data: any) => void;
   templateId?: string;
+  initialPageId?: string;
 }
-export function Editor({ onPublish, templateId }: EditorProps) {
+
+export function Editor({ onPublish, onChange, templateId, initialPageId }: EditorProps) {   
   const [data, setData] = React.useState<any>({});
   React.useEffect(() => {
     const map: Record<string, any> = {
@@ -355,11 +359,15 @@ export function Editor({ onPublish, templateId }: EditorProps) {
     setData(templateToInitialData(tpl));
   }, [templateId]);
   return <>
-    <pre>{JSON.stringify(data || templateToInitialData(basicEvent), null, 2)}</pre>
+    {process.env.NODE_ENV === "development" && <JsonView value={data || templateToInitialData(basicEvent)} />}
     <Puck
       config={config}
       data={data}
       onPublish={onPublish}
+      onChange={(d) => {
+        setData(d);
+        onChange?.(d);
+      }}
       overrides={{
         headerActions: ({ children }) => (
           <>
