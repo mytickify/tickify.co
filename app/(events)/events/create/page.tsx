@@ -12,6 +12,7 @@ import { CreateEventDocument, GetEventByIdDocument, GetEventByIdQuery, UpdateEve
 import { Event, EventCategoryType, EventStatus } from "@/graphql/types";
 import { useMutation, useQuery } from "@apollo/client/react";
 import { useSession } from "@/lib/auth-client";
+import { toast } from "sonner";
 
   const DEFAULT_EVENT_DATA = {
   title: "Event Name",
@@ -128,6 +129,14 @@ function CreateEventContent() {
   };
 
   const isPending = createLoading || updateLoading;
+  React.useEffect(() => {
+    if (createError) {
+      toast.error(createError.message);
+    }
+    if (updateError) {
+      toast.error(updateError.message);
+    }
+  }, [createError, updateError]);
 
   if (isLoading && isEditing) {
     return (
@@ -139,6 +148,7 @@ function CreateEventContent() {
       </div>
     );
   }
+  
 
   return (
     <div className="min-h-screen bg-linear-to-br from-slate-50 via-cyan-50/30 to-amber-50/20">
