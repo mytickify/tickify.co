@@ -37,9 +37,10 @@ export const PricingSectionBlock: ComponentConfig<{
                                 title
                                 description
                                 ticketTiers {
-                                    #id
+                                    id
                                     name
                                     price
+                                    available
                                 }
                             }
                         }
