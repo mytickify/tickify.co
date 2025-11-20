@@ -13,7 +13,7 @@ const typeDefs = /* GraphQL */ `
   enum SectionType { HERO PRICING GALLERY ABOUT SCHEDULE CONTACT }
 
   type Location { venue: String!, address: String!, city: String!, lat: Float, lng: Float }
-  type Category { id: ID!, type: EventCategoryType!, description: String! }
+  type Category { id: ID!, description: String! }
   type Organizer { name: String!, email: String!, phone: String }
   type EventTheme { 
     primaryColor: String!, 
@@ -181,7 +181,7 @@ const typeDefs = /* GraphQL */ `
     event(id: ID!): Event
     eventBySlug(slug: String!): Event
     featuredEvents: [Event!]!
-    eventsByCategory(category: EventCategoryType!): [Event!]!
+    eventsByCategory(categoryId: ID!): [Event!]!
     searchEvents(searchTerm: String!): [Event!]!
     me: User
     users: [User!]!

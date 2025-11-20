@@ -11,7 +11,7 @@ enum SubscriptionStatus { PENDING CONFIRMED UNSUBSCRIBED }
 enum SubscriptionSource { FORM IMPORT ADMIN API }
 enum SectionType { HERO PRICING GALLERY ABOUT SCHEDULE CONTACT }
 
-type Category { id: ID!, type: EventCategoryType!, description: String! }
+type Category { id: ID!, description: String! }
 type Location { venue: String!, address: String!, city: String!, lat: Float, lng: Float }
 type Organizer { name: String!, email: String!, phone: String }
 type EventTheme { 

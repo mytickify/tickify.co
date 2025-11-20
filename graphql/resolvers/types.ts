@@ -1,7 +1,91 @@
 import * as Types from '../types';
 
 import { GraphQLResolveInfo, GraphQLScalarType, GraphQLScalarTypeConfig } from 'graphql';
+import { EventModel } from '@/lib/generated/prisma/models/Event';
+import { PageModel } from '@/lib/generated/prisma/models/Page';
+import { UserModel } from '@/lib/generated/prisma/models/User';
+export type Omit<T, K extends keyof T> = Pick<T, Exclude<keyof T, K>>;
 export type RequireFields<T, K extends keyof T> = Omit<T, K> & { [P in K]-?: NonNullable<T[P]> };
+export type CreatePageMutationVariables = Types.Exact<{
+  input: Types.CreatePageInput;
+}>;
+
+
+export type CreatePageMutation = { __typename?: 'Mutation', createPage: { __typename?: 'Page', id: string, slug: string, name: string, published: boolean, sections: Array<{ __typename?: 'PageSection', id: string, builderId: string, type: Types.SectionType, order: number }> } };
+
+export type PublishPageMutationVariables = Types.Exact<{
+  id: Types.Scalars['ID']['input'];
+}>;
+
+
+export type PublishPageMutation = { __typename?: 'Mutation', publishPage: { __typename?: 'Page', id: string, slug: string, published: boolean, publishedAt?: Date | null } };
+
+export type UpdatePageMutationVariables = Types.Exact<{
+  id: Types.Scalars['ID']['input'];
+  input: Types.UpdatePageInput;
+}>;
+
+
+export type UpdatePageMutation = { __typename?: 'Mutation', updatePage: { __typename?: 'Page', id: string, slug: string, name: string, published: boolean, sections: Array<{ __typename?: 'PageSection', id: string, builderId: string, type: Types.SectionType, order: number }> } };
+
+export type CreateEventMutationVariables = Types.Exact<{
+  input: Types.CreateEventInput;
+}>;
+
+
+export type CreateEventMutation = { __typename?: 'Mutation', createEvent: { __typename?: 'Event', id: string, slug?: string | null, title: string, description: string, startDate: string, startTime: string, endDate: string, endTime: string, is_featured: boolean, status: Types.EventStatus, createdAt?: Date | null, updatedAt?: Date | null, categories?: Array<{ __typename?: 'Category', id: string, description: string } | null> | null, location?: { __typename?: 'Location', venue: string, address: string, city: string, lat?: number | null, lng?: number | null } | null, organizer?: { __typename?: 'Organizer', name: string, email: string, phone?: string | null } | null, theme?: { __typename?: 'EventTheme', primaryColor: string, secondaryColor: string, accentColor: string, backgroundColor: string, textColor: string, fontFamily: Types.FontFamily, layout: Types.LayoutType, gradientEnabled: boolean, gradientDirection: Types.GradientDirection } | null, ticketTiers?: Array<{ __typename?: 'TicketTier', name: string, price: number, currency: string, quantity: number, soldCount: number, description?: string | null, available: boolean }> | null, images?: { __typename?: 'EventImage', banner?: string | null, gallery?: Array<string> | null } | null, features?: { __typename?: 'EventFeatures', showGallery: boolean, allowGuestUploads: boolean, showChat: boolean, showCollaborators: boolean } | null, collaborators?: Array<{ __typename?: 'Collaborator', name: string, type: string, avatar?: string | null }> | null } };
+
+export type DeleteEventMutationVariables = Types.Exact<{
+  id: Types.Scalars['ID']['input'];
+}>;
+
+
+export type DeleteEventMutation = { __typename?: 'Mutation', deleteEvent: boolean };
+
+export type GetEventByIdQueryVariables = Types.Exact<{
+  id: Types.Scalars['ID']['input'];
+}>;
+
+
+export type GetEventByIdQuery = { __typename?: 'Query', event?: { __typename?: 'Event', id: string, slug?: string | null, title: string, description: string, startDate: string, startTime: string, endDate: string, endTime: string, is_featured: boolean, status: Types.EventStatus, createdAt?: Date | null, updatedAt?: Date | null, categories?: Array<{ __typename?: 'Category', id: string, description: string } | null> | null, location?: { __typename?: 'Location', venue: string, address: string, city: string, lat?: number | null, lng?: number | null } | null, organizer?: { __typename?: 'Organizer', name: string, email: string, phone?: string | null } | null, theme?: { __typename?: 'EventTheme', primaryColor: string, secondaryColor: string, accentColor: string, backgroundColor: string, textColor: string, fontFamily: Types.FontFamily, layout: Types.LayoutType, gradientEnabled: boolean, gradientDirection: Types.GradientDirection } | null, ticketTiers?: Array<{ __typename?: 'TicketTier', name: string, price: number, currency: string, quantity: number, soldCount: number, description?: string | null, available: boolean }> | null, images?: { __typename?: 'EventImage', banner?: string | null, gallery?: Array<string> | null } | null, features?: { __typename?: 'EventFeatures', showGallery: boolean, allowGuestUploads: boolean, showChat: boolean, showCollaborators: boolean } | null, collaborators?: Array<{ __typename?: 'Collaborator', name: string, type: string, avatar?: string | null }> | null } | null };
+
+export type GetEventBySlugQueryVariables = Types.Exact<{
+  slug: Types.Scalars['String']['input'];
+}>;
+
+
+export type GetEventBySlugQuery = { __typename?: 'Query', eventBySlug?: { __typename?: 'Event', id: string, slug?: string | null, title: string, description: string, startDate: string, startTime: string, endDate: string, endTime: string, is_featured: boolean, status: Types.EventStatus, createdAt?: Date | null, updatedAt?: Date | null, categories?: Array<{ __typename?: 'Category', id: string, description: string } | null> | null, location?: { __typename?: 'Location', venue: string, address: string, city: string, lat?: number | null, lng?: number | null } | null, organizer?: { __typename?: 'Organizer', name: string, email: string, phone?: string | null } | null, theme?: { __typename?: 'EventTheme', primaryColor: string, secondaryColor: string, accentColor: string, backgroundColor: string, textColor: string, fontFamily: Types.FontFamily, layout: Types.LayoutType, gradientEnabled: boolean, gradientDirection: Types.GradientDirection } | null, ticketTiers?: Array<{ __typename?: 'TicketTier', name: string, price: number, currency: string, quantity: number, soldCount: number, description?: string | null, available: boolean }> | null, images?: { __typename?: 'EventImage', banner?: string | null, gallery?: Array<string> | null } | null, features?: { __typename?: 'EventFeatures', showGallery: boolean, allowGuestUploads: boolean, showChat: boolean, showCollaborators: boolean } | null, collaborators?: Array<{ __typename?: 'Collaborator', name: string, type: string, avatar?: string | null }> | null } | null };
+
+export type GetEventsQueryVariables = Types.Exact<{ [key: string]: never; }>;
+
+
+export type GetEventsQuery = { __typename?: 'Query', events: Array<{ __typename?: 'Event', id: string, slug?: string | null, title: string, description: string, startDate: string, startTime: string, endDate: string, endTime: string, is_featured: boolean, userId?: string | null, status: Types.EventStatus, createdAt?: Date | null, updatedAt?: Date | null, categories?: Array<{ __typename?: 'Category', id: string, description: string } | null> | null, location?: { __typename?: 'Location', venue: string, address: string, city: string, lat?: number | null, lng?: number | null } | null, organizer?: { __typename?: 'Organizer', name: string, email: string, phone?: string | null } | null, theme?: { __typename?: 'EventTheme', primaryColor: string, secondaryColor: string, accentColor: string, backgroundColor: string, textColor: string, fontFamily: Types.FontFamily, layout: Types.LayoutType, gradientEnabled: boolean, gradientDirection: Types.GradientDirection } | null, ticketTiers?: Array<{ __typename?: 'TicketTier', name: string, price: number, currency: string, quantity: number, soldCount: number, description?: string | null, available: boolean }> | null, images?: { __typename?: 'EventImage', banner?: string | null, gallery?: Array<string> | null } | null, features?: { __typename?: 'EventFeatures', showGallery: boolean, allowGuestUploads: boolean, showChat: boolean, showCollaborators: boolean } | null, collaborators?: Array<{ __typename?: 'Collaborator', name: string, type: string, avatar?: string | null }> | null, user?: { __typename?: 'User', id: string, name?: string | null, email: string, image?: string | null, createdAt: Date, updatedAt: Date } | null }> };
+
+export type GetPageQueryVariables = Types.Exact<{
+  id: Types.Scalars['ID']['input'];
+}>;
+
+
+export type GetPageQuery = { __typename?: 'Query', page?: { __typename?: 'Page', id: string, slug: string, name: string, published: boolean, publishedAt?: Date | null, createdAt: Date, updatedAt: Date } | null };
+
+export type GetPagesQueryVariables = Types.Exact<{ [key: string]: never; }>;
+
+
+export type GetPagesQuery = { __typename?: 'Query', pages: Array<{ __typename?: 'Page', id: string, slug: string, name: string, published: boolean, publishedAt?: Date | null, createdAt: Date, updatedAt: Date }> };
+
+export type GetUsersQueryVariables = Types.Exact<{ [key: string]: never; }>;
+
+
+export type GetUsersQuery = { __typename?: 'Query', users: Array<{ __typename?: 'User', id: string, name?: string | null, email: string, image?: string | null, createdAt: Date, updatedAt: Date }> };
+
+export type UpdateEventMutationVariables = Types.Exact<{
+  id: Types.Scalars['ID']['input'];
+  input: Types.UpdateEventInput;
+}>;
+
+
+export type UpdateEventMutation = { __typename?: 'Mutation', updateEvent: { __typename?: 'Event', id: string, slug?: string | null, title: string, description: string, startDate: string, startTime: string, endDate: string, endTime: string, is_featured: boolean, status: Types.EventStatus, createdAt?: Date | null, updatedAt?: Date | null, categories?: Array<{ __typename?: 'Category', id: string, description: string } | null> | null, location?: { __typename?: 'Location', venue: string, address: string, city: string, lat?: number | null, lng?: number | null } | null, organizer?: { __typename?: 'Organizer', name: string, email: string, phone?: string | null } | null, theme?: { __typename?: 'EventTheme', primaryColor: string, secondaryColor: string, accentColor: string, backgroundColor: string, textColor: string, fontFamily: Types.FontFamily, layout: Types.LayoutType, gradientEnabled: boolean, gradientDirection: Types.GradientDirection } | null, ticketTiers?: Array<{ __typename?: 'TicketTier', name: string, price: number, currency: string, quantity: number, soldCount: number, description?: string | null, available: boolean }> | null, images?: { __typename?: 'EventImage', banner?: string | null, gallery?: Array<string> | null } | null, features?: { __typename?: 'EventFeatures', showGallery: boolean, allowGuestUploads: boolean, showChat: boolean, showCollaborators: boolean } | null, collaborators?: Array<{ __typename?: 'Collaborator', name: string, type: string, avatar?: string | null }> | null } };
+
 
 
 export type ResolverTypeWrapper<T> = Promise<T> | T;
@@ -75,7 +159,7 @@ export type DirectiveResolverFn<TResult = Record<PropertyKey, never>, TParent = 
 
 /** Mapping between all available schema types and the resolvers types */
 export type ResolversTypes = {
-  AuthPayload: ResolverTypeWrapper<Types.AuthPayload>;
+  AuthPayload: ResolverTypeWrapper<Omit<Types.AuthPayload, 'user'> & { user: ResolversTypes['User'] }>;
   Boolean: ResolverTypeWrapper<Types.Scalars['Boolean']['output']>;
   Buyer: ResolverTypeWrapper<Types.Buyer>;
   BuyerInput: Types.BuyerInput;
@@ -87,7 +171,7 @@ export type ResolversTypes = {
   CreatePageInput: Types.CreatePageInput;
   CreatePurchaseInput: Types.CreatePurchaseInput;
   DateTime: ResolverTypeWrapper<Types.Scalars['DateTime']['output']>;
-  Event: ResolverTypeWrapper<Types.Event>;
+  Event: ResolverTypeWrapper<EventModel>;
   EventCategoryType: Types.EventCategoryType;
   EventFeatures: ResolverTypeWrapper<Types.EventFeatures>;
   EventFeaturesInput: Types.EventFeaturesInput;
@@ -111,7 +195,7 @@ export type ResolversTypes = {
   Mutation: ResolverTypeWrapper<Record<PropertyKey, never>>;
   Organizer: ResolverTypeWrapper<Types.Organizer>;
   OrganizerInput: Types.OrganizerInput;
-  Page: ResolverTypeWrapper<Types.Page>;
+  Page: ResolverTypeWrapper<PageModel>;
   PageSection: ResolverTypeWrapper<Types.PageSection>;
   PageSectionInput: Types.PageSectionInput;
   PaymentStatus: Types.PaymentStatus;
@@ -128,12 +212,12 @@ export type ResolversTypes = {
   UnsubscribeInput: Types.UnsubscribeInput;
   UpdateEventInput: Types.UpdateEventInput;
   UpdatePageInput: Types.UpdatePageInput;
-  User: ResolverTypeWrapper<Types.User>;
+  User: ResolverTypeWrapper<UserModel>;
 };
 
 /** Mapping between all available schema types and the resolvers parents */
 export type ResolversParentTypes = {
-  AuthPayload: Types.AuthPayload;
+  AuthPayload: Omit<Types.AuthPayload, 'user'> & { user: ResolversParentTypes['User'] };
   Boolean: Types.Scalars['Boolean']['output'];
   Buyer: Types.Buyer;
   BuyerInput: Types.BuyerInput;
@@ -145,7 +229,7 @@ export type ResolversParentTypes = {
   CreatePageInput: Types.CreatePageInput;
   CreatePurchaseInput: Types.CreatePurchaseInput;
   DateTime: Types.Scalars['DateTime']['output'];
-  Event: Types.Event;
+  Event: EventModel;
   EventFeatures: Types.EventFeatures;
   EventFeaturesInput: Types.EventFeaturesInput;
   EventImage: Types.EventImage;
@@ -164,7 +248,7 @@ export type ResolversParentTypes = {
   Mutation: Record<PropertyKey, never>;
   Organizer: Types.Organizer;
   OrganizerInput: Types.OrganizerInput;
-  Page: Types.Page;
+  Page: PageModel;
   PageSection: Types.PageSection;
   PageSectionInput: Types.PageSectionInput;
   Purchase: Types.Purchase;
@@ -177,7 +261,7 @@ export type ResolversParentTypes = {
   UnsubscribeInput: Types.UnsubscribeInput;
   UpdateEventInput: Types.UpdateEventInput;
   UpdatePageInput: Types.UpdatePageInput;
-  User: Types.User;
+  User: UserModel;
 };
 
 export type AuthPayloadResolvers<ContextType = any, ParentType extends ResolversParentTypes['AuthPayload'] = ResolversParentTypes['AuthPayload']> = {
@@ -194,7 +278,6 @@ export type BuyerResolvers<ContextType = any, ParentType extends ResolversParent
 export type CategoryResolvers<ContextType = any, ParentType extends ResolversParentTypes['Category'] = ResolversParentTypes['Category']> = {
   description?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
-  type?: Resolver<ResolversTypes['EventCategoryType'], ParentType, ContextType>;
 };
 
 export type CollaboratorResolvers<ContextType = any, ParentType extends ResolversParentTypes['Collaborator'] = ResolversParentTypes['Collaborator']> = {
@@ -352,7 +435,7 @@ export type QueryResolvers<ContextType = any, ParentType extends ResolversParent
   event?: Resolver<Types.Maybe<ResolversTypes['Event']>, ParentType, ContextType, RequireFields<Types.QueryEventArgs, 'id'>>;
   eventBySlug?: Resolver<Types.Maybe<ResolversTypes['Event']>, ParentType, ContextType, RequireFields<Types.QueryEventBySlugArgs, 'slug'>>;
   events?: Resolver<Array<ResolversTypes['Event']>, ParentType, ContextType, Partial<Types.QueryEventsArgs>>;
-  eventsByCategory?: Resolver<Array<ResolversTypes['Event']>, ParentType, ContextType, RequireFields<Types.QueryEventsByCategoryArgs, 'category'>>;
+  eventsByCategory?: Resolver<Array<ResolversTypes['Event']>, ParentType, ContextType, RequireFields<Types.QueryEventsByCategoryArgs, 'categoryId'>>;
   featuredEvents?: Resolver<Array<ResolversTypes['Event']>, ParentType, ContextType>;
   me?: Resolver<Types.Maybe<ResolversTypes['User']>, ParentType, ContextType>;
   page?: Resolver<Types.Maybe<ResolversTypes['Page']>, ParentType, ContextType, RequireFields<Types.QueryPageArgs, 'id'>>;

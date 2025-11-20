@@ -15,12 +15,17 @@ const config: CodegenConfig = {
     "./graphql/resolvers/types.ts": {
       preset: 'import-types',
       plugins: [
-        "typescript-resolvers",
+        "typescript-operations", "typescript-resolvers",
       ],  
       presetConfig: {
         typesPath: '../types'
       },
       config: {
+        mappers: {
+          Event: '@/lib/generated/prisma/models/Event#EventModel',
+          Page: '@/lib/generated/prisma/models/Page#PageModel',
+          User: '@/lib/generated/prisma/models/User#UserModel',
+        },
         scalars: {
           DateTime: "Date",
           JSON: "object",

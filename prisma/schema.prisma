@@ -101,18 +101,6 @@ enum EventStatus {
   ENDED
 }
 
-enum EventCategoryType {
-  MUSIC
-  SPORTS
-  ARTS
-  FESTIVAL
-  CONFERENCE
-  NIGHTLIFE
-  COMEDY
-  THEATRE
-  OTHER
-}
-
 // Mail subscription enums
 enum SubscriptionStatus {
   PENDING
@@ -182,7 +170,6 @@ model Event {
 
 model Category {
   id          String             @id @default(cuid())
-  type        EventCategoryType  @unique
   description String             @default("")
   createdAt   DateTime           @default(now())
   updatedAt   DateTime           @updatedAt

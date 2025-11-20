@@ -4,7 +4,9 @@ import { authResolvers } from './auth';
 import { pageResolvers } from './page';
 import { userResolvers } from './user';
 
-export const resolvers = {
+import { Resolvers } from '@/graphql/resolvers/types';
+
+export const resolvers: Resolvers = {
   Query: {
     ...eventsResolvers.Query,
     ...pageResolvers.Query,
