@@ -100,15 +100,6 @@ export default function SubscriptionForm({ onClose, source = SubscriptionSource.
           {loading ? 'Subscribing...' : 'Subscribe'}
           <Mail className="ml-2 w-5 h-5" />
         </Button>
-        <Button
-          type="button"
-          variant="outline"
-          size="lg"
-          className="border-white/30 hover:bg-white/10 text-white"
-          onClick={() => onClose?.()}
-        >
-          Cancel
-        </Button>
       </div>
     </form>
   );
