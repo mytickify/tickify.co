@@ -158,7 +158,6 @@ export type CreateEventInput = {
 };
 
 export type CreatePageInput = {
-  eventId?: InputMaybe<Scalars['ID']['input']>;
   metadata: Scalars['JSON']['input'];
   name: Scalars['String']['input'];
   sectionData?: InputMaybe<Scalars['JSON']['input']>;
@@ -438,7 +437,6 @@ export type OrganizerInput = {
 
 export type Page = {
   createdAt: Scalars['DateTime']['output'];
-  eventId?: Maybe<Scalars['ID']['output']>;
   id: Scalars['ID']['output'];
   metadata: Scalars['JSON']['output'];
   name: Scalars['String']['output'];
@@ -625,8 +623,8 @@ export type UpdateEventInput = {
 };
 
 export type UpdatePageInput = {
-  metadata?: InputMaybe<Scalars['JSON']['input']>;
-  name?: InputMaybe<Scalars['String']['input']>;
+  metadata: Scalars['JSON']['input'];
+  name: Scalars['String']['input'];
   published?: InputMaybe<Scalars['Boolean']['input']>;
   sectionData?: InputMaybe<Scalars['JSON']['input']>;
   sections?: InputMaybe<Array<PageSectionInput>>;

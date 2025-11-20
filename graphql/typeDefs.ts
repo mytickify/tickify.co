@@ -103,7 +103,6 @@ const typeDefs = /* GraphQL */ `
     publishedAt: DateTime
     createdAt: DateTime!
     updatedAt: DateTime!
-    eventId: ID
     sections: [PageSection!]!
   }
 
@@ -162,13 +161,12 @@ const typeDefs = /* GraphQL */ `
     template: JSON
     sectionData: JSON
     slug: String
-    eventId: ID
     sections: [PageSectionInput!]!
   }
 
   input UpdatePageInput {
-    name: String
-    metadata: JSON
+    name: String!
+    metadata: JSON!
     template: JSON
     sectionData: JSON
     slug: String

@@ -14,56 +14,69 @@ export const pageResolvers: Resolvers = {
       return prisma.page.findUnique({ where: { slug }, include: { sections: true } });
     },
     pagesByEvent: async (_, { eventId }) => {
-      return prisma.page.findMany({ where: { eventId }, include: { sections: true } });
+      return prisma.page.findMany({ where: { id: eventId }, include: { sections: true } });
     },
   },
   Mutation: {
     createPage: async (_, { input }) => {
       const slug = input.slug ?? generateSlug(input.name || 'page');
-      const sectionsCreate = (input.sections || []).map((s: any, idx: number) => ({
+      const sectionsCreate = (input.sections || []).map((s, idx: number) => ({
         builderId: s.builderId,
-        type: String(s.type),
+        type: s.type,
         order: typeof s.order === 'number' ? s.order : idx,
-        data: s.data as any,
+        data: s.data,
       }));
 
       return prisma.page.create({
         data: {
           slug,
           name: input.name,
-          metadata: input.metadata as any,
+          metadata: input.metadata,
           template: input.template ?? null,
           sectionData: input.sectionData ?? null,
-          eventId: input.eventId ?? null,
           sections: { create: sectionsCreate },
         },
         include: { sections: true },
       });
     },
     updatePage: async (_, { id, input }) => {
-      const data: any = {};
-      for (const key of ['name', 'metadata', 'template', 'sectionData', 'slug', 'published']) {
-        if (input[key] !== undefined) data[key] = input[key];
-      }
+      //const data = {};
+      // for (const key of ['name', 'metadata', 'template', 'sectionData', 'slug', 'published']) {
+      //   if (input[key] !== undefined) data[key] = input[key];
+      // }
 
       if (input.sections !== undefined) {
-        return prisma.$transaction(async (tx: any) => {
+        return prisma.$transaction(async (tx) => {
           await tx.pageSection.deleteMany({ where: { pageId: id } });
-          const updated = await tx.page.update({ where: { id }, data, include: { sections: true } });
+          const updated = await tx.page.update({
+            where: { id }, data: {
+              name: input.name,
+              metadata: input.metadata,
+              template: input.template,
+              sectionData: input.sectionData,
+            }, include: { sections: true }
+          });
           await tx.pageSection.createMany({
-            data: (input.sections || []).map((s: any, idx: number) => ({
+            data: (input.sections || []).map((s, idx) => ({
               pageId: id,
               builderId: s.builderId,
-              type: String(s.type),
+              type: s.type,
               order: typeof s.order === 'number' ? s.order : idx,
-              data: s.data as any,
+              data: s.data,
             })),
           });
-          return tx.page.findUnique({ where: { id }, include: { sections: true } });
+          return updated;
         });
       }
 
-      return prisma.page.update({ where: { id }, data, include: { sections: true } });
+      return prisma.page.update({
+        where: { id }, data: {
+          name: input.name,
+          metadata: input.metadata,
+          template: input.template,
+          sectionData: input.sectionData,
+        }, include: { sections: true }
+      });
     },
     deletePage: async (_, { id }) => {
       await prisma.page.delete({ where: { id } });
