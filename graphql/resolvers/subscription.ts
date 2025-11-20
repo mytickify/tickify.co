@@ -1,6 +1,6 @@
 import prisma from '@/lib/prisma';
 import { generateId } from '@/lib/utils';
-import { SubscriptionStatus } from '../../schema/enums';
+import { SubscriptionStatus } from '../types';
 
 export const subscriptionResolvers = {
   Query: {
@@ -23,7 +23,7 @@ export const subscriptionResolvers = {
           name: input.name ?? undefined,
           preferences: input.preferences ?? undefined,
           source: input.source ?? undefined,
-          status: SubscriptionStatus.PENDING,
+          status: SubscriptionStatus.Pending, 
           token,
           unsubscribedAt: null,
         },
@@ -32,7 +32,7 @@ export const subscriptionResolvers = {
           name: input.name ?? null,
           preferences: input.preferences ?? null,
           source: input.source ?? null,
-          status: SubscriptionStatus.PENDING,
+          status: SubscriptionStatus.Pending, 
           token,
           subscribedAt: new Date(),
         },
@@ -44,14 +44,14 @@ export const subscriptionResolvers = {
       if (!existing) return null;
       return db.mailSubscription.update({
         where: { email: existing.email },
-        data: { status: SubscriptionStatus.CONFIRMED, verifiedAt: new Date(), token: null },
+        data: { status: SubscriptionStatus.Confirmed, verifiedAt: new Date(), token: null },
       });
     },
     unsubscribe: async (_: any, { input }: { input: any }) => {
       const db = prisma as any;
       return db.mailSubscription.update({
         where: { email: input.email },
-        data: { status: SubscriptionStatus.UNSUBSCRIBED, unsubscribedAt: new Date() },
+        data: { status: SubscriptionStatus.Unsubscribed, unsubscribedAt: new Date() },
       });
     },
   },
