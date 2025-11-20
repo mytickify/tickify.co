@@ -4,9 +4,16 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Calendar, MapPin, Users, Ticket, Clock } from "lucide-react";
 import { format } from "date-fns";
-import { Event } from "@/graphql/types";
+import { CreateEventInput, Event, GetCategoriesDocument, UpdateEventInput } from "@/graphql/types";
+import { useQuery } from "@apollo/client/react";
 
-export default function EventPreview({ eventData }: { eventData: Event }) {
+export default function EventPreview({ eventData }: { eventData: CreateEventInput | UpdateEventInput }) {
+  const { data } = useQuery(GetCategoriesDocument, {variables: {
+    filter: {
+      IDs: eventData.categoryIds || []
+    }
+  }});
+  const categories = data?.categories || [];
   return (
     <div className="pb-12">
       {/* Hero Section */}
@@ -25,9 +32,11 @@ export default function EventPreview({ eventData }: { eventData: Event }) {
         />
         
         <div className="absolute bottom-0 left-0 right-0 p-8 text-white">
-          <Badge className="mb-4 bg-white/20 backdrop-blur-sm text-white border-white/30">
-            {eventData.categories?.[0]?.description || 'General'}
-          </Badge>
+          {categories.length > 0 && (
+            <Badge className="mb-4 bg-white/20 backdrop-blur-sm text-white border-white/30">
+              {categories[0].name}
+            </Badge>
+          )}
           <h1 className="text-4xl font-bold mb-2">{eventData.title}</h1>
           <div className="flex flex-wrap items-center gap-4 text-sm">
             <div className="flex items-center gap-2">
@@ -173,7 +182,7 @@ export default function EventPreview({ eventData }: { eventData: Event }) {
                   
                   <div className="flex items-center justify-between mt-4">
                     <p className="text-sm text-gray-600">
-                      {ticket.quantity - (ticket.soldCount || 0)} available
+                      {ticket.quantity} available
                     </p>
                     <Button
                       size="sm"

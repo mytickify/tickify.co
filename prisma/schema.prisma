@@ -169,11 +169,17 @@ model Event {
 
 model Category {
   id          String             @id @default(cuid())
+  name        String             @default("")
   description String             @default("")
   createdAt   DateTime           @default(now())
   updatedAt   DateTime           @updatedAt
 
+  parentId    String?
+  parent      Category? @relation("CategoryCategory", fields: [parentId], references: [id], onDelete: SetNull)
+
   events      Event[]
+
+  categories Category[] @relation("CategoryCategory")
 }
 
 model Location {

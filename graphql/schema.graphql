@@ -12,7 +12,7 @@ enum SubscriptionSource { FORM IMPORT ADMIN API }
 enum SectionType { HERO PRICING GALLERY ABOUT SCHEDULE CONTACT }
 
 type Location { venue: String!, address: String!, city: String!, lat: Float, lng: Float }
-type Category { id: ID!, description: String! }
+type Category { id: ID!, parentId: ID, name: String!, description: String! }
 type Organizer { name: String!, email: String!, phone: String }
 type EventTheme { 
   primaryColor: String!, 
@@ -111,8 +111,13 @@ input EventThemeInput { primaryColor: String!, secondaryColor: String!, accentCo
 input TicketTierInput { name: String!, price: Float!, currency: String!, quantity: Int!, description: String }
 input EventImageInput { banner: String, gallery: [String!] }
 input EventFeaturesInput { showGallery: Boolean!, allowGuestUploads: Boolean!, showChat: Boolean!, showCollaborators: Boolean! }
-input CollaboratorInput { name: String!, type: String!, logo: String }
+input CollaboratorInput { name: String!, type: String!, avatar: String, description: String }
 input BuyerInput { name: String!, email: String!, phone: String! }
+
+input CategoriesFilterInput {
+  parentId: ID
+  IDs: [ID!]
+}
 
 input EventsFilterInput {
   category: EventCategoryType
@@ -127,17 +132,51 @@ input EventsFilterInput {
 }
 
 input CreateEventInput {
-  title: String!, description: String!, startDate: String!, startTime: String!, endDate: String!, endTime: String!,
-  categoryTypes: [EventCategoryType!]!, categoryIds: [ID!], is_featured: Boolean, location: LocationInput, organizer: OrganizerInput!, theme: EventThemeInput,
-  ticketTiers: [TicketTierInput!], images: EventImageInput, features: EventFeaturesInput, collaborators: [CollaboratorInput!], status: EventStatus,
+  title: String!,
+  description: String!,
+  cover_image: String,
+  primary_color: String,
+  secondary_color: String,
+  startDate: String!,
+  startTime: String!,
+  endDate: String!,
+  endTime: String!,
+  categoryIds: [ID!],
+  is_featured: Boolean,
+  location: LocationInput,
+  organizer: OrganizerInput!,
+  theme: EventThemeInput,
+  ticketTiers: [TicketTierInput!],
+  images: EventImageInput,
+  features: EventFeaturesInput,
+  collaborators: [CollaboratorInput!],
+  status: EventStatus,
   userId: ID
 }
+
 input UpdateEventInput {
-  title: String, description: String, startDate: String, startTime: String, endDate: String, endTime: String,
-  categoryTypes: [EventCategoryType!], categoryIds: [ID!], is_featured: Boolean, location: LocationInput, organizer: OrganizerInput, theme: EventThemeInput,
-  ticketTiers: [TicketTierInput!], images: EventImageInput, features: EventFeaturesInput, collaborators: [CollaboratorInput!], status: EventStatus,
+  title: String,
+  description: String,
+  cover_image: String,
+  primary_color: String,
+  secondary_color: String,
+  startDate: String,
+  startTime: String,
+  endDate: String,
+  endTime: String,
+  categoryIds: [ID!],
+  is_featured: Boolean,
+  location: LocationInput,
+  organizer: OrganizerInput,
+  theme: EventThemeInput,
+  ticketTiers: [TicketTierInput!],
+  images: EventImageInput,
+  features: EventFeaturesInput,
+  collaborators: [CollaboratorInput!],
+  status: EventStatus,
   userId: ID
 }
+
 input CreatePurchaseInput { eventId: ID!, ticketTierId: ID!, quantity: Int!, buyer: BuyerInput! }
 
 input RegisterInput { name: String!, email: String!, password: String! }
@@ -174,6 +213,8 @@ input UpdatePageInput {
 }
 
 type Query {
+  categories(filter: CategoriesFilterInput): [Category!]!
+  category(id: ID!): Category
   events(filter: EventsFilterInput): [Event!]!
   event(id: ID!): Event
   eventBySlug(slug: String!): Event

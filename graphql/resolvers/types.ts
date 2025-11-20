@@ -42,6 +42,13 @@ export type DeleteEventMutationVariables = Types.Exact<{
 
 export type DeleteEventMutation = { __typename?: 'Mutation', deleteEvent: boolean };
 
+export type GetCategoriesQueryVariables = Types.Exact<{
+  filter?: Types.InputMaybe<Types.CategoriesFilterInput>;
+}>;
+
+
+export type GetCategoriesQuery = { __typename?: 'Query', categories: Array<{ __typename?: 'Category', id: string, name: string, parentId?: string | null }> };
+
 export type GetEventByIdQueryVariables = Types.Exact<{
   id: Types.Scalars['ID']['input'];
 }>;
@@ -59,7 +66,7 @@ export type GetEventBySlugQuery = { __typename?: 'Query', eventBySlug?: { __type
 export type GetEventsQueryVariables = Types.Exact<{ [key: string]: never; }>;
 
 
-export type GetEventsQuery = { __typename?: 'Query', events: Array<{ __typename?: 'Event', id: string, slug?: string | null, title: string, description: string, startDate: string, startTime: string, endDate: string, endTime: string, is_featured: boolean, userId?: string | null, status: Types.EventStatus, createdAt?: Date | null, updatedAt?: Date | null, categories?: Array<{ __typename?: 'Category', id: string, description: string } | null> | null, location?: { __typename?: 'Location', venue: string, address: string, city: string, lat?: number | null, lng?: number | null } | null, organizer?: { __typename?: 'Organizer', name: string, email: string, phone?: string | null } | null, theme?: { __typename?: 'EventTheme', primaryColor: string, secondaryColor: string, accentColor: string, backgroundColor: string, textColor: string, fontFamily: Types.FontFamily, layout: Types.LayoutType, gradientEnabled: boolean, gradientDirection: Types.GradientDirection } | null, ticketTiers?: Array<{ __typename?: 'TicketTier', id: string, name: string, price: number, currency: string, quantity: number, soldCount: number, description?: string | null, available: boolean }> | null, images?: { __typename?: 'EventImage', banner?: string | null, gallery?: Array<string> | null } | null, features?: { __typename?: 'EventFeatures', showGallery: boolean, allowGuestUploads: boolean, showChat: boolean, showCollaborators: boolean } | null, collaborators?: Array<{ __typename?: 'Collaborator', name: string, type: string, avatar?: string | null }> | null, user?: { __typename?: 'User', id: string, name?: string | null, email: string, image?: string | null, createdAt: Date, updatedAt: Date } | null }> };
+export type GetEventsQuery = { __typename?: 'Query', events: Array<{ __typename?: 'Event', id: string, slug?: string | null, title: string, description: string, startDate: string, startTime: string, endDate: string, endTime: string, is_featured: boolean, userId?: string | null, status: Types.EventStatus, createdAt?: Date | null, updatedAt?: Date | null, categories?: Array<{ __typename?: 'Category', id: string, description: string, name: string } | null> | null, location?: { __typename?: 'Location', venue: string, address: string, city: string, lat?: number | null, lng?: number | null } | null, organizer?: { __typename?: 'Organizer', name: string, email: string, phone?: string | null } | null, theme?: { __typename?: 'EventTheme', primaryColor: string, secondaryColor: string, accentColor: string, backgroundColor: string, textColor: string, fontFamily: Types.FontFamily, layout: Types.LayoutType, gradientEnabled: boolean, gradientDirection: Types.GradientDirection } | null, ticketTiers?: Array<{ __typename?: 'TicketTier', id: string, name: string, price: number, currency: string, quantity: number, soldCount: number, description?: string | null, available: boolean }> | null, images?: { __typename?: 'EventImage', banner?: string | null, gallery?: Array<string> | null } | null, features?: { __typename?: 'EventFeatures', showGallery: boolean, allowGuestUploads: boolean, showChat: boolean, showCollaborators: boolean } | null, collaborators?: Array<{ __typename?: 'Collaborator', name: string, type: string, avatar?: string | null }> | null, user?: { __typename?: 'User', id: string, name?: string | null, email: string, image?: string | null, createdAt: Date, updatedAt: Date } | null }> };
 
 export type GetPageQueryVariables = Types.Exact<{
   id: Types.Scalars['ID']['input'];
@@ -163,6 +170,7 @@ export type ResolversTypes = {
   Boolean: ResolverTypeWrapper<Types.Scalars['Boolean']['output']>;
   Buyer: ResolverTypeWrapper<Types.Buyer>;
   BuyerInput: Types.BuyerInput;
+  CategoriesFilterInput: Types.CategoriesFilterInput;
   Category: ResolverTypeWrapper<Types.Category>;
   Collaborator: ResolverTypeWrapper<Types.Collaborator>;
   CollaboratorInput: Types.CollaboratorInput;
@@ -221,6 +229,7 @@ export type ResolversParentTypes = {
   Boolean: Types.Scalars['Boolean']['output'];
   Buyer: Types.Buyer;
   BuyerInput: Types.BuyerInput;
+  CategoriesFilterInput: Types.CategoriesFilterInput;
   Category: Types.Category;
   Collaborator: Types.Collaborator;
   CollaboratorInput: Types.CollaboratorInput;
@@ -278,6 +287,8 @@ export type BuyerResolvers<ContextType = any, ParentType extends ResolversParent
 export type CategoryResolvers<ContextType = any, ParentType extends ResolversParentTypes['Category'] = ResolversParentTypes['Category']> = {
   description?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
+  name?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  parentId?: Resolver<Types.Maybe<ResolversTypes['ID']>, ParentType, ContextType>;
 };
 
 export type CollaboratorResolvers<ContextType = any, ParentType extends ResolversParentTypes['Collaborator'] = ResolversParentTypes['Collaborator']> = {
@@ -431,6 +442,8 @@ export type PurchaseResolvers<ContextType = any, ParentType extends ResolversPar
 };
 
 export type QueryResolvers<ContextType = any, ParentType extends ResolversParentTypes['Query'] = ResolversParentTypes['Query']> = {
+  categories?: Resolver<Array<ResolversTypes['Category']>, ParentType, ContextType, Partial<Types.QueryCategoriesArgs>>;
+  category?: Resolver<Types.Maybe<ResolversTypes['Category']>, ParentType, ContextType, RequireFields<Types.QueryCategoryArgs, 'id'>>;
   event?: Resolver<Types.Maybe<ResolversTypes['Event']>, ParentType, ContextType, RequireFields<Types.QueryEventArgs, 'id'>>;
   eventBySlug?: Resolver<Types.Maybe<ResolversTypes['Event']>, ParentType, ContextType, RequireFields<Types.QueryEventBySlugArgs, 'slug'>>;
   events?: Resolver<Array<ResolversTypes['Event']>, ParentType, ContextType, Partial<Types.QueryEventsArgs>>;

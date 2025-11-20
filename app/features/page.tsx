@@ -28,7 +28,7 @@ export default async function FeaturesPage({ searchParams }: PageProps<'/feature
   const user = session?.user;
 
   if (user && !noredirect) {
-    redirect('/home')
+    redirect('/dashboard')
   }
 
   const features = [
@@ -268,7 +268,7 @@ export default async function FeaturesPage({ searchParams }: PageProps<'/feature
                     <Sparkles className="ml-2 w-5 h-5" />
                   </Button>
                 </Link>
-                <Link href="/home">
+                <Link href="/dashboard">
                   <Button size="lg" variant="outline" className="h-14 px-8">
                     See Examples
                     <Eye className="ml-2 w-5 h-5" />

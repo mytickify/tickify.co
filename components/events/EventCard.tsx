@@ -47,7 +47,7 @@ export default function EventCard({ event, featured = false } : { event: Event, 
           {/* Badges */}
           <div className="absolute top-4 left-4 right-4 flex justify-between items-start">
             <Badge className={`${categoryColors['OTHER']} border`}>
-              {event.categories?.[0]?.description || 'Event'}
+              {event.categories?.[0]?.name || 'Event'}
             </Badge>
             {featured && (
               <Badge className="bg-orange-500 text-white border-0">

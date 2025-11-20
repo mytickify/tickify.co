@@ -8,8 +8,8 @@ import { ArrowLeft, Save, Eye } from "lucide-react";
 import EventEditor from "@/components/events/EventEditor";
 import EventPreview from "@/components/events/EventPreview";
 import { Skeleton } from "@/components/ui/skeleton";
-import { CreateEventDocument, GetEventByIdDocument, GetEventByIdQuery, UpdateEventDocument } from "@/graphql/types";
-import { Event, EventCategoryType, EventStatus } from "@/graphql/types";
+import { CreateEventDocument, CreateEventInput, GetEventByIdDocument, GetEventByIdQuery, UpdateEventDocument, UpdateEventInput } from "@/graphql/types";
+import { EventCategoryType, EventStatus } from "@/graphql/types";
 import { useMutation, useQuery } from "@apollo/client/react";
 import { useSession } from "@/lib/auth-client";
 import { toast } from "sonner";
@@ -70,8 +70,8 @@ function CreateEventContent() {
     skip: !isEditing,
   });
 
-  const eventData: Event = isEditing ? existingEvent?.event || DEFAULT_EVENT_DATA : DEFAULT_EVENT_DATA;
-  const [previewData, setPreviewData] = useState<Event>(eventData);
+  const eventData: CreateEventInput | UpdateEventInput = isEditing ? existingEvent?.event || DEFAULT_EVENT_DATA : DEFAULT_EVENT_DATA;
+  const [previewData, setPreviewData] = useState<CreateEventInput | UpdateEventInput>(eventData);
   React.useEffect(() => {
     setPreviewData(eventData);
   }, [isEditing, existingEvent?.event]);
@@ -81,22 +81,20 @@ function CreateEventContent() {
   const [updateEventMutation, { data: updateData, loading: updateLoading, error: updateError }] = useMutation(UpdateEventDocument);
 
   const handleSave = async (status?: EventStatus) => {
-    const dataToSave: Event = {
+    const dataToSave: CreateEventInput | UpdateEventInput  = {
       ...previewData,
-      status: status || eventData?.status // Keep current status if not specified
+      status: status || eventData?.status || EventStatus.Draft, // Keep current status if not specified
     };
 
     if (isEditing) {
-      const { id, updatedAt, createdAt, slug, categories, ...input } = dataToSave;
+      const { ticketTiers, ...input } = dataToSave as UpdateEventInput;
 
       updateEventMutation({
         variables: {
           id: editEventId,
           input: {
             ...input,
-            categoryIds: categories?.map((c: any) => c.id).filter((id: string) => id && id !== 'temp') || undefined,
-            categoryTypes: categories?.map((c: any) => toCategoryEnum(c?.description)) || [],
-            ticketTiers: input.ticketTiers?.map(tier => {
+            ticketTiers: ticketTiers?.map(tier => {
               const { currency, description, name, price, quantity } = tier;
               return {
                 currency: currency,
@@ -111,6 +109,7 @@ function CreateEventContent() {
         refetchQueries: "active",
       });
     } else {
+      const { ticketTiers, ...input } = dataToSave as CreateEventInput;
       createEventMutation(
         {
           variables: {
@@ -126,8 +125,6 @@ function CreateEventContent() {
                 city: "",
                 venue: "",
               },
-              categoryIds: dataToSave.categories?.map((c: any) => c.id).filter((id: string) => id && id !== 'temp') || undefined,
-              categoryTypes: dataToSave.categories?.map((c: any) => toCategoryEnum(c?.description)) || [],
               status: dataToSave.status || EventStatus.Draft,
               is_featured: dataToSave.is_featured || false,
               organizer: {
@@ -201,7 +198,7 @@ function CreateEventContent() {
                 <>
                   <Button
                     variant="outline"
-                    onClick={() => handleSave(eventData?.status)}
+                    onClick={() => handleSave()}
                     disabled={isPending}
                   >
                     <Save className="w-4 h-4 mr-2" />
@@ -248,7 +245,7 @@ function CreateEventContent() {
         <div className="grid lg:grid-cols-2 gap-0 min-h-[calc(100vh-180px)]">
           {/* Editor Panel */}
           <div className="bg-white border-r overflow-y-auto" style={{ maxHeight: 'calc(100vh - 180px)' }}>
-            <EventEditor editorData={eventData} onChange={setPreviewData} />
+            <EventEditor editorData={previewData} onChange={setPreviewData} />
           </div>
 
           {/* Preview Panel */}
