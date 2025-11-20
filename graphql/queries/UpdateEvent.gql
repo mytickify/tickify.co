@@ -8,7 +8,7 @@ mutation UpdateEvent($id: ID!, $input: UpdateEventInput!) {
       startTime
       endDate
       endTime
-      categories { id type description }
+      categories { id description }
       is_featured
       location {
         venue
