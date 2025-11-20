@@ -2,10 +2,12 @@ import 'reflect-metadata';
 import { ApolloServer } from '@apollo/server';
 import { startServerAndCreateNextHandler } from '@as-integrations/next';
 import { NextRequest } from 'next/server';
-import { typeGraphqlSchema } from '@/graphql/typegraphql';
+import { schema } from '@/graphql/schema';
+
+export const runtime = 'nodejs'; // or 'nodejs'
 
 const server = new ApolloServer({ 
-  schema: typeGraphqlSchema,
+  schema,
   status400ForVariableCoercionErrors: true,
 });
 

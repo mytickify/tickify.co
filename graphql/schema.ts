@@ -9,4 +9,4 @@ const resolvers = {
   ...baseResolvers,
 };
 
-export const typeGraphqlSchema = makeExecutableSchema({ typeDefs, resolvers,  });
+export const schema = makeExecutableSchema({ typeDefs, resolvers,  });
