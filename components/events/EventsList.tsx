@@ -31,7 +31,7 @@ export default function EventsList({
           <p className="text-gray-600 mt-2">{filteredEvents.length} events available</p>
         </div>
 
-        <Link href={"/create"}>
+        <Link href={"/events/create"}>
           <Button className="bg-linear-to-r from-cyan-600 to-amber-500 text-white">
             Create Event
           </Button>
@@ -64,7 +64,7 @@ export default function EventsList({
           </div>
           <h3 className="text-2xl font-bold text-gray-900 mb-2">No events found</h3>
           <p className="text-gray-600 mb-6">Try adjusting your search or filters</p>
-          <Link href={"/create"}>
+          <Link href={"/events/create"}>
             <Button className="bg-linear-to-r from-cyan-600 to-amber-500 text-white">
               Create the first event
             </Button>

@@ -15,7 +15,7 @@ type HeaderProps = {
 
 const navigation: { name: string; href: Route; icon: LucideIcon }[] = [
   { name: "Discover", href: "/", icon: Home },
-  { name: "Create Event", href: "/create", icon: Plus },
+  { name: "Create Event", href: "/events/create", icon: Plus },
   { name: "Events", href: "/home", icon: Calendar },
 ];
 

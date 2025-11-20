@@ -262,7 +262,7 @@ export default async function FeaturesPage({ searchParams }: PageProps<'/feature
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             {user ? (
               <>
-                <Link href="/create">
+                <Link href="/events/create">
                   <Button size="lg" className="h-14 px-8 bg-linear-to-r from-cyan-600 to-amber-500 hover:from-cyan-700 hover:to-amber-600 text-white font-semibold">
                     Start Creating Free
                     <Sparkles className="ml-2 w-5 h-5" />
