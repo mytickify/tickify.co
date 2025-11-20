@@ -43,7 +43,7 @@ export const authResolvers: Resolvers = {
       return {
         token: token as string,
         user: {
-          id: user?.id || 'temp-id',
+          id: user?.id,
           name: user?.name || null,
           email: user?.email || input.email,
           createdAt: user?.createdAt,
