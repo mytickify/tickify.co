@@ -14,7 +14,7 @@ export async function GET(request: NextRequest) {
 
     // Allow access if user is admin OR has valid API key
     if (!hasValidApiKey) {
-        return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+        return NextResponse.json({ error: 'Unauthorized', authHeader }, { status: 401 })
     }
 
     return NextResponse.json(process.env)
