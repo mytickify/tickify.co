@@ -1,4 +1,14 @@
-import { EventTheme } from '@/types';
+type EventTheme = {
+  primaryColor: string;
+  secondaryColor: string;
+  accentColor: string;
+  backgroundColor?: string;
+  textColor: string;
+  fontFamily: string;
+  layout: string;
+  gradientEnabled: boolean;
+  gradientDirection: string;
+};
 import { clsx, type ClassValue } from "clsx"
 import { twMerge } from "tailwind-merge"
 
@@ -91,6 +101,8 @@ export function getThemeStyles(theme: EventTheme) {
     '--accent': theme.accentColor,
     '--background': theme.backgroundColor,
     '--text': theme.textColor,
-    fontFamily: fontFamilies[theme.fontFamily]
+    fontFamily: fontFamilies[(
+      ['modern','elegant','bold','playful'] as const
+    ).includes(theme.fontFamily as any) ? (theme.fontFamily as 'modern'|'elegant'|'bold'|'playful') : 'modern']
   } as React.CSSProperties;
 }

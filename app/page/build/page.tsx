@@ -133,5 +133,5 @@ export default function CreatePage() {
     );
   }
 
-  return <SiteBuilder onSave={handleSave} onPublish={handlePublish} />;
+  return <SiteBuilder onPublish={handlePublish} />;
 }

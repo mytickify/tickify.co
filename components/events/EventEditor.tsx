@@ -189,20 +189,20 @@ export default function EventEditor({ editorData, onChange }: { editorData: Even
 
             <div>
               <Label htmlFor="category">Category</Label>
-              <Select value={eventData?.categories?.[0]?.type || ''} onValueChange={(value) => handleInputChange('categories', [{ id: 'temp', type: value as EventCategoryType, description: eventData?.categories?.[0]?.description || '' }] as any)}>
+              <Select value={eventData?.categories?.[0]?.description || ''} onValueChange={(value) => handleInputChange('categories', [{ id: 'temp', description: value }] as any)}>
                 <SelectTrigger>
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="music">Music</SelectItem>
-                  <SelectItem value="sports">Sports</SelectItem>
-                  <SelectItem value="arts">Arts</SelectItem>
-                  <SelectItem value="festival">Festival</SelectItem>
-                  <SelectItem value="conference">Conference</SelectItem>
-                  <SelectItem value="nightlife">Nightlife</SelectItem>
-                  <SelectItem value="comedy">Comedy</SelectItem>
-                  <SelectItem value="theatre">Theatre</SelectItem>
-                  <SelectItem value="other">Other</SelectItem>
+                  <SelectItem value="Music">Music</SelectItem>
+                  <SelectItem value="Sports">Sports</SelectItem>
+                  <SelectItem value="Arts">Arts</SelectItem>
+                  <SelectItem value="Festival">Festival</SelectItem>
+                  <SelectItem value="Conference">Conference</SelectItem>
+                  <SelectItem value="Nightlife">Nightlife</SelectItem>
+                  <SelectItem value="Comedy">Comedy</SelectItem>
+                  <SelectItem value="Theatre">Theatre</SelectItem>
+                  <SelectItem value="Other">Other</SelectItem>
                 </SelectContent>
               </Select>
             </div>

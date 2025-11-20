@@ -22,7 +22,7 @@ import { toast } from "sonner";
     city: "Paris",
     venue: "Parc des Princes",
   },
-  categories: [{ id: "temp", type: EventCategoryType.Music, description: "" }] as any,
+  categories: [{ id: "temp", description: "Other" }] as any,
   status: EventStatus.Draft,
   is_featured: false,
   createdAt: new Date().toISOString(),
@@ -36,6 +36,21 @@ import { toast } from "sonner";
     email: "organizer@example.com",
     phone: "1234567890",
   },
+}
+
+function toCategoryEnum(desc?: string): EventCategoryType {
+  const key = (desc || '').toUpperCase();
+  switch (key) {
+    case 'MUSIC': return EventCategoryType.Music;
+    case 'SPORTS': return EventCategoryType.Sports;
+    case 'ARTS': return EventCategoryType.Arts;
+    case 'FESTIVAL': return EventCategoryType.Festival;
+    case 'CONFERENCE': return EventCategoryType.Conference;
+    case 'NIGHTLIFE': return EventCategoryType.Nightlife;
+    case 'COMEDY': return EventCategoryType.Comedy;
+    case 'THEATRE': return EventCategoryType.Theatre;
+    default: return EventCategoryType.Other;
+  }
 }
 
 function CreateEventContent() {
@@ -80,7 +95,7 @@ function CreateEventContent() {
           input: {
             ...input,
             categoryIds: categories?.map((c: any) => c.id).filter((id: string) => id && id !== 'temp') || undefined,
-            categoryTypes: categories?.map((c: any) => c.type) || [],
+            categoryTypes: categories?.map((c: any) => toCategoryEnum(c?.description)) || [],
             ticketTiers: input.ticketTiers?.map(tier => {
               const { currency, description, name, price, quantity } = tier;
               return {
@@ -112,7 +127,7 @@ function CreateEventContent() {
                 venue: "",
               },
               categoryIds: dataToSave.categories?.map((c: any) => c.id).filter((id: string) => id && id !== 'temp') || undefined,
-              categoryTypes: dataToSave.categories?.map((c: any) => c.type) || [],
+              categoryTypes: dataToSave.categories?.map((c: any) => toCategoryEnum(c?.description)) || [],
               status: dataToSave.status || EventStatus.Draft,
               is_featured: dataToSave.is_featured || false,
               organizer: {

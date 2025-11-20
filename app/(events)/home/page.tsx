@@ -30,7 +30,7 @@ export default function Home() {
   const filteredEvents = events?.events?.filter(event => {
     const matchesSearch = event.title?.toLowerCase().includes(searchTerm.toLowerCase()) ||
                          event.location?.venue?.toLowerCase().includes(searchTerm.toLowerCase());
-    const matchesCategory = !selectedCategory || selectedCategory === "all" || (event.categories || []).some(c => c.type === selectedCategory);
+    const matchesCategory = selectedCategory === "all" || (event.categories || []).some(c => (c?.description || '').toUpperCase() === String(selectedCategory).toUpperCase());
     return matchesSearch && matchesCategory;
   }) || [];
 

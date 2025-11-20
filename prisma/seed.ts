@@ -142,11 +142,12 @@ async function main() {
 
     // Ensure categories exist and get their ids
     const catTypes = (ev.category?.type ?? []) as any[];
-    const cats = await Promise.all(catTypes.map(async (type) => prisma.category.upsert({
-      where: { type },
-      update: { description: ev.category?.description ?? '' },
-      create: { type, description: ev.category?.description ?? '' },
-    })));
+    const cats = await Promise.all(catTypes.map(async (type) => {
+      const desc = ev.category?.description ?? '';
+      const existing = await prisma.category.findFirst({ where: { description: desc } });
+      if (existing) return existing;
+      return prisma.category.create({ data: { description: desc } });
+    }));
 
     await prisma.event.create({
       data: {
