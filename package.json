@@ -4,11 +4,16 @@
   "private": true,
   "scripts": {
     "predev": "npm run codegen",
-    "prebuild": "npm run codegen",
+    "prebuild": "npm run db:generate && npm run codegen",
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
     "lint": "eslint",
+    "prisma": "prisma",
+    "db:migrate": "prisma migrate dev",
+    "db:push": "prisma db push",
+    "db:migrate:reset": "prisma migrate reset",
+    "db:generate": "prisma generate",
     "codegen": "graphql-codegen --config codegen.ts",
     "db:seed": "node --env-file=.env --import=tsx prisma/seed.js",
     "create-user": "node --env-file=.env --import=tsx prisma/create-user.ts"
