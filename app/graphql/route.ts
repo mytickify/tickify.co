@@ -4,8 +4,6 @@ import { startServerAndCreateNextHandler } from '@as-integrations/next';
 import { NextRequest } from 'next/server';
 import { schema } from '@/graphql/schema';
 
-export const runtime = 'nodejs'; // or 'nodejs'
-
 const server = new ApolloServer({ 
   schema,
   status400ForVariableCoercionErrors: true,
