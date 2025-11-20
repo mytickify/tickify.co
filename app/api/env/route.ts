@@ -9,11 +9,11 @@ export async function GET(request: NextRequest) {
 
     // Keep the API key authentication as a fallback method
 
-    // const authHeader = request.headers.get('authorization')
-    // const hasValidApiKey = authHeader === `Bearer ${process.env.ENV_API_SECRET}`
+    const authHeader = request.headers.get('authorization')
+    const hasValidApiKey = authHeader === `Bearer ${process.env.BETTER_AUTH_SECRET}`
 
     // Allow access if user is admin OR has valid API key
-    if (!user) {
+    if (!hasValidApiKey) {
         return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     }
 
