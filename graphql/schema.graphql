@@ -11,8 +11,8 @@ enum SubscriptionStatus { PENDING CONFIRMED UNSUBSCRIBED }
 enum SubscriptionSource { FORM IMPORT ADMIN API }
 enum SectionType { HERO PRICING GALLERY ABOUT SCHEDULE CONTACT }
 
-type Category { id: ID!, description: String! }
 type Location { venue: String!, address: String!, city: String!, lat: Float, lng: Float }
+type Category { id: ID!, description: String! }
 type Organizer { name: String!, email: String!, phone: String }
 type EventTheme { 
   primaryColor: String!, 
@@ -102,7 +102,6 @@ type Page {
   publishedAt: DateTime
   createdAt: DateTime!
   updatedAt: DateTime!
-  eventId: ID
   sections: [PageSection!]!
 }
 
@@ -161,13 +160,12 @@ input CreatePageInput {
   template: JSON
   sectionData: JSON
   slug: String
-  eventId: ID
   sections: [PageSectionInput!]!
 }
 
 input UpdatePageInput {
-  name: String
-  metadata: JSON
+  name: String!
+  metadata: JSON!
   template: JSON
   sectionData: JSON
   slug: String
@@ -180,7 +178,7 @@ type Query {
   event(id: ID!): Event
   eventBySlug(slug: String!): Event
   featuredEvents: [Event!]!
-  eventsByCategory(category: EventCategoryType!): [Event!]!
+  eventsByCategory(categoryId: ID!): [Event!]!
   searchEvents(searchTerm: String!): [Event!]!
   me: User
   users: [User!]!

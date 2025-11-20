@@ -3,8 +3,9 @@ import { subscriptionResolvers } from './subscription';
 import { authResolvers } from './auth';
 import { pageResolvers } from './page';
 import { userResolvers } from './user';
+import { DateTimeResolver, JSONResolver } from 'graphql-scalars';
 
-import { Resolvers } from '@/graphql/resolvers/types';
+import type { Resolvers } from '@/graphql/resolvers/types';
 
 export const resolvers: Resolvers = {
   Query: {
@@ -20,4 +21,6 @@ export const resolvers: Resolvers = {
     ...subscriptionResolvers.Mutation,
     ...authResolvers.Mutation,
   },
+  DateTime: DateTimeResolver,
+  JSON: JSONResolver,
 };

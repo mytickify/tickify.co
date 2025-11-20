@@ -1,12 +1,17 @@
+import { GraphQLFileLoader } from '@graphql-tools/graphql-file-loader';
+import { loadSchema } from '@graphql-tools/load';
 import { makeExecutableSchema } from '@graphql-tools/schema';
-import typeDefs from './typeDefs';
-import { resolvers as baseResolvers } from './resolvers';
-import { DateTimeResolver, JSONResolver } from 'graphql-scalars';
+import { dirname, join } from 'node:path';
+import { fileURLToPath } from 'node:url';
 
-const resolvers = {
-  DateTime: DateTimeResolver,
-  JSON: JSONResolver,
-  ...baseResolvers,
-};
+import { resolvers } from './resolvers';
 
-export const schema = makeExecutableSchema({ typeDefs, resolvers,  });
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
+
+// Load schema from schema.graphql file
+const typeDefs = await loadSchema(join(__dirname, './schema.graphql'), {
+  loaders: [new GraphQLFileLoader()]
+})
+
+export const schema = makeExecutableSchema({ typeDefs, resolvers })
