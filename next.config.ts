@@ -5,6 +5,8 @@ const nextConfig: NextConfig = {
   /* config options here */
   experimental: {
     reactCompiler: true,
+    typedEnv: true,
+    gzipSize: true,
   },
   typedRoutes: true,
   turbopack: {
