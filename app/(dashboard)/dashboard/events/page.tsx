@@ -1,6 +1,7 @@
 "use client";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { gql } from "@apollo/client";
 import { useQuery } from "@apollo/client/react";
 import { EventsOrderField, OrderDirection, GetEventsPagedQuery } from "@/graphql/types";
@@ -41,18 +42,36 @@ export default function DashboardEventsList() {
   const [search, setSearch] = useState<string>("");
   const [page, setPage] = useState<number>(0);
   const [pageSize, setPageSize] = useState<number>(20);
+  const [orderField, setOrderField] = useState<EventsOrderField>(EventsOrderField.UpdatedAt);
+  const [orderDirection, setOrderDirection] = useState<OrderDirection>(OrderDirection.Desc);
+
   const { data, loading, error } = useQuery<GetEventsPagedQuery>(GET_EVENTS_PAGED, {
     variables: {
       filter: { searchTerm: search || undefined },
       pagination: { limit: pageSize, offset: page * pageSize },
-      orderBy: [ { field: EventsOrderField.UpdatedAt, direction: OrderDirection.Desc } ],
+      orderBy: [{ field: orderField, direction: orderDirection }],
     },
-    fetchPolicy: 'cache-and-network',
+    fetchPolicy: "cache-and-network",
   });
 
   const events = Array.isArray(data?.events) ? data.events : [];
   const total = typeof data?.eventsCount === 'number' ? data.eventsCount : 0;
   const totalPages = Math.max(Math.ceil(total / pageSize), 1);
+
+  const handlePageSizeChange = (value: string) => {
+    setPage(0);
+    setPageSize(Number(value));
+  };
+
+  const handleOrderFieldChange = (value: string) => {
+    setPage(0);
+    setOrderField(value as EventsOrderField);
+  };
+
+  const handleOrderDirectionChange = (value: string) => {
+    setPage(0);
+    setOrderDirection(value as OrderDirection);
+  };
 
   console.log('DashboardEventsList', data);
   if (!loading && error) {
@@ -80,12 +99,43 @@ export default function DashboardEventsList() {
         <CardHeader>
           <div className="flex items-center justify-between">
             <CardTitle className="text-sm text-[#637381]">List</CardTitle>
-            <div className="w-64">
-              <Input
-                value={search}
-                onChange={(e) => setSearch(e.target.value)}
-                placeholder="Search by title or slug"
-              />
+            <div className="flex items-center gap-2">
+              <div className="w-64">
+                <Input
+                  value={search}
+                  onChange={(e) => setSearch(e.target.value)}
+                  placeholder="Search by title or slug"
+                />
+              </div>
+              <Select value={String(pageSize)} onValueChange={handlePageSizeChange}>
+                <SelectTrigger className="w-24">
+                  <SelectValue placeholder="Page size" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="10">10</SelectItem>
+                  <SelectItem value="20">20</SelectItem>
+                  <SelectItem value="50">50</SelectItem>
+                </SelectContent>
+              </Select>
+              <Select value={orderField} onValueChange={handleOrderFieldChange}>
+                <SelectTrigger className="w-36">
+                  <SelectValue placeholder="Sort by" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value={EventsOrderField.UpdatedAt}>Updated At</SelectItem>
+                  <SelectItem value={EventsOrderField.CreatedAt}>Created At</SelectItem>
+                  <SelectItem value={EventsOrderField.Title}>Title</SelectItem>
+                </SelectContent>
+              </Select>
+              <Select value={orderDirection} onValueChange={handleOrderDirectionChange}>
+                <SelectTrigger className="w-28">
+                  <SelectValue placeholder="Direction" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value={OrderDirection.Asc}>Asc</SelectItem>
+                  <SelectItem value={OrderDirection.Desc}>Desc</SelectItem>
+                </SelectContent>
+              </Select>
             </div>
           </div>
         </CardHeader>
