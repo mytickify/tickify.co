@@ -9,11 +9,15 @@ const nextConfig: NextConfig = {
     gzipSize: true,
   },
   typedRoutes: true,
-  turbopack: {
-    resolveAlias: {
-      'node:fs/promises': 'fs',
-    }
-  }
+  webpack: (config) => {
+    config.module.rules.push({
+      test: /\.graphql$/,
+      exclude: /node_modules/,
+      loader: '@graphql-tools/webpack-loader',
+    })
+
+    return config
+  },
 };
 
 export default nextConfig;
