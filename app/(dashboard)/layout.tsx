@@ -14,19 +14,18 @@ export default async function DashboardLayout({ children }: { children: React.Re
   if (!user) {
     redirect("/auth");
   }
-  let isAdmin = true;
+  let isAdmin = false;
   try {
     if (user?.id) {
       const roles = await prisma.userRole.findMany({
         where: { userId: user.id },
         include: { role: true },
       });
-      isAdmin = roles.some((r) => r.role?.name === "Admin");
+      isAdmin = roles.some((r) => r.role?.name === "ADMIN_WEB");
     }
   } catch (e) {
     // Fallback: if role lookup fails, default to true to avoid blocking admins.
     console.error("Error fetching user roles:", e);
-    isAdmin = true;
   }
   return (
     <SidebarProvider>

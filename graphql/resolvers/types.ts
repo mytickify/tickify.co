@@ -25,6 +25,15 @@ export type GetEventsCountQueryVariables = Types.Exact<{
 
 export type GetEventsCountQuery = { __typename?: 'Query', eventsCount: number };
 
+export type GetUsersPagedQueryVariables = Types.Exact<{
+  filter?: Types.InputMaybe<Types.UsersFilterInput>;
+  pagination?: Types.InputMaybe<Types.PaginationInput>;
+  orderBy?: Types.InputMaybe<Array<Types.UsersOrderByInput> | Types.UsersOrderByInput>;
+}>;
+
+
+export type GetUsersPagedQuery = { __typename?: 'Query', usersCount: number, users: Array<{ __typename?: 'User', id: string, name?: string | null, email: string, createdAt: Date }> };
+
 export type GetMyEventsPagedQueryVariables = Types.Exact<{
   filter?: Types.InputMaybe<Types.EventsFilterInput>;
   pagination?: Types.InputMaybe<Types.PaginationInput>;
@@ -265,6 +274,9 @@ export type ResolversTypes = {
   UpdateEventInput: Types.UpdateEventInput;
   UpdatePageInput: Types.UpdatePageInput;
   User: ResolverTypeWrapper<UserModel>;
+  UsersFilterInput: Types.UsersFilterInput;
+  UsersOrderByInput: Types.UsersOrderByInput;
+  UsersOrderField: Types.UsersOrderField;
 };
 
 /** Mapping between all available schema types and the resolvers parents */
@@ -326,6 +338,8 @@ export type ResolversParentTypes = {
   UpdateEventInput: Types.UpdateEventInput;
   UpdatePageInput: Types.UpdatePageInput;
   User: UserModel;
+  UsersFilterInput: Types.UsersFilterInput;
+  UsersOrderByInput: Types.UsersOrderByInput;
 };
 
 export type AuthPayloadResolvers<ContextType = any, ParentType extends ResolversParentTypes['AuthPayload'] = ResolversParentTypes['AuthPayload']> = {
@@ -550,7 +564,8 @@ export type QueryResolvers<ContextType = any, ParentType extends ResolversParent
   ticket?: Resolver<Types.Maybe<ResolversTypes['Ticket']>, ParentType, ContextType, Partial<Types.QueryTicketArgs>>;
   tickets?: Resolver<Array<ResolversTypes['Ticket']>, ParentType, ContextType, Partial<Types.QueryTicketsArgs>>;
   ticketsCount?: Resolver<ResolversTypes['Int'], ParentType, ContextType, Partial<Types.QueryTicketsCountArgs>>;
-  users?: Resolver<Array<ResolversTypes['User']>, ParentType, ContextType>;
+  users?: Resolver<Array<ResolversTypes['User']>, ParentType, ContextType, Partial<Types.QueryUsersArgs>>;
+  usersCount?: Resolver<ResolversTypes['Int'], ParentType, ContextType, Partial<Types.QueryUsersCountArgs>>;
 };
 
 export type TicketResolvers<ContextType = any, ParentType extends ResolversParentTypes['Ticket'] = ResolversParentTypes['Ticket']> = {

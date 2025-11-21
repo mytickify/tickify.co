@@ -286,6 +286,12 @@ input TicketsFilterInput {
   code: String
 }
 
+input UsersFilterInput {
+  name: String
+  email: String
+  searchTerm: String
+}
+
 enum OrderDirection { ASC DESC }
 
 enum CustomersOrderField { CREATED_AT NAME EMAIL }
@@ -300,6 +306,9 @@ input TicketsOrderByInput { field: TicketsOrderField!, direction: OrderDirection
 enum EventsOrderField { CREATED_AT UPDATED_AT START_DATE END_DATE TITLE STATUS FEATURED }
 input EventsOrderByInput { field: EventsOrderField!, direction: OrderDirection! }
 
+enum UsersOrderField { CREATED_AT NAME EMAIL }
+input UsersOrderByInput { field: UsersOrderField!, direction: OrderDirection! }
+
 type Query {
   categories(filter: CategoriesFilterInput): [Category!]!
   category(id: ID!): Category
@@ -311,7 +320,8 @@ type Query {
   eventsByCategory(categoryId: ID!): [Event!]!
   searchEvents(searchTerm: String!): [Event!]!
   me: User
-  users: [User!]!
+  users(filter: UsersFilterInput, pagination: PaginationInput, orderBy: [UsersOrderByInput!]): [User!]!
+  usersCount(filter: UsersFilterInput): Int!
   subscriptions: [MailSubscription!]!
   subscriptionByEmail(email: String!): MailSubscription
   pages: [Page!]!
