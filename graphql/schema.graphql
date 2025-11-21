@@ -304,6 +304,7 @@ type Query {
   categories(filter: CategoriesFilterInput): [Category!]!
   category(id: ID!): Category
   events(filter: EventsFilterInput, pagination: PaginationInput, orderBy: [EventsOrderByInput!]): [Event!]!
+  eventsCount(filter: EventsFilterInput): Int!
   event(id: ID!): Event
   eventBySlug(slug: String!): Event
   featuredEvents: [Event!]!
@@ -318,10 +319,13 @@ type Query {
   pageBySlug(slug: String!): Page
   pagesByEvent(eventId: ID!): [Page!]!
   customers(filter: CustomersFilterInput, pagination: PaginationInput, orderBy: [CustomersOrderByInput!]): [Customer!]!
+  customersCount(filter: CustomersFilterInput): Int!
   customer(id: ID, email: String): Customer
   orders(filter: OrdersFilterInput, pagination: PaginationInput, orderBy: [OrdersOrderByInput!]): [Order!]!
+  ordersCount(filter: OrdersFilterInput): Int!
   order(id: ID!): Order
   tickets(filter: TicketsFilterInput, pagination: PaginationInput, orderBy: [TicketsOrderByInput!]): [Ticket!]!
+  ticketsCount(filter: TicketsFilterInput): Int!
   ticket(id: ID, code: String): Ticket
 }
 

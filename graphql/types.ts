@@ -596,14 +596,17 @@ export type Query = {
   category?: Maybe<Category>;
   customer?: Maybe<Customer>;
   customers: Array<Customer>;
+  customersCount: Scalars['Int']['output'];
   event?: Maybe<Event>;
   eventBySlug?: Maybe<Event>;
   events: Array<Event>;
   eventsByCategory: Array<Event>;
+  eventsCount: Scalars['Int']['output'];
   featuredEvents: Array<Event>;
   me?: Maybe<User>;
   order?: Maybe<Order>;
   orders: Array<Order>;
+  ordersCount: Scalars['Int']['output'];
   page?: Maybe<Page>;
   pageBySlug?: Maybe<Page>;
   pages: Array<Page>;
@@ -613,6 +616,7 @@ export type Query = {
   subscriptions: Array<MailSubscription>;
   ticket?: Maybe<Ticket>;
   tickets: Array<Ticket>;
+  ticketsCount: Scalars['Int']['output'];
   users: Array<User>;
 };
 
@@ -640,6 +644,11 @@ export type QueryCustomersArgs = {
 };
 
 
+export type QueryCustomersCountArgs = {
+  filter?: InputMaybe<CustomersFilterInput>;
+};
+
+
 export type QueryEventArgs = {
   id: Scalars['ID']['input'];
 };
@@ -662,6 +671,11 @@ export type QueryEventsByCategoryArgs = {
 };
 
 
+export type QueryEventsCountArgs = {
+  filter?: InputMaybe<EventsFilterInput>;
+};
+
+
 export type QueryOrderArgs = {
   id: Scalars['ID']['input'];
 };
@@ -671,6 +685,11 @@ export type QueryOrdersArgs = {
   filter?: InputMaybe<OrdersFilterInput>;
   orderBy?: InputMaybe<Array<OrdersOrderByInput>>;
   pagination?: InputMaybe<PaginationInput>;
+};
+
+
+export type QueryOrdersCountArgs = {
+  filter?: InputMaybe<OrdersFilterInput>;
 };
 
 
@@ -709,6 +728,11 @@ export type QueryTicketsArgs = {
   filter?: InputMaybe<TicketsFilterInput>;
   orderBy?: InputMaybe<Array<TicketsOrderByInput>>;
   pagination?: InputMaybe<PaginationInput>;
+};
+
+
+export type QueryTicketsCountArgs = {
+  filter?: InputMaybe<TicketsFilterInput>;
 };
 
 export type RegisterInput = {

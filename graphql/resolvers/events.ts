@@ -77,6 +77,29 @@ export const eventsResolvers: Resolvers = {
         }
       })
     },
+    eventsCount: async (_: any, { filter }: any) => {
+      const where: any = {};
+      if (filter?.status) where.status = filter.status;
+      if (filter?.is_featured !== undefined) where.is_featured = filter.is_featured;
+      if (filter?.userId) where.userId = filter.userId;
+      if (filter?.category) where.categories = { some: { type: filter.category } };
+      const locationWhere: any = {};
+      if (filter?.city) locationWhere.city = { equals: filter.city, mode: Prisma.QueryMode.insensitive };
+      if (filter?.venue) locationWhere.venue = { contains: filter.venue, mode: Prisma.QueryMode.insensitive };
+      if (Object.keys(locationWhere).length) where.location = { is: locationWhere };
+      if (filter?.fromDate) where.startDate = { gte: filter.fromDate };
+      if (filter?.toDate) where.endDate = { lte: filter.toDate };
+      const s = filter?.searchTerm ? { contains: filter.searchTerm, mode: Prisma.QueryMode.insensitive } : null;
+      if (s) {
+        where.OR = [
+          { title: s },
+          { description: s },
+          { location: { is: { venue: s } } },
+          { location: { is: { city: s } } },
+        ];
+      }
+      return prisma.event.count({ where });
+    },
     event: async (_: any, { id }: { id: string }) => {
       return prisma.event.findUnique({ where: { id }, include: { location: true, organizer: true, theme: true, images: true, features: true, ticketTiers: true, collaborators: true, categories: true } });
     },

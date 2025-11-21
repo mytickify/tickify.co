@@ -504,14 +504,17 @@ export type QueryResolvers<ContextType = any, ParentType extends ResolversParent
   category?: Resolver<Types.Maybe<ResolversTypes['Category']>, ParentType, ContextType, RequireFields<Types.QueryCategoryArgs, 'id'>>;
   customer?: Resolver<Types.Maybe<ResolversTypes['Customer']>, ParentType, ContextType, Partial<Types.QueryCustomerArgs>>;
   customers?: Resolver<Array<ResolversTypes['Customer']>, ParentType, ContextType, Partial<Types.QueryCustomersArgs>>;
+  customersCount?: Resolver<ResolversTypes['Int'], ParentType, ContextType, Partial<Types.QueryCustomersCountArgs>>;
   event?: Resolver<Types.Maybe<ResolversTypes['Event']>, ParentType, ContextType, RequireFields<Types.QueryEventArgs, 'id'>>;
   eventBySlug?: Resolver<Types.Maybe<ResolversTypes['Event']>, ParentType, ContextType, RequireFields<Types.QueryEventBySlugArgs, 'slug'>>;
   events?: Resolver<Array<ResolversTypes['Event']>, ParentType, ContextType, Partial<Types.QueryEventsArgs>>;
   eventsByCategory?: Resolver<Array<ResolversTypes['Event']>, ParentType, ContextType, RequireFields<Types.QueryEventsByCategoryArgs, 'categoryId'>>;
+  eventsCount?: Resolver<ResolversTypes['Int'], ParentType, ContextType, Partial<Types.QueryEventsCountArgs>>;
   featuredEvents?: Resolver<Array<ResolversTypes['Event']>, ParentType, ContextType>;
   me?: Resolver<Types.Maybe<ResolversTypes['User']>, ParentType, ContextType>;
   order?: Resolver<Types.Maybe<ResolversTypes['Order']>, ParentType, ContextType, RequireFields<Types.QueryOrderArgs, 'id'>>;
   orders?: Resolver<Array<ResolversTypes['Order']>, ParentType, ContextType, Partial<Types.QueryOrdersArgs>>;
+  ordersCount?: Resolver<ResolversTypes['Int'], ParentType, ContextType, Partial<Types.QueryOrdersCountArgs>>;
   page?: Resolver<Types.Maybe<ResolversTypes['Page']>, ParentType, ContextType, RequireFields<Types.QueryPageArgs, 'id'>>;
   pageBySlug?: Resolver<Types.Maybe<ResolversTypes['Page']>, ParentType, ContextType, RequireFields<Types.QueryPageBySlugArgs, 'slug'>>;
   pages?: Resolver<Array<ResolversTypes['Page']>, ParentType, ContextType>;
@@ -521,6 +524,7 @@ export type QueryResolvers<ContextType = any, ParentType extends ResolversParent
   subscriptions?: Resolver<Array<ResolversTypes['MailSubscription']>, ParentType, ContextType>;
   ticket?: Resolver<Types.Maybe<ResolversTypes['Ticket']>, ParentType, ContextType, Partial<Types.QueryTicketArgs>>;
   tickets?: Resolver<Array<ResolversTypes['Ticket']>, ParentType, ContextType, Partial<Types.QueryTicketsArgs>>;
+  ticketsCount?: Resolver<ResolversTypes['Int'], ParentType, ContextType, Partial<Types.QueryTicketsCountArgs>>;
   users?: Resolver<Array<ResolversTypes['User']>, ParentType, ContextType>;
 };
 
