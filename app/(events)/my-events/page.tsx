@@ -13,7 +13,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { gql } from "@apollo/client";
 import { useMutation, useQuery } from "@apollo/client/react";
 import { useSession } from "@/lib/auth-client";
-import { DeleteEventDocument, EventsOrderField, OrderDirection, GetMyEventsPagedDocument, GetMyEventsPagedQuery } from "@/graphql/types";
+import { DeleteEventDocument, EventsOrderField, OrderDirection, GetMyEventsPagedQuery } from "@/graphql/types";
 import { EventStatus} from "@/graphql/types";
 
   const GET_EVENTS_PAGED = gql`
@@ -34,13 +34,12 @@ import { EventStatus} from "@/graphql/types";
 
 export default function MyEvents() {
   const { data: session } = useSession();
-  const userEmail = session?.user?.email || null;
 
   const [activeTab, setActiveTab] = useState<'all' | EventStatus>("all");
 
   const [page, setPage] = useState<number>(0);
   const [pageSize, setPageSize] = useState<number>(10);
-  const { data: eventsData, loading: isLoading } = useQuery<GetMyEventsPagedQuery>(GetMyEventsPagedDocument, {
+  const { data: eventsData, loading: isLoading } = useQuery<GetMyEventsPagedQuery>(GET_EVENTS_PAGED, {
     variables: {
       filter: {
         userId: session?.user?.id || undefined,
