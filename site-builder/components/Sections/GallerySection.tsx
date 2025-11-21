@@ -1,6 +1,7 @@
 import React from 'react';
 import { GallerySectionProps } from '../../types';
 import './GallerySection.css';
+import Image from 'next/image';
 
 interface GallerySectionComponentProps {
   section: GallerySectionProps;
@@ -32,10 +33,11 @@ const GallerySection: React.FC<GallerySectionComponentProps> = ({
         <div className={`gallery-${layout} gallery-columns-${columns}`}>
           {data.images.map((image) => (
             <div key={image.id} className="gallery-item">
-              <img
+              <Image
                 src={image.url}
                 alt={image.alt}
                 className="gallery-image"
+                objectFit='contain'
               />
               {image.caption && (
                 <p className="gallery-caption">{image.caption}</p>

@@ -6,6 +6,7 @@ import { Calendar, MapPin, Users, Ticket, Clock } from "lucide-react";
 import { format } from "date-fns";
 import { CreateEventInput, Event, GetCategoriesDocument, UpdateEventInput } from "@/graphql/types";
 import { useQuery } from "@apollo/client/react";
+import Image from "next/image";
 
 export default function EventPreview({ eventData }: { eventData: CreateEventInput | UpdateEventInput }) {
   const { data } = useQuery(GetCategoriesDocument, {variables: {
@@ -116,7 +117,7 @@ export default function EventPreview({ eventData }: { eventData: CreateEventInpu
                   <div key={index} className="text-center">
                     <div className="mb-3 mx-auto">
                       {collab.avatar ? (
-                        <img 
+                        <Image
                           src={collab.avatar} 
                           alt={collab.name}
                           className="w-20 h-20 rounded-full object-cover mx-auto border-4 shadow-lg"

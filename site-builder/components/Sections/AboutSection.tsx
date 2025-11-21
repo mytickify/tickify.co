@@ -1,6 +1,7 @@
 import React from 'react';
 import { AboutSectionProps } from '../../types';
 import './AboutSection.css';
+import Image from 'next/image';
 
 interface AboutSectionComponentProps {
   section: AboutSectionProps;
@@ -24,10 +25,11 @@ const AboutSection: React.FC<AboutSectionComponentProps> = ({
       <div className={`about-container about-image-${imagePosition}`}>
         {data.image && (
           <div className="about-image-wrapper">
-            <img
+            <Image
               src={data.image}
               alt={data.title}
               className="about-image"
+              objectFit='contain'
             />
           </div>
         )}

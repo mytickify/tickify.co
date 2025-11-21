@@ -12,6 +12,7 @@ import { format } from "date-fns";
 import { Skeleton } from "@/components/ui/skeleton";
 import Link from "next/link";
 import { GetEventByIdDocument, GetEventByIdQuery } from "@/graphql/types";
+import Image from "next/image";
 
 export default function EventDetails() {
   const router = useRouter();
@@ -176,7 +177,7 @@ export default function EventDetails() {
                       <div key={index} className="text-center group">
                         <div className="mb-4 mx-auto transform transition-transform duration-300 group-hover:scale-110">
                           {collab.avatar ? (
-                            <img 
+                            <Image 
                               src={collab.avatar} 
                               alt={collab.name}
                               className="w-24 h-24 rounded-full object-cover mx-auto border-4 shadow-xl"

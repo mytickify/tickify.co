@@ -9,6 +9,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Plus, Trash2, Upload, Palette, Users } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { CreateEventInput, Event, EventCategoryType, UpdateEventInput } from "@/graphql/types";
+import Image from "next/image";
 
 export default function EventEditor({ editorData, onChange }: { editorData: CreateEventInput | UpdateEventInput | null, onChange?: (values: Event) => void, }) {
   const formik = useFormik({
@@ -262,7 +263,7 @@ export default function EventEditor({ editorData, onChange }: { editorData: Crea
               </Button>
               {eventData?.cover_image && (
                 <div className="mt-3 rounded-lg overflow-hidden">
-                  <img 
+                  <Image
                     src={eventData.cover_image} 
                     alt="Cover" 
                     className="w-full h-32 object-cover"
@@ -366,7 +367,7 @@ export default function EventEditor({ editorData, onChange }: { editorData: Crea
                       <label htmlFor={`collab-avatar-${index}`} className="cursor-pointer">
                         <div className="w-20 h-20 rounded-full border-2 border-dashed border-gray-300 flex items-center justify-center overflow-hidden hover:border-purple-500 transition-colors">
                           {collab.avatar ? (
-                            <img src={collab.avatar} alt={collab.name} className="w-full h-full object-cover" />
+                            <Image src={collab.avatar} alt={collab.name} className="w-full h-full object-cover" />
                           ) : (
                             <Upload className="w-6 h-6 text-gray-400" />
                           )}
