@@ -11,7 +11,8 @@ import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { ArrowDown, ArrowUp, ArrowUpDown } from "lucide-react";
+import { ArrowDown, ArrowUp, ArrowUpDown, MoreHorizontal, Copy } from "lucide-react";
+import { DropdownMenu, DropdownMenuTrigger, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel } from "@/components/ui/dropdown-menu";
 
 const GET_USERS_PAGED = gql`
   query GetUsersPaged($filter: UsersFilterInput, $pagination: PaginationInput, $orderBy: [UsersOrderByInput!]) {
@@ -58,6 +59,33 @@ export default function UsersShadcnPage() {
     { accessorKey: "email", header: "Email" },
     { accessorKey: "name", header: "Name" },
     { accessorKey: "createdAt", header: "Created", cell: ({ getValue }) => new Date(String(getValue())).toLocaleString() },
+    {
+      id: "actions",
+      header: "Actions",
+      cell: ({ row }) => {
+        const u = row.original;
+        return (
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button variant="ghost" size="icon" className="h-8 w-8">
+                <MoreHorizontal className="h-4 w-4" />
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end">
+              <DropdownMenuLabel>Actions</DropdownMenuLabel>
+              <DropdownMenuItem onClick={() => navigator.clipboard?.writeText(u.email)}>
+                <Copy className="mr-2 h-4 w-4" />
+                Copy email
+              </DropdownMenuItem>
+              <DropdownMenuItem onClick={() => navigator.clipboard?.writeText(u.id)}>
+                <Copy className="mr-2 h-4 w-4" />
+                Copy ID
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
+        );
+      },
+    },
   ], []);
 
   const table = useReactTable({
