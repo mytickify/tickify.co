@@ -1,14 +1,13 @@
 "use client";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { useQuery } from "@apollo/client/react";
-import { GetEventsDocument, GetEventsQuery, GetPagesDocument, GetPagesQuery, GetUsersDocument, GetUsersQuery } from "@/graphql/types";
-
-// Generated types from codegen are used for events and pages
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Skeleton } from "@/components/ui/skeleton";
+import { GetEventsDocument, GetPagesDocument, GetUsersDocument } from "@/graphql/types";
 
 export default function DashboardOverviewPage() {
-  const { data: eventsData } = useQuery<GetEventsQuery>(GetEventsDocument);
-  const { data: pagesData } = useQuery<GetPagesQuery>(GetPagesDocument);
-  const { data: usersData } = useQuery<GetUsersQuery>(GetUsersDocument);
+  const { data: eventsData, loading: eventsLoading } = useQuery(GetEventsDocument);
+  const { data: pagesData, loading: pagesLoading } = useQuery(GetPagesDocument);
+  const { data: usersData, loading: usersLoading } = useQuery(GetUsersDocument);
 
   const activeEvents = Array.isArray(eventsData?.events)
     ? eventsData.events.filter((e) => e.status === 'PUBLISHED').length
@@ -39,8 +38,17 @@ export default function DashboardOverviewPage() {
             <CardTitle className="text-sm text-[#637381]">Active Events</CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="text-3xl font-semibold text-[#202223]">{activeEvents}</div>
-            <p className="mt-1 text-sm text-[#637381]">Published events</p>
+            {eventsLoading ? (
+              <div className="space-y-2">
+                <Skeleton className="h-8 w-14" />
+                <Skeleton className="h-4 w-32" />
+              </div>
+            ) : (
+              <>
+                <div className="text-3xl font-semibold text-[#202223]">{activeEvents}</div>
+                <p className="mt-1 text-sm text-[#637381]">Published events</p>
+              </>
+            )}
           </CardContent>
         </Card>
 
@@ -49,8 +57,17 @@ export default function DashboardOverviewPage() {
             <CardTitle className="text-sm text-[#637381]">Total Users</CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="text-3xl font-semibold text-[#202223]">{totalUsers}</div>
-            <p className="mt-1 text-sm text-[#637381]">Registered users</p>
+            {usersLoading ? (
+              <div className="space-y-2">
+                <Skeleton className="h-8 w-16" />
+                <Skeleton className="h-4 w-36" />
+              </div>
+            ) : (
+              <>
+                <div className="text-3xl font-semibold text-[#202223]">{totalUsers}</div>
+                <p className="mt-1 text-sm text-[#637381]">Registered users</p>
+              </>
+            )}
           </CardContent>
         </Card>
 
@@ -59,8 +76,17 @@ export default function DashboardOverviewPage() {
             <CardTitle className="text-sm text-[#637381]">Published Pages</CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="text-3xl font-semibold text-[#202223]">{publishedPages}</div>
-            <p className="mt-1 text-sm text-[#637381]">Pages published</p>
+            {pagesLoading ? (
+              <div className="space-y-2">
+                <Skeleton className="h-8 w-12" />
+                <Skeleton className="h-4 w-28" />
+              </div>
+            ) : (
+              <>
+                <div className="text-3xl font-semibold text-[#202223]">{publishedPages}</div>
+                <p className="mt-1 text-sm text-[#637381]">Pages published</p>
+              </>
+            )}
           </CardContent>
         </Card>
       </div>
@@ -71,7 +97,15 @@ export default function DashboardOverviewPage() {
           <CardTitle className="text-sm text-[#637381]">Recent Activity</CardTitle>
         </CardHeader>
         <CardContent>
-          <p className="text-sm text-[#637381]">We’ll list recent changes here.</p>
+          {eventsLoading || pagesLoading || usersLoading ? (
+            <div className="space-y-2">
+              <Skeleton className="h-4 w-full" />
+              <Skeleton className="h-4 w-5/6" />
+              <Skeleton className="h-4 w-2/3" />
+            </div>
+          ) : (
+            <p className="text-sm text-[#637381]">We’ll list recent changes here.</p>
+          )}
         </CardContent>
       </Card>
     </div>
