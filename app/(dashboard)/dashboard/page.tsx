@@ -3,14 +3,13 @@ import { gql } from "@apollo/client";
 import { useQuery } from "@apollo/client/react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
-import { EventStatus, GetEventsDocument, GetPagesDocument, GetUsersDocument, GetEventsCountDocument, GetEventsCountQuery } from "@/graphql/types";
+import { EventStatus, GetPagesDocument, GetUsersDocument, GetEventsCountQuery } from "@/graphql/types";
 
 // query definition for codegen is embedded below but we use the generated document for typing
 const GET_EVENTS_COUNT = gql`query GetEventsCount($filter: EventsFilterInput) { eventsCount(filter: $filter) }`;
 
 export default function DashboardOverviewPage() {
-  const { data: eventsData, loading: eventsLoading } = useQuery(GetEventsDocument);
-  const { data: eventsCountData, loading: eventsCountLoading } = useQuery<GetEventsCountQuery>(GetEventsCountDocument, {
+  const { data: eventsCountData, loading: eventsCountLoading } = useQuery<GetEventsCountQuery>(GET_EVENTS_COUNT, {
     variables: { filter: { status: EventStatus.Published } },
     fetchPolicy: 'cache-and-network',
   });
@@ -44,7 +43,7 @@ export default function DashboardOverviewPage() {
             <CardTitle className="text-sm text-[#637381]">Active Events</CardTitle>
           </CardHeader>
           <CardContent>
-            {(eventsLoading || eventsCountLoading) ? (
+            {(eventsCountLoading) ? (
               <div className="space-y-2">
                 <Skeleton className="h-8 w-14" />
                 <Skeleton className="h-4 w-32" />
@@ -103,7 +102,7 @@ export default function DashboardOverviewPage() {
           <CardTitle className="text-sm text-[#637381]">Recent Activity</CardTitle>
         </CardHeader>
         <CardContent>
-          {eventsLoading || pagesLoading || usersLoading ? (
+          {eventsCountLoading || pagesLoading || usersLoading ? (
             <div className="space-y-2">
               <Skeleton className="h-4 w-full" />
               <Skeleton className="h-4 w-5/6" />
