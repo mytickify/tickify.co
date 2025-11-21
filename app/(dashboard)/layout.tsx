@@ -25,6 +25,7 @@ export default async function DashboardLayout({ children }: { children: React.Re
     }
   } catch (e) {
     // Fallback: if role lookup fails, default to true to avoid blocking admins.
+    console.error("Error fetching user roles:", e);
     isAdmin = true;
   }
   return (
