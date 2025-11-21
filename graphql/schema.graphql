@@ -105,6 +105,50 @@ type Page {
   sections: [PageSection!]!
 }
 
+type Customer {
+  id: ID!
+  email: String!
+  name: String
+  phone: String
+  userId: ID
+  user: User
+  createdAt: DateTime!
+  updatedAt: DateTime!
+  orders: [Order!]!
+  tickets: [Ticket!]!
+}
+
+type Order {
+  id: ID!
+  number: String!
+  status: String!
+  total: Float!
+  currency: String!
+  createdAt: DateTime!
+  updatedAt: DateTime!
+  customerId: ID!
+  customer: Customer!
+  eventId: ID!
+  event: Event!
+  tickets: [Ticket!]!
+}
+
+type Ticket {
+  id: ID!
+  code: String!
+  status: String!
+  createdAt: DateTime!
+  updatedAt: DateTime!
+  customerId: ID!
+  customer: Customer!
+  eventId: ID!
+  event: Event!
+  ticketTierId: ID!
+  ticketTier: TicketTier!
+  orderId: ID
+  order: Order
+}
+
 input LocationInput { venue: String!, address: String!, city: String!, lat: Float, lng: Float }
 input OrganizerInput { name: String!, email: String!, phone: String }
 input EventThemeInput { primaryColor: String!, secondaryColor: String!, accentColor: String!, textColor: String!, fontFamily: FontFamily!, layout: LayoutType!, gradientEnabled: Boolean!, gradientDirection: GradientDirection! }
@@ -212,10 +256,54 @@ input UpdatePageInput {
   published: Boolean
 }
 
+input PaginationInput {
+  limit: Int
+  offset: Int
+}
+
+input CustomersFilterInput {
+  email: String
+  name: String
+  phone: String
+  userId: ID
+}
+
+input OrdersFilterInput {
+  status: String
+  eventId: ID
+  customerId: ID
+  number: String
+  currency: String
+  from: DateTime
+  to: DateTime
+}
+
+input TicketsFilterInput {
+  status: String
+  eventId: ID
+  customerId: ID
+  ticketTierId: ID
+  code: String
+}
+
+enum OrderDirection { ASC DESC }
+
+enum CustomersOrderField { CREATED_AT NAME EMAIL }
+input CustomersOrderByInput { field: CustomersOrderField!, direction: OrderDirection! }
+
+enum OrdersOrderField { CREATED_AT TOTAL STATUS NUMBER }
+input OrdersOrderByInput { field: OrdersOrderField!, direction: OrderDirection! }
+
+enum TicketsOrderField { CREATED_AT CODE STATUS }
+input TicketsOrderByInput { field: TicketsOrderField!, direction: OrderDirection! }
+
+enum EventsOrderField { CREATED_AT UPDATED_AT START_DATE END_DATE TITLE STATUS FEATURED }
+input EventsOrderByInput { field: EventsOrderField!, direction: OrderDirection! }
+
 type Query {
   categories(filter: CategoriesFilterInput): [Category!]!
   category(id: ID!): Category
-  events(filter: EventsFilterInput): [Event!]!
+  events(filter: EventsFilterInput, pagination: PaginationInput, orderBy: [EventsOrderByInput!]): [Event!]!
   event(id: ID!): Event
   eventBySlug(slug: String!): Event
   featuredEvents: [Event!]!
@@ -229,6 +317,12 @@ type Query {
   page(id: ID!): Page
   pageBySlug(slug: String!): Page
   pagesByEvent(eventId: ID!): [Page!]!
+  customers(filter: CustomersFilterInput, pagination: PaginationInput, orderBy: [CustomersOrderByInput!]): [Customer!]!
+  customer(id: ID, email: String): Customer
+  orders(filter: OrdersFilterInput, pagination: PaginationInput, orderBy: [OrdersOrderByInput!]): [Order!]!
+  order(id: ID!): Order
+  tickets(filter: TicketsFilterInput, pagination: PaginationInput, orderBy: [TicketsOrderByInput!]): [Ticket!]!
+  ticket(id: ID, code: String): Ticket
 }
 
 type Mutation {

@@ -25,6 +25,9 @@ const config: CodegenConfig = {
           Event: '@/lib/generated/prisma/models/Event#EventModel',
           Page: '@/lib/generated/prisma/models/Page#PageModel',
           User: '@/lib/generated/prisma/models/User#UserModel',
+          Customer: '@/lib/generated/prisma/models/Customer#CustomerModel',
+          Order: '@/lib/generated/prisma/models/Order#OrderModel',
+          Ticket: '@/lib/generated/prisma/models/Ticket#TicketModel',
         },
         scalars: {
           DateTime: "Date",

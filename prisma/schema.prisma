@@ -23,10 +23,11 @@ model User {
   createdAt     DateTime @default(now())
   updatedAt     DateTime @updatedAt
 
-  sessions Session[]
-  accounts Account[]
-  roles    UserRole[]
-  events   Event[]
+  sessions  Session[]
+  accounts  Account[]
+  roles     UserRole[]
+  events    Event[]
+  customers Customer[]
 }
 
 model Session {
@@ -143,41 +144,43 @@ model Event {
   createdAt       DateTime    @default(now())
   updatedAt       DateTime    @updatedAt
 
-  categories          Category[]
+  categories Category[]
 
-  locationId String? @unique
-  location   Location?   @relation(fields: [locationId], references: [id], onDelete: SetNull)
+  locationId String?   @unique
+  location   Location? @relation(fields: [locationId], references: [id], onDelete: SetNull)
 
-  organizerId String? @unique
-  organizer   Organizer?  @relation(fields: [organizerId], references: [id], onDelete: SetNull)
+  organizerId String?    @unique
+  organizer   Organizer? @relation(fields: [organizerId], references: [id], onDelete: SetNull)
 
-  themeId String? @unique
+  themeId String?     @unique
   theme   EventTheme? @relation(fields: [themeId], references: [id], onDelete: SetNull)
 
-  imagesId String? @unique
-  images   EventImage?  @relation(fields: [imagesId], references: [id], onDelete: SetNull)
+  imagesId String?     @unique
+  images   EventImage? @relation(fields: [imagesId], references: [id], onDelete: SetNull)
 
-  featuresId String? @unique
+  featuresId String?        @unique
   features   EventFeatures? @relation(fields: [featuresId], references: [id], onDelete: SetNull)
 
-  ticketTiers  TicketTier[]
+  ticketTiers   TicketTier[]
   collaborators Collaborator[]
 
-  userId String?
-  user   User? @relation(fields: [userId], references: [id], onDelete: SetNull)
+  userId  String?
+  user    User?    @relation(fields: [userId], references: [id], onDelete: SetNull)
+  orders  Order[]
+  tickets Ticket[]
 }
 
 model Category {
-  id          String             @id @default(cuid())
-  name        String             @default("")
-  description String             @default("")
-  createdAt   DateTime           @default(now())
-  updatedAt   DateTime           @updatedAt
+  id          String   @id @default(cuid())
+  name        String   @default("")
+  description String   @default("")
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
 
-  parentId    String?
-  parent      Category? @relation("CategoryCategory", fields: [parentId], references: [id], onDelete: SetNull)
+  parentId String?
+  parent   Category? @relation("CategoryCategory", fields: [parentId], references: [id], onDelete: SetNull)
 
-  events      Event[]
+  events Event[]
 
   categories Category[] @relation("CategoryCategory")
 }
@@ -205,19 +208,19 @@ model Organizer {
 }
 
 model EventTheme {
-  id               String   @id @default(cuid())
-  primaryColor     String
-  secondaryColor   String
-  accentColor      String
-  textColor        String
-  fontFamily       String
-  layout           String
-  gradientEnabled  Boolean
+  id                String   @id @default(cuid())
+  primaryColor      String
+  secondaryColor    String
+  accentColor       String
+  textColor         String
+  fontFamily        String
+  layout            String
+  gradientEnabled   Boolean
   gradientDirection String
-  backgroundColor  String?
-  createdAt        DateTime @default(now())
-  updatedAt        DateTime @updatedAt
-  event            Event?
+  backgroundColor   String?
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+  event             Event?
 }
 
 model EventImage {
@@ -241,7 +244,7 @@ model EventFeatures {
 }
 
 model TicketTier {
-  id          String  @id @default(cuid())
+  id          String   @id @default(cuid())
   name        String
   price       Float
   currency    String
@@ -252,11 +255,12 @@ model TicketTier {
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
   eventId     String
-  event       Event   @relation(fields: [eventId], references: [id], onDelete: Cascade)
+  event       Event    @relation(fields: [eventId], references: [id], onDelete: Cascade)
+  tickets     Ticket[]
 }
 
 model Collaborator {
-  id          String  @id @default(cuid())
+  id          String   @id @default(cuid())
   name        String
   type        String
   avatar      String?
@@ -265,7 +269,7 @@ model Collaborator {
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
   eventId     String
-  event       Event   @relation(fields: [eventId], references: [id], onDelete: Cascade)
+  event       Event    @relation(fields: [eventId], references: [id], onDelete: Cascade)
 }
 
 // Mail subscriptions
@@ -311,4 +315,61 @@ model PageSection {
   page   Page   @relation(fields: [pageId], references: [id], onDelete: Cascade)
 
   @@index([pageId, order])
+}
+
+// Commerce: customers, orders, and issued tickets
+model Customer {
+  id        String   @id @default(cuid())
+  email     String   @unique
+  name      String?
+  phone     String?
+  userId    String?
+  user      User?    @relation(fields: [userId], references: [id], onDelete: SetNull)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  orders  Order[]
+  tickets Ticket[]
+}
+
+model Order {
+  id        String   @id @default(cuid())
+  number    String   @unique
+  status    String
+  total     Float
+  currency  String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  customerId String
+  customer   Customer @relation(fields: [customerId], references: [id], onDelete: Cascade)
+
+  eventId String
+  event   Event  @relation(fields: [eventId], references: [id], onDelete: Cascade)
+
+  tickets Ticket[]
+
+  @@index([customerId, eventId])
+}
+
+model Ticket {
+  id        String   @id @default(cuid())
+  code      String   @unique
+  status    String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  customerId String
+  customer   Customer @relation(fields: [customerId], references: [id], onDelete: Cascade)
+
+  eventId String
+  event   Event  @relation(fields: [eventId], references: [id], onDelete: Cascade)
+
+  ticketTierId String
+  ticketTier   TicketTier @relation(fields: [ticketTierId], references: [id], onDelete: Cascade)
+
+  orderId String?
+  order   Order?  @relation(fields: [orderId], references: [id], onDelete: SetNull)
+
+  @@index([eventId, customerId])
 }

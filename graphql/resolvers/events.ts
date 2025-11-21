@@ -5,6 +5,7 @@ import { EventStatus } from '@/lib/generated/prisma/enums';
 import { Resolvers } from '@/graphql/resolvers/types';
 import { PaymentStatus } from '@/graphql/types';
 import { FieldNode, Kind } from 'graphql';
+import { randomBytes } from 'crypto';
 
 function withDefaultsForTicketTiers(tiers?: any[] | null) {
   if (!tiers) return undefined;
@@ -18,7 +19,7 @@ function withDefaultsForTicketTiers(tiers?: any[] | null) {
 
 export const eventsResolvers: Resolvers = {
   Query: {
-    events: async (_: any, { filter }, _context, info) => {
+    events: async (_: any, { filter, pagination, orderBy }: any, _context, info) => {
       const selections = info.fieldNodes[0]
       .selectionSet?.selections
       .filter((s): s is FieldNode => s.kind === Kind.FIELD && s.selectionSet !== undefined)
@@ -46,9 +47,24 @@ export const eventsResolvers: Resolvers = {
           { location: { is: { city: s } } },
         ];
       }
+      const take = Math.min(Math.max(pagination?.limit ?? 50, 1), 100);
+      const skip = Math.max(pagination?.offset ?? 0, 0);
+      const fieldMap: any = {
+        CREATED_AT: 'createdAt',
+        UPDATED_AT: 'updatedAt',
+        START_DATE: 'startDate',
+        END_DATE: 'endDate',
+        TITLE: 'title',
+        STATUS: 'status',
+        FEATURED: 'is_featured',
+      };
+      const orderItems = Array.isArray(orderBy) ? orderBy : orderBy ? [orderBy] : [];
+      const prismaOrderBy = orderItems.map((o: any) => ({ [fieldMap[o?.field] ?? 'createdAt']: o?.direction === 'ASC' ? 'asc' : 'desc' }));
       return prisma.event.findMany({
         where,
-        orderBy: { createdAt: 'desc' },
+        orderBy: prismaOrderBy.length ? prismaOrderBy : [{ createdAt: 'desc' }],
+        take,
+        skip,
         include: {
           location: selections.includes('location'),
           organizer: selections.includes('organizer'),
@@ -250,14 +266,75 @@ export const eventsResolvers: Resolvers = {
       await db.event.delete({ where: { id } });
       return true;
     },
-    createPurchase: async (_: any, { input }: { input: any }) => {
+    createPurchase: async (_: any, { input }: { input: any }, ctx: any) => {
+      const { eventId, ticketTierId, quantity, buyer } = input;
+      if (!eventId || !ticketTierId) throw new Error('Missing eventId or ticketTierId');
+      if (typeof quantity !== 'number' || quantity <= 0) throw new Error('Quantity must be greater than zero');
+
+      const event = await prisma.event.findUnique({ where: { id: eventId }, select: { id: true } });
+      if (!event) throw new Error('Event not found');
+
+      const tier = await prisma.ticketTier.findUnique({ where: { id: ticketTierId } });
+      if (!tier) throw new Error('Ticket tier not found');
+      if (tier.eventId !== eventId) throw new Error('Ticket tier does not belong to event');
+
+      const availableCount = tier.quantity - tier.soldCount;
+      if (quantity > availableCount) throw new Error('Not enough tickets available');
+
+      const totalAmount = tier.price * quantity;
+      const currency = tier.currency;
+      const orderNumber = `ORD-${Date.now().toString(36)}-${Math.random().toString(36).slice(2,8).toUpperCase()}`;
+
+      const genCode = () => `TKT-${randomBytes(4).toString('hex').toUpperCase()}`;
+
+      const result = await prisma.$transaction(async (tx) => {
+        const customer = await tx.customer.upsert({
+          where: { email: buyer.email },
+          update: { name: buyer.name, phone: buyer.phone, userId: ctx?.user?.email === buyer.email ? ctx?.user?.id : undefined },
+          create: { email: buyer.email, name: buyer.name, phone: buyer.phone, userId: ctx?.user?.email === buyer.email ? ctx?.user?.id : undefined },
+        });
+
+        const order = await tx.order.create({
+          data: {
+            number: orderNumber,
+            status: 'PENDING',
+            total: totalAmount,
+            currency,
+            customerId: customer.id,
+            eventId,
+          }
+        });
+
+        await tx.ticket.createMany({
+          data: Array.from({ length: quantity }, () => ({
+            code: genCode(),
+            status: 'ISSUED',
+            customerId: customer.id,
+            eventId,
+            ticketTierId,
+            orderId: order.id,
+          }))
+        });
+
+        const newSold = tier.soldCount + quantity;
+        await tx.ticketTier.update({
+          where: { id: ticketTierId },
+          data: {
+            soldCount: newSold,
+            available: tier.quantity - newSold > 0,
+          }
+        });
+
+        return { order, customer };
+      });
+
       return {
-        id: Math.random().toString(36).substr(2, 9),
-        eventId: input.eventId,
-        ticketTierId: input.ticketTierId,
-        quantity: input.quantity,
-        totalAmount: 0,
-        buyer: input.buyer,
+        id: result.order.id,
+        eventId,
+        ticketTierId,
+        quantity,
+        totalAmount,
+        buyer,
         paymentStatus: PaymentStatus.Pending,
         purchasedAt: new Date(),
       };

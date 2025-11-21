@@ -190,6 +190,37 @@ export type CreatePurchaseInput = {
   ticketTierId: Scalars['ID']['input'];
 };
 
+export type Customer = {
+  createdAt: Scalars['DateTime']['output'];
+  email: Scalars['String']['output'];
+  id: Scalars['ID']['output'];
+  name?: Maybe<Scalars['String']['output']>;
+  orders: Array<Order>;
+  phone?: Maybe<Scalars['String']['output']>;
+  tickets: Array<Ticket>;
+  updatedAt: Scalars['DateTime']['output'];
+  user?: Maybe<User>;
+  userId?: Maybe<Scalars['ID']['output']>;
+};
+
+export type CustomersFilterInput = {
+  email?: InputMaybe<Scalars['String']['input']>;
+  name?: InputMaybe<Scalars['String']['input']>;
+  phone?: InputMaybe<Scalars['String']['input']>;
+  userId?: InputMaybe<Scalars['ID']['input']>;
+};
+
+export type CustomersOrderByInput = {
+  direction: OrderDirection;
+  field: CustomersOrderField;
+};
+
+export enum CustomersOrderField {
+  CreatedAt = 'CREATED_AT',
+  Email = 'EMAIL',
+  Name = 'NAME'
+}
+
 export type Event = {
   categories?: Maybe<Array<Maybe<Category>>>;
   collaborators?: Maybe<Array<Collaborator>>;
@@ -299,6 +330,21 @@ export type EventsFilterInput = {
   userId?: InputMaybe<Scalars['ID']['input']>;
   venue?: InputMaybe<Scalars['String']['input']>;
 };
+
+export type EventsOrderByInput = {
+  direction: OrderDirection;
+  field: EventsOrderField;
+};
+
+export enum EventsOrderField {
+  CreatedAt = 'CREATED_AT',
+  EndDate = 'END_DATE',
+  Featured = 'FEATURED',
+  StartDate = 'START_DATE',
+  Status = 'STATUS',
+  Title = 'TITLE',
+  UpdatedAt = 'UPDATED_AT'
+}
 
 export enum FontFamily {
   Bold = 'BOLD',
@@ -440,6 +486,48 @@ export type MutationUpdatePageArgs = {
   input: UpdatePageInput;
 };
 
+export type Order = {
+  createdAt: Scalars['DateTime']['output'];
+  currency: Scalars['String']['output'];
+  customer: Customer;
+  customerId: Scalars['ID']['output'];
+  event: Event;
+  eventId: Scalars['ID']['output'];
+  id: Scalars['ID']['output'];
+  number: Scalars['String']['output'];
+  status: Scalars['String']['output'];
+  tickets: Array<Ticket>;
+  total: Scalars['Float']['output'];
+  updatedAt: Scalars['DateTime']['output'];
+};
+
+export enum OrderDirection {
+  Asc = 'ASC',
+  Desc = 'DESC'
+}
+
+export type OrdersFilterInput = {
+  currency?: InputMaybe<Scalars['String']['input']>;
+  customerId?: InputMaybe<Scalars['ID']['input']>;
+  eventId?: InputMaybe<Scalars['ID']['input']>;
+  from?: InputMaybe<Scalars['DateTime']['input']>;
+  number?: InputMaybe<Scalars['String']['input']>;
+  status?: InputMaybe<Scalars['String']['input']>;
+  to?: InputMaybe<Scalars['DateTime']['input']>;
+};
+
+export type OrdersOrderByInput = {
+  direction: OrderDirection;
+  field: OrdersOrderField;
+};
+
+export enum OrdersOrderField {
+  CreatedAt = 'CREATED_AT',
+  Number = 'NUMBER',
+  Status = 'STATUS',
+  Total = 'TOTAL'
+}
+
 export type Organizer = {
   email: Scalars['String']['output'];
   name: Scalars['String']['output'];
@@ -481,6 +569,11 @@ export type PageSectionInput = {
   type: SectionType;
 };
 
+export type PaginationInput = {
+  limit?: InputMaybe<Scalars['Int']['input']>;
+  offset?: InputMaybe<Scalars['Int']['input']>;
+};
+
 export enum PaymentStatus {
   Completed = 'COMPLETED',
   Failed = 'FAILED',
@@ -501,12 +594,16 @@ export type Purchase = {
 export type Query = {
   categories: Array<Category>;
   category?: Maybe<Category>;
+  customer?: Maybe<Customer>;
+  customers: Array<Customer>;
   event?: Maybe<Event>;
   eventBySlug?: Maybe<Event>;
   events: Array<Event>;
   eventsByCategory: Array<Event>;
   featuredEvents: Array<Event>;
   me?: Maybe<User>;
+  order?: Maybe<Order>;
+  orders: Array<Order>;
   page?: Maybe<Page>;
   pageBySlug?: Maybe<Page>;
   pages: Array<Page>;
@@ -514,6 +611,8 @@ export type Query = {
   searchEvents: Array<Event>;
   subscriptionByEmail?: Maybe<MailSubscription>;
   subscriptions: Array<MailSubscription>;
+  ticket?: Maybe<Ticket>;
+  tickets: Array<Ticket>;
   users: Array<User>;
 };
 
@@ -525,6 +624,19 @@ export type QueryCategoriesArgs = {
 
 export type QueryCategoryArgs = {
   id: Scalars['ID']['input'];
+};
+
+
+export type QueryCustomerArgs = {
+  email?: InputMaybe<Scalars['String']['input']>;
+  id?: InputMaybe<Scalars['ID']['input']>;
+};
+
+
+export type QueryCustomersArgs = {
+  filter?: InputMaybe<CustomersFilterInput>;
+  orderBy?: InputMaybe<Array<CustomersOrderByInput>>;
+  pagination?: InputMaybe<PaginationInput>;
 };
 
 
@@ -540,11 +652,25 @@ export type QueryEventBySlugArgs = {
 
 export type QueryEventsArgs = {
   filter?: InputMaybe<EventsFilterInput>;
+  orderBy?: InputMaybe<Array<EventsOrderByInput>>;
+  pagination?: InputMaybe<PaginationInput>;
 };
 
 
 export type QueryEventsByCategoryArgs = {
   categoryId: Scalars['ID']['input'];
+};
+
+
+export type QueryOrderArgs = {
+  id: Scalars['ID']['input'];
+};
+
+
+export type QueryOrdersArgs = {
+  filter?: InputMaybe<OrdersFilterInput>;
+  orderBy?: InputMaybe<Array<OrdersOrderByInput>>;
+  pagination?: InputMaybe<PaginationInput>;
 };
 
 
@@ -570,6 +696,19 @@ export type QuerySearchEventsArgs = {
 
 export type QuerySubscriptionByEmailArgs = {
   email: Scalars['String']['input'];
+};
+
+
+export type QueryTicketArgs = {
+  code?: InputMaybe<Scalars['String']['input']>;
+  id?: InputMaybe<Scalars['ID']['input']>;
+};
+
+
+export type QueryTicketsArgs = {
+  filter?: InputMaybe<TicketsFilterInput>;
+  orderBy?: InputMaybe<Array<TicketsOrderByInput>>;
+  pagination?: InputMaybe<PaginationInput>;
 };
 
 export type RegisterInput = {
@@ -607,6 +746,22 @@ export enum SubscriptionStatus {
   Unsubscribed = 'UNSUBSCRIBED'
 }
 
+export type Ticket = {
+  code: Scalars['String']['output'];
+  createdAt: Scalars['DateTime']['output'];
+  customer: Customer;
+  customerId: Scalars['ID']['output'];
+  event: Event;
+  eventId: Scalars['ID']['output'];
+  id: Scalars['ID']['output'];
+  order?: Maybe<Order>;
+  orderId?: Maybe<Scalars['ID']['output']>;
+  status: Scalars['String']['output'];
+  ticketTier: TicketTier;
+  ticketTierId: Scalars['ID']['output'];
+  updatedAt: Scalars['DateTime']['output'];
+};
+
 export type TicketTier = {
   available: Scalars['Boolean']['output'];
   currency: Scalars['String']['output'];
@@ -625,6 +780,25 @@ export type TicketTierInput = {
   price: Scalars['Float']['input'];
   quantity: Scalars['Int']['input'];
 };
+
+export type TicketsFilterInput = {
+  code?: InputMaybe<Scalars['String']['input']>;
+  customerId?: InputMaybe<Scalars['ID']['input']>;
+  eventId?: InputMaybe<Scalars['ID']['input']>;
+  status?: InputMaybe<Scalars['String']['input']>;
+  ticketTierId?: InputMaybe<Scalars['ID']['input']>;
+};
+
+export type TicketsOrderByInput = {
+  direction: OrderDirection;
+  field: TicketsOrderField;
+};
+
+export enum TicketsOrderField {
+  Code = 'CODE',
+  CreatedAt = 'CREATED_AT',
+  Status = 'STATUS'
+}
 
 export type UnsubscribeInput = {
   email: Scalars['String']['input'];

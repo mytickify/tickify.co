@@ -4,6 +4,7 @@ import { authResolvers } from './auth';
 import { pageResolvers } from './page';
 import { userResolvers } from './user';
 import { categoriesResolvers } from './categories';
+import { commerceResolvers } from './commerce';
 
 import { DateTimeResolver, JSONResolver } from 'graphql-scalars';
 
@@ -17,6 +18,7 @@ export const resolvers: Resolvers = {
     ...authResolvers.Query,
     ...userResolvers.Query,
     ...categoriesResolvers.Query,
+    ...commerceResolvers.Query,
   },
   Mutation: {
     ...eventsResolvers.Mutation,
@@ -26,4 +28,7 @@ export const resolvers: Resolvers = {
   },
   DateTime: DateTimeResolver,
   JSON: JSONResolver,
+  Customer: commerceResolvers.Customer,
+  Order: commerceResolvers.Order,
+  Ticket: commerceResolvers.Ticket,
 };

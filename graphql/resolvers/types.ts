@@ -4,6 +4,9 @@ import { GraphQLResolveInfo, GraphQLScalarType, GraphQLScalarTypeConfig } from '
 import { EventModel } from '@/lib/generated/prisma/models/Event';
 import { PageModel } from '@/lib/generated/prisma/models/Page';
 import { UserModel } from '@/lib/generated/prisma/models/User';
+import { CustomerModel } from '@/lib/generated/prisma/models/Customer';
+import { OrderModel } from '@/lib/generated/prisma/models/Order';
+import { TicketModel } from '@/lib/generated/prisma/models/Ticket';
 export type Omit<T, K extends keyof T> = Pick<T, Exclude<keyof T, K>>;
 export type RequireFields<T, K extends keyof T> = Omit<T, K> & { [P in K]-?: NonNullable<T[P]> };
 export type CreatePageMutationVariables = Types.Exact<{
@@ -178,6 +181,10 @@ export type ResolversTypes = {
   CreateEventInput: Types.CreateEventInput;
   CreatePageInput: Types.CreatePageInput;
   CreatePurchaseInput: Types.CreatePurchaseInput;
+  Customer: ResolverTypeWrapper<CustomerModel>;
+  CustomersFilterInput: Types.CustomersFilterInput;
+  CustomersOrderByInput: Types.CustomersOrderByInput;
+  CustomersOrderField: Types.CustomersOrderField;
   DateTime: ResolverTypeWrapper<Types.Scalars['DateTime']['output']>;
   Event: ResolverTypeWrapper<EventModel>;
   EventCategoryType: Types.EventCategoryType;
@@ -189,6 +196,8 @@ export type ResolversTypes = {
   EventTheme: ResolverTypeWrapper<Types.EventTheme>;
   EventThemeInput: Types.EventThemeInput;
   EventsFilterInput: Types.EventsFilterInput;
+  EventsOrderByInput: Types.EventsOrderByInput;
+  EventsOrderField: Types.EventsOrderField;
   Float: ResolverTypeWrapper<Types.Scalars['Float']['output']>;
   FontFamily: Types.FontFamily;
   GradientDirection: Types.GradientDirection;
@@ -201,11 +210,17 @@ export type ResolversTypes = {
   LoginInput: Types.LoginInput;
   MailSubscription: ResolverTypeWrapper<Types.MailSubscription>;
   Mutation: ResolverTypeWrapper<Record<PropertyKey, never>>;
+  Order: ResolverTypeWrapper<OrderModel>;
+  OrderDirection: Types.OrderDirection;
+  OrdersFilterInput: Types.OrdersFilterInput;
+  OrdersOrderByInput: Types.OrdersOrderByInput;
+  OrdersOrderField: Types.OrdersOrderField;
   Organizer: ResolverTypeWrapper<Types.Organizer>;
   OrganizerInput: Types.OrganizerInput;
   Page: ResolverTypeWrapper<PageModel>;
   PageSection: ResolverTypeWrapper<Types.PageSection>;
   PageSectionInput: Types.PageSectionInput;
+  PaginationInput: Types.PaginationInput;
   PaymentStatus: Types.PaymentStatus;
   Purchase: ResolverTypeWrapper<Types.Purchase>;
   Query: ResolverTypeWrapper<Record<PropertyKey, never>>;
@@ -215,8 +230,12 @@ export type ResolversTypes = {
   SubscribeInput: Types.SubscribeInput;
   SubscriptionSource: Types.SubscriptionSource;
   SubscriptionStatus: Types.SubscriptionStatus;
+  Ticket: ResolverTypeWrapper<TicketModel>;
   TicketTier: ResolverTypeWrapper<Types.TicketTier>;
   TicketTierInput: Types.TicketTierInput;
+  TicketsFilterInput: Types.TicketsFilterInput;
+  TicketsOrderByInput: Types.TicketsOrderByInput;
+  TicketsOrderField: Types.TicketsOrderField;
   UnsubscribeInput: Types.UnsubscribeInput;
   UpdateEventInput: Types.UpdateEventInput;
   UpdatePageInput: Types.UpdatePageInput;
@@ -237,6 +256,9 @@ export type ResolversParentTypes = {
   CreateEventInput: Types.CreateEventInput;
   CreatePageInput: Types.CreatePageInput;
   CreatePurchaseInput: Types.CreatePurchaseInput;
+  Customer: CustomerModel;
+  CustomersFilterInput: Types.CustomersFilterInput;
+  CustomersOrderByInput: Types.CustomersOrderByInput;
   DateTime: Types.Scalars['DateTime']['output'];
   Event: EventModel;
   EventFeatures: Types.EventFeatures;
@@ -246,6 +268,7 @@ export type ResolversParentTypes = {
   EventTheme: Types.EventTheme;
   EventThemeInput: Types.EventThemeInput;
   EventsFilterInput: Types.EventsFilterInput;
+  EventsOrderByInput: Types.EventsOrderByInput;
   Float: Types.Scalars['Float']['output'];
   ID: Types.Scalars['ID']['output'];
   Int: Types.Scalars['Int']['output'];
@@ -255,18 +278,25 @@ export type ResolversParentTypes = {
   LoginInput: Types.LoginInput;
   MailSubscription: Types.MailSubscription;
   Mutation: Record<PropertyKey, never>;
+  Order: OrderModel;
+  OrdersFilterInput: Types.OrdersFilterInput;
+  OrdersOrderByInput: Types.OrdersOrderByInput;
   Organizer: Types.Organizer;
   OrganizerInput: Types.OrganizerInput;
   Page: PageModel;
   PageSection: Types.PageSection;
   PageSectionInput: Types.PageSectionInput;
+  PaginationInput: Types.PaginationInput;
   Purchase: Types.Purchase;
   Query: Record<PropertyKey, never>;
   RegisterInput: Types.RegisterInput;
   String: Types.Scalars['String']['output'];
   SubscribeInput: Types.SubscribeInput;
+  Ticket: TicketModel;
   TicketTier: Types.TicketTier;
   TicketTierInput: Types.TicketTierInput;
+  TicketsFilterInput: Types.TicketsFilterInput;
+  TicketsOrderByInput: Types.TicketsOrderByInput;
   UnsubscribeInput: Types.UnsubscribeInput;
   UpdateEventInput: Types.UpdateEventInput;
   UpdatePageInput: Types.UpdatePageInput;
@@ -296,6 +326,19 @@ export type CollaboratorResolvers<ContextType = any, ParentType extends Resolver
   description?: Resolver<Types.Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   name?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   type?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+};
+
+export type CustomerResolvers<ContextType = any, ParentType extends ResolversParentTypes['Customer'] = ResolversParentTypes['Customer']> = {
+  createdAt?: Resolver<ResolversTypes['DateTime'], ParentType, ContextType>;
+  email?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
+  name?: Resolver<Types.Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  orders?: Resolver<Array<ResolversTypes['Order']>, ParentType, ContextType>;
+  phone?: Resolver<Types.Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  tickets?: Resolver<Array<ResolversTypes['Ticket']>, ParentType, ContextType>;
+  updatedAt?: Resolver<ResolversTypes['DateTime'], ParentType, ContextType>;
+  user?: Resolver<Types.Maybe<ResolversTypes['User']>, ParentType, ContextType>;
+  userId?: Resolver<Types.Maybe<ResolversTypes['ID']>, ParentType, ContextType>;
 };
 
 export interface DateTimeScalarConfig extends GraphQLScalarTypeConfig<ResolversTypes['DateTime'], any> {
@@ -402,6 +445,21 @@ export type MutationResolvers<ContextType = any, ParentType extends ResolversPar
   updatePage?: Resolver<ResolversTypes['Page'], ParentType, ContextType, RequireFields<Types.MutationUpdatePageArgs, 'id' | 'input'>>;
 };
 
+export type OrderResolvers<ContextType = any, ParentType extends ResolversParentTypes['Order'] = ResolversParentTypes['Order']> = {
+  createdAt?: Resolver<ResolversTypes['DateTime'], ParentType, ContextType>;
+  currency?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  customer?: Resolver<ResolversTypes['Customer'], ParentType, ContextType>;
+  customerId?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
+  event?: Resolver<ResolversTypes['Event'], ParentType, ContextType>;
+  eventId?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
+  id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
+  number?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  status?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  tickets?: Resolver<Array<ResolversTypes['Ticket']>, ParentType, ContextType>;
+  total?: Resolver<ResolversTypes['Float'], ParentType, ContextType>;
+  updatedAt?: Resolver<ResolversTypes['DateTime'], ParentType, ContextType>;
+};
+
 export type OrganizerResolvers<ContextType = any, ParentType extends ResolversParentTypes['Organizer'] = ResolversParentTypes['Organizer']> = {
   email?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   name?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
@@ -444,12 +502,16 @@ export type PurchaseResolvers<ContextType = any, ParentType extends ResolversPar
 export type QueryResolvers<ContextType = any, ParentType extends ResolversParentTypes['Query'] = ResolversParentTypes['Query']> = {
   categories?: Resolver<Array<ResolversTypes['Category']>, ParentType, ContextType, Partial<Types.QueryCategoriesArgs>>;
   category?: Resolver<Types.Maybe<ResolversTypes['Category']>, ParentType, ContextType, RequireFields<Types.QueryCategoryArgs, 'id'>>;
+  customer?: Resolver<Types.Maybe<ResolversTypes['Customer']>, ParentType, ContextType, Partial<Types.QueryCustomerArgs>>;
+  customers?: Resolver<Array<ResolversTypes['Customer']>, ParentType, ContextType, Partial<Types.QueryCustomersArgs>>;
   event?: Resolver<Types.Maybe<ResolversTypes['Event']>, ParentType, ContextType, RequireFields<Types.QueryEventArgs, 'id'>>;
   eventBySlug?: Resolver<Types.Maybe<ResolversTypes['Event']>, ParentType, ContextType, RequireFields<Types.QueryEventBySlugArgs, 'slug'>>;
   events?: Resolver<Array<ResolversTypes['Event']>, ParentType, ContextType, Partial<Types.QueryEventsArgs>>;
   eventsByCategory?: Resolver<Array<ResolversTypes['Event']>, ParentType, ContextType, RequireFields<Types.QueryEventsByCategoryArgs, 'categoryId'>>;
   featuredEvents?: Resolver<Array<ResolversTypes['Event']>, ParentType, ContextType>;
   me?: Resolver<Types.Maybe<ResolversTypes['User']>, ParentType, ContextType>;
+  order?: Resolver<Types.Maybe<ResolversTypes['Order']>, ParentType, ContextType, RequireFields<Types.QueryOrderArgs, 'id'>>;
+  orders?: Resolver<Array<ResolversTypes['Order']>, ParentType, ContextType, Partial<Types.QueryOrdersArgs>>;
   page?: Resolver<Types.Maybe<ResolversTypes['Page']>, ParentType, ContextType, RequireFields<Types.QueryPageArgs, 'id'>>;
   pageBySlug?: Resolver<Types.Maybe<ResolversTypes['Page']>, ParentType, ContextType, RequireFields<Types.QueryPageBySlugArgs, 'slug'>>;
   pages?: Resolver<Array<ResolversTypes['Page']>, ParentType, ContextType>;
@@ -457,7 +519,25 @@ export type QueryResolvers<ContextType = any, ParentType extends ResolversParent
   searchEvents?: Resolver<Array<ResolversTypes['Event']>, ParentType, ContextType, RequireFields<Types.QuerySearchEventsArgs, 'searchTerm'>>;
   subscriptionByEmail?: Resolver<Types.Maybe<ResolversTypes['MailSubscription']>, ParentType, ContextType, RequireFields<Types.QuerySubscriptionByEmailArgs, 'email'>>;
   subscriptions?: Resolver<Array<ResolversTypes['MailSubscription']>, ParentType, ContextType>;
+  ticket?: Resolver<Types.Maybe<ResolversTypes['Ticket']>, ParentType, ContextType, Partial<Types.QueryTicketArgs>>;
+  tickets?: Resolver<Array<ResolversTypes['Ticket']>, ParentType, ContextType, Partial<Types.QueryTicketsArgs>>;
   users?: Resolver<Array<ResolversTypes['User']>, ParentType, ContextType>;
+};
+
+export type TicketResolvers<ContextType = any, ParentType extends ResolversParentTypes['Ticket'] = ResolversParentTypes['Ticket']> = {
+  code?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  createdAt?: Resolver<ResolversTypes['DateTime'], ParentType, ContextType>;
+  customer?: Resolver<ResolversTypes['Customer'], ParentType, ContextType>;
+  customerId?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
+  event?: Resolver<ResolversTypes['Event'], ParentType, ContextType>;
+  eventId?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
+  id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
+  order?: Resolver<Types.Maybe<ResolversTypes['Order']>, ParentType, ContextType>;
+  orderId?: Resolver<Types.Maybe<ResolversTypes['ID']>, ParentType, ContextType>;
+  status?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  ticketTier?: Resolver<ResolversTypes['TicketTier'], ParentType, ContextType>;
+  ticketTierId?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
+  updatedAt?: Resolver<ResolversTypes['DateTime'], ParentType, ContextType>;
 };
 
 export type TicketTierResolvers<ContextType = any, ParentType extends ResolversParentTypes['TicketTier'] = ResolversParentTypes['TicketTier']> = {
@@ -485,6 +565,7 @@ export type Resolvers<ContextType = any> = {
   Buyer?: BuyerResolvers<ContextType>;
   Category?: CategoryResolvers<ContextType>;
   Collaborator?: CollaboratorResolvers<ContextType>;
+  Customer?: CustomerResolvers<ContextType>;
   DateTime?: GraphQLScalarType;
   Event?: EventResolvers<ContextType>;
   EventFeatures?: EventFeaturesResolvers<ContextType>;
@@ -494,11 +575,13 @@ export type Resolvers<ContextType = any> = {
   Location?: LocationResolvers<ContextType>;
   MailSubscription?: MailSubscriptionResolvers<ContextType>;
   Mutation?: MutationResolvers<ContextType>;
+  Order?: OrderResolvers<ContextType>;
   Organizer?: OrganizerResolvers<ContextType>;
   Page?: PageResolvers<ContextType>;
   PageSection?: PageSectionResolvers<ContextType>;
   Purchase?: PurchaseResolvers<ContextType>;
   Query?: QueryResolvers<ContextType>;
+  Ticket?: TicketResolvers<ContextType>;
   TicketTier?: TicketTierResolvers<ContextType>;
   User?: UserResolvers<ContextType>;
 };
