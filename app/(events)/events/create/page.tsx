@@ -9,12 +9,12 @@ import EventEditor from "@/components/events/EventEditor";
 import EventPreview from "@/components/events/EventPreview";
 import { Skeleton } from "@/components/ui/skeleton";
 import { CreateEventDocument, CreateEventInput, GetEventByIdDocument, GetEventByIdQuery, UpdateEventDocument, UpdateEventInput } from "@/graphql/types";
-import { EventCategoryType, EventStatus } from "@/graphql/types";
+import { EventStatus } from "@/graphql/types";
 import { useMutation, useQuery } from "@apollo/client/react";
 import { useSession } from "@/lib/auth-client";
 import { toast } from "sonner";
 
-  const DEFAULT_EVENT_DATA = {
+const DEFAULT_EVENT_DATA = {
   title: "Event Name",
   description: "Description of the event",
   location: {
@@ -38,21 +38,6 @@ import { toast } from "sonner";
   },
 }
 
-function toCategoryEnum(desc?: string): EventCategoryType {
-  const key = (desc || '').toUpperCase();
-  switch (key) {
-    case 'MUSIC': return EventCategoryType.Music;
-    case 'SPORTS': return EventCategoryType.Sports;
-    case 'ARTS': return EventCategoryType.Arts;
-    case 'FESTIVAL': return EventCategoryType.Festival;
-    case 'CONFERENCE': return EventCategoryType.Conference;
-    case 'NIGHTLIFE': return EventCategoryType.Nightlife;
-    case 'COMEDY': return EventCategoryType.Comedy;
-    case 'THEATRE': return EventCategoryType.Theatre;
-    default: return EventCategoryType.Other;
-  }
-}
-
 function CreateEventContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -74,14 +59,14 @@ function CreateEventContent() {
   const [previewData, setPreviewData] = useState<CreateEventInput | UpdateEventInput>(eventData);
   React.useEffect(() => {
     setPreviewData(eventData);
-  }, [isEditing, existingEvent?.event]);
+  }, [isEditing, existingEvent?.event, eventData]);
 
-  const [createEventMutation, { data: createData, loading: createLoading, error: createError }] = useMutation(CreateEventDocument);
+  const [createEventMutation, { loading: createLoading, error: createError }] = useMutation(CreateEventDocument);
 
-  const [updateEventMutation, { data: updateData, loading: updateLoading, error: updateError }] = useMutation(UpdateEventDocument);
+  const [updateEventMutation, { loading: updateLoading, error: updateError }] = useMutation(UpdateEventDocument);
 
   const handleSave = async (status?: EventStatus) => {
-    const dataToSave: CreateEventInput | UpdateEventInput  = {
+    const dataToSave: CreateEventInput | UpdateEventInput = {
       ...previewData,
       status: status || eventData?.status || EventStatus.Draft, // Keep current status if not specified
     };
@@ -109,7 +94,7 @@ function CreateEventContent() {
         refetchQueries: "active",
       });
     } else {
-      const { ticketTiers, ...input } = dataToSave as CreateEventInput;
+      const { ticketTiers } = dataToSave as CreateEventInput;
       createEventMutation(
         {
           variables: {
@@ -133,6 +118,16 @@ function CreateEventContent() {
                 phone: dataToSave.organizer?.phone || "",
               },
               userId: session?.user?.id,
+              ticketTiers: ticketTiers?.map(tier => {
+                const { currency, description, name, price, quantity } = tier;
+                return {
+                  currency: currency,
+                  name: name,
+                  description: description,
+                  price: Number(price),
+                  quantity: Number(quantity),
+                }
+              }) || [],
             }
           }
         }
@@ -160,7 +155,7 @@ function CreateEventContent() {
       </div>
     );
   }
-  
+
 
   return (
     <div className="min-h-screen bg-linear-to-br from-slate-50 via-cyan-50/30 to-amber-50/20">
