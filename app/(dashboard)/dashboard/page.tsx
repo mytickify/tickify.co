@@ -1,17 +1,23 @@
 "use client";
+import { gql } from "@apollo/client";
 import { useQuery } from "@apollo/client/react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
-import { GetEventsDocument, GetPagesDocument, GetUsersDocument } from "@/graphql/types";
+import { EventStatus, GetEventsDocument, GetPagesDocument, GetUsersDocument, GetEventsCountDocument, GetEventsCountQuery } from "@/graphql/types";
+
+// query definition for codegen is embedded below but we use the generated document for typing
+const GET_EVENTS_COUNT = gql`query GetEventsCount($filter: EventsFilterInput) { eventsCount(filter: $filter) }`;
 
 export default function DashboardOverviewPage() {
   const { data: eventsData, loading: eventsLoading } = useQuery(GetEventsDocument);
+  const { data: eventsCountData, loading: eventsCountLoading } = useQuery<GetEventsCountQuery>(GetEventsCountDocument, {
+    variables: { filter: { status: EventStatus.Published } },
+    fetchPolicy: 'cache-and-network',
+  });
   const { data: pagesData, loading: pagesLoading } = useQuery(GetPagesDocument);
   const { data: usersData, loading: usersLoading } = useQuery(GetUsersDocument);
 
-  const activeEvents = Array.isArray(eventsData?.events)
-    ? eventsData.events.filter((e) => e.status === 'PUBLISHED').length
-    : 0;
+  const activeEvents = typeof eventsCountData?.eventsCount === 'number' ? eventsCountData.eventsCount : 0;
   const publishedPages = Array.isArray(pagesData?.pages)
     ? pagesData.pages.filter((p) => !!p.published).length
     : 0;
@@ -38,7 +44,7 @@ export default function DashboardOverviewPage() {
             <CardTitle className="text-sm text-[#637381]">Active Events</CardTitle>
           </CardHeader>
           <CardContent>
-            {eventsLoading ? (
+            {(eventsLoading || eventsCountLoading) ? (
               <div className="space-y-2">
                 <Skeleton className="h-8 w-14" />
                 <Skeleton className="h-4 w-32" />

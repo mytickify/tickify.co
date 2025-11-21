@@ -1,8 +1,9 @@
 "use client";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
+import { gql } from "@apollo/client";
 import { useQuery } from "@apollo/client/react";
-import { GetEventsDocument, GetEventsQuery } from "@/graphql/types";
+import { EventsOrderField, OrderDirection, GetEventsPagedDocument, GetEventsPagedQuery } from "@/graphql/types";
 import { useMemo, useState } from "react";
 import Link from "next/link";
 import type { Route } from "next";
@@ -24,20 +25,36 @@ function formatDate(dt?: string | any | null) {
   }
 }
 
+const GET_EVENTS_PAGED = gql`
+  query GetEventsPaged($filter: EventsFilterInput, $pagination: PaginationInput, $orderBy: [EventsOrderByInput!]) {
+    events(filter: $filter, pagination: $pagination, orderBy: $orderBy) {
+      id
+      slug
+      title
+      status
+      updatedAt
+    }
+    eventsCount(filter: $filter)
+  }
+`;
+
 export default function DashboardEventsList() {
   const { data: session } = useSession();
-  const { data, loading, error, } = useQuery<GetEventsQuery>(GetEventsDocument);
   const [search, setSearch] = useState<string>("");
+  const [page, setPage] = useState<number>(0);
+  const [pageSize, setPageSize] = useState<number>(20);
+  const { data, loading, error } = useQuery<GetEventsPagedQuery>(GetEventsPagedDocument, {
+    variables: {
+      filter: { searchTerm: search || undefined },
+      pagination: { limit: pageSize, offset: page * pageSize },
+      orderBy: [ { field: EventsOrderField.UpdatedAt, direction: OrderDirection.Desc } ],
+    },
+    fetchPolicy: 'cache-and-network',
+  });
 
-  const events = Array.isArray(data?.events) ? data!.events : [];
-  const filtered = useMemo(() => {
-    const q = search.trim().toLowerCase();
-    if (!q) return events;
-    return events.filter((e) => {
-      const base = `${e.title ?? ""} ${e.slug ?? ""}`.toLowerCase();
-      return base.includes(q);
-    });
-  }, [events, search]);
+  const events = Array.isArray(data?.events) ? data.events : [];
+  const total = typeof data?.eventsCount === 'number' ? data.eventsCount : 0;
+  const totalPages = Math.max(Math.ceil(total / pageSize), 1);
 
   console.log('DashboardEventsList', data);
   if (!loading && error) {
@@ -77,13 +94,13 @@ export default function DashboardEventsList() {
         <CardContent>
           {loading ? (
             <p className="text-sm text-[#637381]">Loading events…</p>
-          ) : filtered.length === 0 ? (
+          ) : events.length === 0 ? (
             <div className="rounded border border-dashed border-[#DFE3E8] p-6 text-center">
               <p className="text-sm text-[#637381]">No events found. Create your first event.</p>
             </div>
           ) : (
             <ul className="divide-y divide-[#DFE3E8]">
-              {filtered.map((e) => (
+              {events.map((e) => (
                 <li key={e.id} className="flex items-center justify-between py-3">
                   <div className="flex items-center gap-3">
                     <div className="h-8 w-8 rounded bg-[#F6F7F8]" />
@@ -116,6 +133,21 @@ export default function DashboardEventsList() {
               ))}
             </ul>
           )}
+          <div className="mt-4 flex items-center justify-between">
+            <div className="text-xs text-[#637381]">Page {page + 1} of {totalPages} • {total} total</div>
+            <div className="flex items-center gap-2">
+              <button
+                className="rounded px-2 py-1 text-xs text-[#637381] hover:bg-[#F6F7F8] hover:text-[#202223]"
+                disabled={page === 0}
+                onClick={() => setPage((p) => Math.max(p - 1, 0))}
+              >Prev</button>
+              <button
+                className="rounded px-2 py-1 text-xs text-[#637381] hover:bg-[#F6F7F8] hover:text-[#202223]"
+                disabled={page + 1 >= totalPages}
+                onClick={() => setPage((p) => Math.min(p + 1, totalPages - 1))}
+              >Next</button>
+            </div>
+          </div>
         </CardContent>
       </Card>
     </div>

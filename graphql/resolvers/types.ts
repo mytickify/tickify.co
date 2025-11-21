@@ -9,6 +9,31 @@ import { OrderModel } from '@/lib/generated/prisma/models/Order';
 import { TicketModel } from '@/lib/generated/prisma/models/Ticket';
 export type Omit<T, K extends keyof T> = Pick<T, Exclude<keyof T, K>>;
 export type RequireFields<T, K extends keyof T> = Omit<T, K> & { [P in K]-?: NonNullable<T[P]> };
+export type GetEventsPagedQueryVariables = Types.Exact<{
+  filter?: Types.InputMaybe<Types.EventsFilterInput>;
+  pagination?: Types.InputMaybe<Types.PaginationInput>;
+  orderBy?: Types.InputMaybe<Array<Types.EventsOrderByInput> | Types.EventsOrderByInput>;
+}>;
+
+
+export type GetEventsPagedQuery = { __typename?: 'Query', eventsCount: number, events: Array<{ __typename?: 'Event', id: string, slug?: string | null, title: string, status: Types.EventStatus, updatedAt?: Date | null }> };
+
+export type GetEventsCountQueryVariables = Types.Exact<{
+  filter?: Types.InputMaybe<Types.EventsFilterInput>;
+}>;
+
+
+export type GetEventsCountQuery = { __typename?: 'Query', eventsCount: number };
+
+export type GetMyEventsPagedQueryVariables = Types.Exact<{
+  filter?: Types.InputMaybe<Types.EventsFilterInput>;
+  pagination?: Types.InputMaybe<Types.PaginationInput>;
+  orderBy?: Types.InputMaybe<Array<Types.EventsOrderByInput> | Types.EventsOrderByInput>;
+}>;
+
+
+export type GetMyEventsPagedQuery = { __typename?: 'Query', eventsCount: number, events: Array<{ __typename?: 'Event', id: string, title: string, status: Types.EventStatus, startDate: string, images?: { __typename?: 'EventImage', banner?: string | null } | null, theme?: { __typename?: 'EventTheme', primaryColor: string, secondaryColor: string } | null, location?: { __typename?: 'Location', venue: string, city: string } | null, ticketTiers?: Array<{ __typename?: 'TicketTier', soldCount: number }> | null }> };
+
 export type CreatePageMutationVariables = Types.Exact<{
   input: Types.CreatePageInput;
 }>;

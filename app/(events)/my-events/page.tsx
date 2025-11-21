@@ -10,10 +10,27 @@ import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { Plus, Calendar, MapPin, Edit, Trash2, BarChart3, Eye } from "lucide-react";
 import { format } from "date-fns";
 import { Skeleton } from "@/components/ui/skeleton";
+import { gql } from "@apollo/client";
 import { useMutation, useQuery } from "@apollo/client/react";
 import { useSession } from "@/lib/auth-client";
-import { DeleteEventDocument,GetEventsDocument, GetEventsQuery } from "@/graphql/types";
+import { DeleteEventDocument, EventsOrderField, OrderDirection, GetMyEventsPagedDocument, GetMyEventsPagedQuery } from "@/graphql/types";
 import { EventStatus} from "@/graphql/types";
+
+  const GET_EVENTS_PAGED = gql`
+  query GetMyEventsPaged($filter: EventsFilterInput, $pagination: PaginationInput, $orderBy: [EventsOrderByInput!]) {
+    events(filter: $filter, pagination: $pagination, orderBy: $orderBy) {
+      id
+      title
+      status
+      startDate
+      images { banner }
+      theme { primaryColor secondaryColor }
+      location { venue city }
+      ticketTiers { soldCount }
+    }
+    eventsCount(filter: $filter)
+  }
+`;
 
 export default function MyEvents() {
   const { data: session } = useSession();
@@ -21,13 +38,25 @@ export default function MyEvents() {
 
   const [activeTab, setActiveTab] = useState<'all' | EventStatus>("all");
 
-  const { data: eventsData, loading: isLoading } = useQuery<GetEventsQuery>(GetEventsDocument);
-
-  const [deleteEvent] = useMutation(DeleteEventDocument, {
-    refetchQueries: [{ query: GetEventsDocument }],
+  const [page, setPage] = useState<number>(0);
+  const [pageSize, setPageSize] = useState<number>(10);
+  const { data: eventsData, loading: isLoading } = useQuery<GetMyEventsPagedQuery>(GetMyEventsPagedDocument, {
+    variables: {
+      filter: {
+        userId: session?.user?.id || undefined,
+        status: activeTab === 'all' ? undefined : activeTab,
+      },
+      pagination: { limit: pageSize, offset: page * pageSize },
+      orderBy: [ { field: EventsOrderField.UpdatedAt, direction: OrderDirection.Desc } ],
+    },
+    fetchPolicy: 'cache-and-network',
   });
 
-  const myEvents = (eventsData?.events || []).filter(e => e.organizer?.email === userEmail);
+  const [deleteEvent] = useMutation(DeleteEventDocument);
+
+  const myEvents = (eventsData?.events || []);
+  const total = typeof eventsData?.eventsCount === 'number' ? eventsData.eventsCount : 0;
+  const totalPages = Math.max(Math.ceil(total / pageSize), 1);
 
   const filteredEvents = myEvents.filter(event => {
     if (activeTab === "all") return true;
@@ -243,6 +272,13 @@ export default function MyEvents() {
                     </Link>
                   </div>
                 )}
+                <div className="mt-6 flex items-center justify-between">
+                  <div className="text-xs text-gray-600">Page {page + 1} of {totalPages} • {total} total</div>
+                  <div className="flex items-center gap-2">
+                    <Button size="sm" variant="outline" disabled={page === 0} onClick={() => setPage((p) => Math.max(p - 1, 0))}>Prev</Button>
+                    <Button size="sm" variant="outline" disabled={page + 1 >= totalPages} onClick={() => setPage((p) => Math.min(p + 1, totalPages - 1))}>Next</Button>
+                  </div>
+                </div>
               </TabsContent>
             </Tabs>
           </CardContent>
