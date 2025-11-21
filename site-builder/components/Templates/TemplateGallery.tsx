@@ -34,10 +34,6 @@ const TemplateGallery: React.FC<TemplateGalleryProps> = ({
     { id: 'concert', name: 'Conciertos' }
   ];
 
-  const filteredTemplates = selectedCategory === 'all'
-    ? templates
-    : templates.filter(t => t.category === selectedCategory);
-
   return (
     <div className="template-gallery-overlay">
       <div className="template-gallery">
