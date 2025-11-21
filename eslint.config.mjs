@@ -17,6 +17,8 @@ const eslintConfig = defineConfig([
   {
     rules: {
       "@typescript-eslint/no-explicit-any": "off",
+      // Disable React Compiler's incompatible library warning for TanStack Table usage
+      "react-hooks/incompatible-library": "off",
     },
   },
 ]);

@@ -59,6 +59,16 @@ const data = {
       url: "/dashboard/users",
       icon: Users,
     },
+        {
+      title: "Users(Refine)",
+      url: "/dashboard/users-refine",
+      icon: Users,
+    },
+        {
+      title: "Users(Shadcn)",
+      url: "/dashboard/users-shadcn",
+      icon: Users,
+    },
     {
       title: "Settings",
       url: "/dashboard/settings",

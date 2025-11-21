@@ -25,6 +25,15 @@ export type GetEventsCountQueryVariables = Types.Exact<{
 
 export type GetEventsCountQuery = { __typename?: 'Query', eventsCount: number };
 
+export type GetUsersRefineQueryVariables = Types.Exact<{
+  filter?: Types.InputMaybe<Types.UsersFilterInput>;
+  pagination?: Types.InputMaybe<Types.PaginationInput>;
+  orderBy?: Types.InputMaybe<Array<Types.UsersOrderByInput> | Types.UsersOrderByInput>;
+}>;
+
+
+export type GetUsersRefineQuery = { __typename?: 'Query', usersCount: number, users: Array<{ __typename?: 'User', id: string, name?: string | null, email: string, createdAt: Date }> };
+
 export type GetUsersPagedQueryVariables = Types.Exact<{
   filter?: Types.InputMaybe<Types.UsersFilterInput>;
   pagination?: Types.InputMaybe<Types.PaginationInput>;
