@@ -14,7 +14,7 @@ const httpLink = new HttpLink({
 const removeTypenameLink = new RemoveTypenameFromVariablesLink();
 const link = ApolloLink.from([removeTypenameLink, httpLink]);
 
-const authLink = new SetContextLink((prevContext, _) => {
+const authLink = new SetContextLink((prevContext) => {
   // If you use token-based auth in future, uncomment below and add header
   return {
     headers: {
