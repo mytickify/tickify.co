@@ -11,7 +11,7 @@ import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { ArrowUpDown } from "lucide-react";
+import { ArrowDown, ArrowUp, ArrowUpDown } from "lucide-react";
 
 const GET_USERS_PAGED = gql`
   query GetUsersPaged($filter: UsersFilterInput, $pagination: PaginationInput, $orderBy: [UsersOrderByInput!]) {
@@ -152,7 +152,13 @@ export default function UsersShadcnPage() {
                               onClick={header.column.getToggleSortingHandler()}
                             >
                               {flexRender(header.column.columnDef.header, header.getContext())}
-                              <ArrowUpDown className="ml-2 h-4 w-4" />
+                              {header.column.getIsSorted() === "asc" && (
+                                <ArrowUp className="ml-2 h-4 w-4" />
+                              )}
+                              {header.column.getIsSorted() === "desc" && (
+                               <ArrowDown className="ml-2 h-4 w-4" />
+                              )}
+                              
                             </Button>
                           )}
                         </TableHead>

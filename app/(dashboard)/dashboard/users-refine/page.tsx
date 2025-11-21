@@ -35,9 +35,9 @@ function UsersListRefine() {
   const fetchList = useCallback(async () => {
     setLoading(true);
     try {
-      const result = await (apolloDataProvider as any).getList({
+      const result = await apolloDataProvider.getList({
         resource: "users",
-        pagination: { current: page, pageSize },
+        pagination: { currentPage: page, pageSize },
         sorters: [{ field: orderField, order: orderDirection }],
         filters: [{ field: "searchTerm", operator: "eq", value: search || undefined }],
         meta: { gqlQuery: USERS_LIST_QUERY },
