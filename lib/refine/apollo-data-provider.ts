@@ -1,14 +1,14 @@
-import type { DataProvider, CrudFilters, CrudSorting } from "@refinedev/core";
+import type { DataProvider, CrudFilters, CrudSorting, Pagination } from "@refinedev/core";
 import client from "@/lib/apollo-client";
 import { DocumentNode } from "graphql";
 
 type GetListMeta = { gqlQuery: DocumentNode };
 type MutationMeta = { gqlMutation: DocumentNode };
 
-function mapUsersVariables({ pagination, sorters, filters }: { pagination?: { current?: number; pageSize?: number }, sorters?: CrudSorting, filters?: CrudFilters }) {
-  const current = Math.max(pagination?.current ?? 1, 1);
+function mapUsersVariables({ pagination, sorters, filters }: { pagination?: Pagination, sorters?: CrudSorting, filters?: CrudFilters }) {
+  const currentPage = Math.max(pagination?.currentPage ?? 1, 1);
   const pageSize = Math.min(Math.max(pagination?.pageSize ?? 20, 1), 100);
-  const offset = (current - 1) * pageSize;
+  const offset = (currentPage - 1) * pageSize;
   const limit = pageSize;
 
   const fieldMap: Record<string, string> = { createdAt: "CREATED_AT", name: "NAME", email: "EMAIL" };
