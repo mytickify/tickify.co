@@ -8,7 +8,7 @@ import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Plus, Trash2, Upload, Palette, Users } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { CreateEventInput, Event, EventCategoryType, UpdateEventInput } from "@/graphql/types";
+import { CreateEventInput, Event, UpdateEventInput } from "@/graphql/types";
 import Image from "next/image";
 
 export default function EventEditor({ editorData, onChange }: { editorData: CreateEventInput | UpdateEventInput | null, onChange?: (values: Event) => void, }) {

@@ -4,12 +4,11 @@ import { SiteBuilder } from "@/site-builder";
 import { gql } from "@apollo/client";
 import { useMutation } from "@apollo/client/react";
 import { generateSlug } from "@/lib/utils";
-import { useState, useCallback, useMemo } from "react";
+import { useState, useCallback } from "react";
 import { useSession } from "@/lib/auth-client";
 import Link from "next/link";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Loader } from "lucide-react";
 import { Skeleton } from "@/components/ui/skeleton";
 
 const CREATE_PAGE = gql`
