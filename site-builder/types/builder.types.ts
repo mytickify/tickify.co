@@ -3,8 +3,7 @@
  * Defines builder state and actions
  */
 
-import { PageConfig, PageMetadata } from './page.types';
-import { SectionProps } from './section.types';
+import { PageConfig } from './page.types';
 
 export interface BuilderState {
   page: PageConfig | null;
