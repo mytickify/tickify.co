@@ -138,5 +138,5 @@ export default function EditPage() {
     );
   }
 
-  return <SiteBuilder initialPageId={pageId} onChange={handleSave} onPublish={handlePublish} />;
+  return <SiteBuilder onChange={handleSave} onPublish={handlePublish} />;
 }
