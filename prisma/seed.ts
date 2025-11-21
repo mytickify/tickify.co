@@ -142,7 +142,7 @@ async function main() {
 
     // Ensure categories exist and get their ids
     const catTypes = (ev.category?.type ?? []) as any[];
-    const cats = await Promise.all(catTypes.map(async (type) => {
+    const cats = await Promise.all(catTypes.map(async () => {
       const desc = ev.category?.description ?? '';
       const existing = await prisma.category.findFirst({ where: { description: desc } });
       if (existing) return existing;
