@@ -339,10 +339,9 @@ interface EditorProps {
   onPublish: (data: any) => void;
   onChange?: (data: any) => void;
   templateId?: string;
-  initialPageId?: string;
 }
 
-export function Editor({ onPublish, onChange, templateId, initialPageId }: EditorProps) {   
+export function Editor({ onPublish, onChange, templateId }: EditorProps) {   
   const [data, setData] = React.useState<any>({});
   React.useEffect(() => {
     const map: Record<string, any> = {
