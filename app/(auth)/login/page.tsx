@@ -1,7 +1,7 @@
 "use client";
 
 import { useSession, signIn } from "@/lib/auth-client";
-import { useSearchParams, useRouter } from "next/navigation";
+import { useSearchParams } from "next/navigation";
 import { Suspense, useState } from "react";
 import { GalleryVerticalEnd } from "lucide-react"
 
