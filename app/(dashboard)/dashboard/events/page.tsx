@@ -3,11 +3,10 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { gql } from "@apollo/client";
 import { useQuery } from "@apollo/client/react";
-import { EventsOrderField, OrderDirection, GetEventsPagedDocument, GetEventsPagedQuery } from "@/graphql/types";
-import { useMemo, useState } from "react";
+import { EventsOrderField, OrderDirection, GetEventsPagedQuery } from "@/graphql/types";
+import { useState } from "react";
 import Link from "next/link";
 import type { Route } from "next";
-import { useSession } from "@/lib/auth-client";
 
 function formatDate(dt?: string | any | null) {
   try {
@@ -39,11 +38,10 @@ const GET_EVENTS_PAGED = gql`
 `;
 
 export default function DashboardEventsList() {
-  const { data: session } = useSession();
   const [search, setSearch] = useState<string>("");
   const [page, setPage] = useState<number>(0);
   const [pageSize, setPageSize] = useState<number>(20);
-  const { data, loading, error } = useQuery<GetEventsPagedQuery>(GetEventsPagedDocument, {
+  const { data, loading, error } = useQuery<GetEventsPagedQuery>(GET_EVENTS_PAGED, {
     variables: {
       filter: { searchTerm: search || undefined },
       pagination: { limit: pageSize, offset: page * pageSize },
