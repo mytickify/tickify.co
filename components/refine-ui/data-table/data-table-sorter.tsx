@@ -1,23 +1,27 @@
 "use client";
 
-import type { Column } from "@tanstack/react-table";
+
+import type { Column, Table as ReactTable } from "@tanstack/react-table";
 import { ArrowDown, ArrowUp, ChevronsUpDown } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
+import { CrudSort } from "@refinedev/core";
 
 export type DataTableSorterProps<TData> = {
   column: Column<TData>;
+  sorters?: CrudSort[];
 } & React.ComponentProps<typeof Button>;
 
 export function DataTableSorter<TData>({
   column,
+  sorters,
   className,
-  ...props
 }: DataTableSorterProps<TData>) {
+  const sort = sorters?.find((sorter) => sorter.field === column.id)?.order || false
   const title =
-    column.getIsSorted() === "desc"
+    sort === "desc"
       ? `Sort by ${column.id} as descending`
-      : column.getIsSorted() === "asc"
+      : sort === "asc"
         ? `Sort by ${column.id} as ascending`
         : `Sort by ${column.id}`;
 
@@ -28,12 +32,11 @@ export function DataTableSorter<TData>({
       onClick={() => column.toggleSorting(undefined, true)}
       title={title}
       aria-label={title}
-      {...props}
       className={cn("data-[state=open]:bg-accent", "w-5 h-5", className)}
     >
-      {column.getIsSorted() === "desc" ? (
+      {sort === "desc" ? (
         <ArrowDown className={cn("text-primary", "!w-3", "!h-3")} />
-      ) : column.getIsSorted() === "asc" ? (
+      ) : sort === "asc" ? (
         <ArrowUp className={cn("text-primary", "!w-3", "!h-3")} />
       ) : (
         <ChevronsUpDown

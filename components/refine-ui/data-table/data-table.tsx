@@ -34,6 +34,7 @@ export function DataTable<TData extends BaseRecord>({
       pageCount,
       pageSize,
       setPageSize,
+      sorters
     },
   } = table;
 
@@ -102,7 +103,7 @@ export function DataTable<TData extends BaseRecord>({
                         <div className={cn("flex", "items-center", "gap-1")}>
                           {flexRender(
                             header.column.columnDef.header,
-                            header.getContext(),
+                            {...header.getContext(), sorters},
                           )}
                         </div>
                       )}
@@ -132,7 +133,7 @@ export function DataTable<TData extends BaseRecord>({
                           }}
                           className={cn("truncate")}
                         >
-                          <div className="h-8" />
+                          <div className="h-4" />
                         </TableCell>
                       ))}
                     </TableRow>
