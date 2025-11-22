@@ -1,14 +1,20 @@
-"use client";
+"use client"
+"use no memo"
+
 import { useMemo, useState } from "react";
 import { gql } from "@apollo/client";
-import { useQuery } from "@apollo/client/react";
-import { GetUsersPagedQuery, UsersOrderField, OrderDirection } from "@/graphql/types";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Refine, useUserFriendlyName } from "@refinedev/core";
+import { useTable } from "@refinedev/react-table";
+import type { ColumnDef, Table } from "@tanstack/react-table";
+import { DataTable } from "@/components/refine-ui/data-table/data-table";
+import { DataTableSorter } from "@/components/refine-ui/data-table/data-table-sorter";
+import { DataTableFilterDropdownDateRangePicker, DataTableFilterDropdownText } from "@/components/refine-ui/data-table/data-table-filter";
+import { Card, CardContent, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 
-const GET_USERS_PAGED = gql`
-  query GetUsersPaged($filter: UsersFilterInput, $pagination: PaginationInput, $orderBy: [UsersOrderByInput!]) {
+const USERS_LIST_QUERY = gql`
+  query GetUsersRefine($filter: UsersFilterInput, $pagination: PaginationInput, $orderBy: [UsersOrderByInput!]) {
     users(filter: $filter, pagination: $pagination, orderBy: $orderBy) {
       id
       name
@@ -19,151 +25,213 @@ const GET_USERS_PAGED = gql`
   }
 `;
 
-export default function UsersListPage() {
-  const [search, setSearch] = useState("");
-  const [page, setPage] = useState(0);
-  const [pageSize, setPageSize] = useState(20);
-  const [orderField, setOrderField] = useState<UsersOrderField>(UsersOrderField.CreatedAt);
-  const [orderDirection, setOrderDirection] = useState<OrderDirection>(OrderDirection.Desc);
+import apolloDataProvider from "@/lib/refine/apollo-data-provider";
+import JsonView from "@uiw/react-json-view";
+import { ListView, ListViewHeader } from "@/components/refine-ui/views/list-view";
+import { Sort } from "@/components/table/sort";
+import { Checkbox } from "@/components/ui/checkbox";
+import { CheckAll } from "@/components/table/checkall";
 
-  const { data, loading, error } = useQuery<GetUsersPagedQuery>(GET_USERS_PAGED, {
-    variables: {
-      filter: { searchTerm: search || undefined },
-      pagination: { limit: pageSize, offset: page * pageSize },
-      orderBy: [{ field: orderField, direction: orderDirection }],
+type RowUser = { id: string; name?: string | null; email: string; createdAt: string };
+  const columns: ColumnDef<RowUser>[] = [
+    // {
+    //   id: 'select', // Unique ID for the select column
+    //   header: ({ table }) => (
+    //     <CheckAll<RowUser>
+    //       options={[
+    //         bulkDeleteAction(table, (selected) => {
+    //           alert(
+    //             `Delete ${selected.length} ${friendly(
+    //               "Row",
+    //               selected.length > 1 ? "plural" : "singular",
+    //             )}`
+    //           );
+    //         }),
+    //       ]}
+    //       table={table}
+    //     />
+    //   ),
+    //   size: 10,
+    //   cell: ({ row }) => (
+    //     <Checkbox
+    //       className="translate-y-[2px]"
+    //       checked={row.getIsSelected()}
+    //       onCheckedChange={(value) =>
+    //         row.toggleSelected(!!value)
+    //       }
+    //       aria-label="Select row"
+    //       key={`checkbox-${row.original.id}`}
+    //     />
+    //   ),
+    // },
+    {
+      id: "email",
+      accessorKey: "email",
+      header: ({ column, table, ...props }) => (
+        <div className="flex items-center gap-1">
+          <span>Email</span>
+          <DataTableSorter column={column} {...props} />
+        </div>
+      ),
     },
-    fetchPolicy: "cache-and-network",
-  });
-  console.log("UsersListPage", data, loading, error);
-  const users = useMemo(() => {
-    return Array.isArray(data?.users) ? data.users : [];
-  }, [data, search, page, pageSize, orderField, orderDirection, loading]);
+    {
+      id: "name",
+      accessorKey: "name",
+      header: ({ column, table, ...props }) => (
+        <div className="flex items-center gap-1">
+          <span>Name</span>
+          <Sort column={column} {...props} />
+          <div>
+            <DataTableFilterDropdownText
+              defaultOperator="contains"
+              column={column}
+              table={table}
+              placeholder="Filter name"
+            />
+          </div>
+        </div>
+      ),
+    },
+    {
+      id: "createdAt",
+      accessorKey: "createdAt",
+      header: ({ column, ...props }) => (
+        <div className="flex items-center gap-1">
+          <span>Created</span>
+          <DataTableSorter column={column} {...props} />
+          <div>
+            <DataTableFilterDropdownDateRangePicker
+              defaultOperator="between"
+              column={column}
+            />
+          </div>
+        </div>
+      ),
+      cell: ({ getValue }) => new Date(String(getValue())).toLocaleString(),
+    },
+  ];
 
-  const total = typeof data?.usersCount === "number" ? data.usersCount : 0;
-  const totalPages = Math.max(Math.ceil(total / pageSize), 1);
+function UsersListRefine() {
+  const [search, setSearch] = useState("");
+  const friendly = useUserFriendlyName();
+  
+  // function bulkDeleteAction<TData>(
+  //   table: Table<TData>,
+  //   onDelete: (selected: TData[]) => void,
+  // ) {
+  //   const count = table.getSelectedRowModel().rows.length;
+  //   const label = `Delete Selected (${count}) ${friendly(
+  //     "Row",
+  //     count > 1 ? "plural" : "singular",
+  //   )}`;
+
+  //   return {
+  //     label,
+  //     onClick: () => {
+  //       const selected = table
+  //         .getSelectedRowModel()
+  //         .rows.map((r) => r.original as TData);
+  //       onDelete(selected);
+  //     },
+  //   };
+  // }
+  
+  const table = useTable<RowUser>({
+    columns,
+    refineCoreProps: {
+      resource: "users",
+      meta: { gqlQuery: USERS_LIST_QUERY },
+      pagination: { currentPage: 1, pageSize: 10 },
+      sorters: { initial: [{ field: "createdAt", order: "desc" }] },
+    },
+  });
+
+  const {
+    refineCore: {
+      sorters,
+      filters,
+      setFilters,
+      setPageSize,
+      currentPage,
+      pageSize,
+    },
+    reactTable: { setSorting, getState },
+  } = table;
 
   const handlePageSizeChange = (value: string) => {
-    setPage(0);
-    setPageSize(Number(value));
+    const size = Number(value);
+    setPageSize(size);
   };
-
   const handleOrderFieldChange = (value: string) => {
-    setPage(0);
-    setOrderField(value as UsersOrderField);
+    const order = getState()?.sorting?.[0]?.desc ? "desc" : "asc";
+    setSorting([{ id: value, desc: order === "desc" }]);
+  };
+  const handleOrderDirectionChange = (value: string) => {
+    const field = getState()?.sorting?.[0]?.id || "createdAt";
+    setSorting([{ id: field, desc: value === "desc" }]);
   };
 
-  const handleOrderDirectionChange = (value: string) => {
-    setPage(0);
-    setOrderDirection(value as OrderDirection);
+  const handleSearchChange = (value: string) => {
+    setSearch(value);
+    // Refine DataTableFilterDropdownText already wires filter, but we also add a global searchTerm
+    setFilters([{ field: "searchTerm", operator: "contains", value }]);
   };
 
   return (
     <div className="space-y-6">
-      {/* PageHeader */}
-      <div className="flex items-center justify-between">
-        <div>
-          <h1 className="text-2xl font-semibold text-[#202223]">Users</h1>
-          <p className="mt-1 text-sm text-[#637381]">Manage registered users</p>
-        </div>
-        {/* Placeholder actions */}
-        <div className="flex gap-2"></div>
-      </div>
-      {error && <p className="text-red-500">Error: {error.message}</p>}
-      {/* Filters */}
-      <Card className="border-[#DFE3E8]">
-        <CardContent className="p-4">
-          <div className="flex items-center gap-4">
-            <Input
-              value={search}
-              onChange={(e) => setSearch(e.target.value)}
-              placeholder="Search by name or email"
-            />
-            <Select value={String(pageSize)} onValueChange={handlePageSizeChange}>
-              <SelectTrigger className="w-24">
-                <SelectValue placeholder="Page size" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="10">10</SelectItem>
-                <SelectItem value="20">20</SelectItem>
-                <SelectItem value="50">50</SelectItem>
-              </SelectContent>
-            </Select>
-            <Select value={orderField} onValueChange={handleOrderFieldChange}>
-              <SelectTrigger className="w-36">
-                <SelectValue placeholder="Sort by" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value={UsersOrderField.CreatedAt}>Created At</SelectItem>
-                <SelectItem value={UsersOrderField.Name}>Name</SelectItem>
-                <SelectItem value={UsersOrderField.Email}>Email</SelectItem>
-              </SelectContent>
-            </Select>
-            <Select value={orderDirection} onValueChange={handleOrderDirectionChange}>
-              <SelectTrigger className="w-28">
-                <SelectValue placeholder="Direction" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value={OrderDirection.Asc}>Asc</SelectItem>
-                <SelectItem value={OrderDirection.Desc}>Desc</SelectItem>
-              </SelectContent>
-            </Select>
-          </div>
-        </CardContent>
-      </Card>
-
-      {/* List */}
-      <Card className="border-[#DFE3E8]">
-        <CardHeader>
-          <CardTitle className="text-sm text-[#637381]">All Users</CardTitle>
-        </CardHeader>
-        <CardContent>
-          {loading && <p className="text-sm text-[#637381]">Loading users…</p>}
-          {!loading && users.length === 0 && (
-            <p className="text-sm text-[#637381]">No users found.</p>
-          )}
-          {!loading && users.length > 0 && (
-            <div className="divide-y divide-[#DFE3E8] rounded border border-[#DFE3E8] bg-white">
-              {users.map((u) => (
-                <div key={u.id} className="flex items-center justify-between p-3">
-                  <div className="flex min-w-0 items-center gap-3">
-                    <div className="h-8 w-8 shrink-0 rounded-full bg-[#DFE3E8]" />
-                    <div className="min-w-0">
-                      <div className="truncate text-sm font-medium text-[#202223]">{u.name || "Unnamed"}</div>
-                      <div className="truncate text-xs text-[#637381]">{u.email}</div>
-                    </div>
-                  </div>
-                  <div className="text-xs text-[#637381]">
-                    {new Date(u.createdAt).toLocaleDateString()}
-                  </div>
-                </div>
-              ))}
+      <ListView>
+        <ListViewHeader title="Users" canCreate={true} resource="users-refine" />
+        <Card>
+          <CardContent>
+            <div className="flex items-center justify-between">
+              <CardTitle className="text-sm text-[#637381]">Filters</CardTitle>
+              <div className="flex items-center gap-2">
+                <Input value={search} onChange={(e) => handleSearchChange(e.target.value)} placeholder="Search by name or email" />
+                <Select value={String(pageSize)} onValueChange={handlePageSizeChange}>
+                  <SelectTrigger className="w-24">
+                    <SelectValue placeholder="Page size" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="10">10</SelectItem>
+                    <SelectItem value="20">20</SelectItem>
+                    <SelectItem value="50">50</SelectItem>
+                  </SelectContent>
+                </Select>
+                <Select value={String(((table as any).reactTable?.getState()?.sorting?.[0]?.id) || "createdAt")} onValueChange={handleOrderFieldChange}>
+                  <SelectTrigger className="w-36">
+                    <SelectValue placeholder="Sort by" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="createdAt">Created At</SelectItem>
+                    <SelectItem value="name">Name</SelectItem>
+                    <SelectItem value="email">Email</SelectItem>
+                  </SelectContent>
+                </Select>
+                <Select value={String((((table as any).reactTable?.getState()?.sorting?.[0]?.desc) ? "desc" : "asc"))} onValueChange={handleOrderDirectionChange}>
+                  <SelectTrigger className="w-28">
+                    <SelectValue placeholder="Direction" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="asc">Asc</SelectItem>
+                    <SelectItem value="desc">Desc</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
             </div>
-          )}
-        </CardContent>
-      </Card>
-
-      {/* Pagination */}
-      <div className="flex items-center justify-between">
-        <div className="text-xs text-[#637381]">
-          Page {page + 1} of {totalPages} • {total} total
-        </div>
-        <div className="flex items-center gap-2">
-          <button
-            className="rounded px-2 py-1 text-xs text-[#637381] hover:bg-[#F6F7F8] hover:text-[#202223]"
-            disabled={page === 0}
-            onClick={() => setPage((p) => Math.max(p - 1, 0))}
-          >
-            Prev
-          </button>
-          <button
-            className="rounded px-2 py-1 text-xs text-[#637381] hover:bg-[#F6F7F8] hover:text-[#202223]"
-            disabled={page + 1 >= totalPages}
-            onClick={() => setPage((p) => Math.min(p + 1, totalPages - 1))}
-          >
-            Next
-          </button>
-        </div>
-      </div>
+          </CardContent>
+        </Card>
+        <DataTable table={table} />
+      </ListView>
+      <JsonView value={{ filters, pagination: { currentPage, pageSize }, sorters }} />
     </div>
+  );
+}
+
+export default function UsersRefinePage() {
+  "use no memo";
+  return (
+    <Refine dataProvider={apolloDataProvider}>
+      <UsersListRefine />
+    </Refine>
   );
 }
