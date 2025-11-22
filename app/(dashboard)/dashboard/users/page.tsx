@@ -1,9 +1,8 @@
 "use client"
-"use no memo"
 
-import { useMemo, useState } from "react";
+import { useState } from "react";
 import { gql } from "@apollo/client";
-import { Refine, useUserFriendlyName } from "@refinedev/core";
+import { useUserFriendlyName } from "@refinedev/core";
 import { useTable } from "@refinedev/react-table";
 import type { ColumnDef, Table } from "@tanstack/react-table";
 import { DataTable } from "@/components/refine-ui/data-table/data-table";
@@ -25,7 +24,6 @@ const USERS_LIST_QUERY = gql`
   }
 `;
 
-import apolloDataProvider from "@/lib/refine/apollo-data-provider";
 import JsonView from "@uiw/react-json-view";
 import { ListView, ListViewHeader } from "@/components/refine-ui/views/list-view";
 import { Sort } from "@/components/table/sort";
@@ -230,8 +228,6 @@ function UsersListRefine() {
 export default function UsersRefinePage() {
   "use no memo";
   return (
-    <Refine dataProvider={apolloDataProvider}>
       <UsersListRefine />
-    </Refine>
   );
 }

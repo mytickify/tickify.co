@@ -44,6 +44,7 @@
     "@radix-ui/react-tooltip": "^1.2.8",
     "@refinedev/core": "^5.0.6",
     "@refinedev/graphql": "^8.0.1",
+    "@refinedev/nextjs-router": "^7.0.4",
     "@refinedev/react-table": "^6.0.1",
     "@tanstack/react-table": "^8.21.3",
     "@uiw/react-json-view": "^2.0.0-alpha.39",
