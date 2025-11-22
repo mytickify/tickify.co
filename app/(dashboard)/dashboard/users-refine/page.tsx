@@ -3,11 +3,14 @@
 import { useMemo, useState } from "react";
 import { gql } from "@urql/core";
 import { Refine } from "@refinedev/core";
-import { useTable } from "@refinedev/antd";
+import { useTable } from "@refinedev/react-table";
+import type { ColumnDef } from "@tanstack/react-table";
+import { DataTable } from "@/components/refine-ui/data-table/data-table";
+import { DataTableSorter } from "@/components/refine-ui/data-table/data-table-sorter";
+import { DataTableFilterDropdownDateRangePicker, DataTableFilterDropdownText } from "@/components/refine-ui/data-table/data-table-filter";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Separator } from "@/components/ui/separator";
 
 const USERS_LIST_QUERY = gql`
   query GetUsersRefine($filter: UsersFilterInput, $pagination: PaginationInput, $orderBy: [UsersOrderByInput!]) {
@@ -22,53 +25,106 @@ const USERS_LIST_QUERY = gql`
 `;
 
 import apolloDataProvider from "@/lib/refine/apollo-data-provider";
+import JsonView from "@uiw/react-json-view";
 
 type RowUser = { id: string; name?: string | null; email: string; createdAt: string };
 
 function UsersListRefine() {
   const [search, setSearch] = useState("");
 
-  const { tableProps, sorters, setSorters, filters, setFilters } = useTable({
-    resource: "users",
-    meta: { gqlQuery: USERS_LIST_QUERY },
-    syncWithLocation: false,
-    sorters: {
-      initial: [
-        { field: "createdAt", order: "desc" },
-      ],
+  const columns = useMemo<ColumnDef<RowUser>[]>(() => [
+    {
+      id: "email",
+      accessorKey: "email",
+      header: ({ column }) => (
+        <div className="flex items-center gap-1">
+          <span>Email</span>
+          <DataTableSorter column={column} />
+        </div>
+      ),
     },
-    pagination: {
-      current: 1,
-      pageSize: 20,
-    } as any,
+    {
+      id: "name",
+      accessorKey: "name",
+      header: ({ column, table }) => (
+        <div className="flex items-center gap-1">
+          <span>Name</span>
+          <DataTableSorter column={column} />
+          <div>
+            <DataTableFilterDropdownText
+              defaultOperator="contains"
+              column={column}
+              table={table}
+              placeholder="Filter name"
+            />
+          </div>
+        </div>
+      ),
+    },
+    {
+      id: "createdAt",
+      accessorKey: "createdAt",
+      header: ({ column }) => (
+        <div className="flex items-center gap-1">
+          <span>Created</span>
+          <DataTableSorter column={column} />
+          <div>
+            <DataTableFilterDropdownDateRangePicker
+              defaultOperator="between"
+              column={column}
+            />
+          </div>
+        </div>
+      ),
+      cell: ({ getValue }) => new Date(String(getValue())).toLocaleString(),
+    },
+  ], []);
+
+  const table = useTable<RowUser>({
+    columns,
+    refineCoreProps: {
+      resource: "users",
+      meta: { gqlQuery: USERS_LIST_QUERY },
+      pagination: { currentPage: 1, pageSize: 20 },
+      sorters: { initial: [{ field: "createdAt", order: "desc" }] },
+    },
   });
 
-  const users = useMemo<RowUser[]>(() => Array.isArray((tableProps as any)?.dataSource) ? (tableProps as any).dataSource as RowUser[] : [], [tableProps]);
-  const isLoading = (tableProps as any)?.loading ?? false;
-  const currentPage = (tableProps as any)?.pagination?.current ?? 1;
-  const pageSize = (tableProps as any)?.pagination?.pageSize ?? 20;
-  const totalCount = (tableProps as any)?.pagination?.total ?? (Array.isArray(users) ? users.length : 0);
+  const { 
+    refineCore: { 
+      filters,
+       setFilters,
+        setPageSize, 
+        currentPage, 
+        pageSize,
+        
+        tableQuery:{
+          isLoading,
+        }
+       },
+    reactTable: { setSorting, getState },
+ } = table;
+
+  const totalCount = Number(((table as any).refineCore?.tableQuery?.data?.total) ?? 0);
   const totalPages = useMemo(() => Math.max(Math.ceil(totalCount / pageSize), 1), [totalCount, pageSize]);
 
   const handlePageSizeChange = (value: string) => {
     const size = Number(value);
-    const onChange = (tableProps as any)?.pagination?.onChange;
-    const onShowSizeChange = (tableProps as any)?.pagination?.onShowSizeChange;
-    if (typeof onShowSizeChange === "function") onShowSizeChange(1, size);
-    else if (typeof onChange === "function") onChange(1, size);
+    setPageSize(size);  
   };
   const handleOrderFieldChange = (value: string) => {
-    const nextOrder = Array.isArray(sorters) && sorters[0]?.order ? sorters[0].order : "desc";
-    setSorters?.([{ field: value, order: nextOrder } as any]);
+    const order = getState()?.sorting?.[0]?.desc ? "desc" : "asc";
+    setSorting([{ id: value, desc: order === "desc" }]);
   };
   const handleOrderDirectionChange = (value: string) => {
-    const field = Array.isArray(sorters) && sorters[0]?.field ? String(sorters[0].field) : "createdAt";
-    setSorters?.([{ field, order: value as any }]);
+    const field = getState()?.sorting?.[0]?.id || "createdAt";
+    setSorting([{ id: field, desc: value === "desc" }]);
   };
 
   const handleSearchChange = (value: string) => {
     setSearch(value);
-    setFilters?.([{ field: "searchTerm", operator: "contains", value } as any]);
+    // Refine DataTableFilterDropdownText already wires filter, but we also add a global searchTerm
+    setFilters([{ field: "searchTerm", operator: "contains", value }]);
   };
 
   return (
@@ -79,7 +135,7 @@ function UsersListRefine() {
           <p className="mt-1 text-sm text-[#637381]">List powered by Refine GraphQL provider.</p>
         </div>
       </div>
-
+      <JsonView value={{ filters, pagination: { currentPage, pageSize } }} />
       <Card className="border-[#DFE3E8]">
         <CardHeader>
           <div className="flex items-center justify-between">
@@ -96,7 +152,7 @@ function UsersListRefine() {
                   <SelectItem value="50">50</SelectItem>
                 </SelectContent>
               </Select>
-              <Select value={String((Array.isArray(sorters) && sorters[0]?.field) || "createdAt")} onValueChange={handleOrderFieldChange}>
+              <Select value={String(((table as any).reactTable?.getState()?.sorting?.[0]?.id) || "createdAt")} onValueChange={handleOrderFieldChange}>
                 <SelectTrigger className="w-36">
                   <SelectValue placeholder="Sort by" />
                 </SelectTrigger>
@@ -106,7 +162,7 @@ function UsersListRefine() {
                   <SelectItem value="email">Email</SelectItem>
                 </SelectContent>
               </Select>
-              <Select value={String((Array.isArray(sorters) && sorters[0]?.order) || "desc")} onValueChange={handleOrderDirectionChange}>
+              <Select value={String((((table as any).reactTable?.getState()?.sorting?.[0]?.desc) ? "desc" : "asc"))} onValueChange={handleOrderDirectionChange}>
                 <SelectTrigger className="w-28">
                   <SelectValue placeholder="Direction" />
                 </SelectTrigger>
@@ -120,21 +176,12 @@ function UsersListRefine() {
         </CardHeader>
         <CardContent>
           {isLoading && <p className="text-sm text-[#637381]">Loading users…</p>}
-          {!isLoading && users.length === 0 && (
+          {!isLoading && table.reactTable?.getRowModel?.().rows.length === 0 && (
             <p className="text-sm text-[#637381]">No users found.</p>
           )}
-          {!isLoading && users.length > 0 && (
-            <div className="divide-y divide-[#DFE3E8] rounded border border-[#DFE3E8] bg-white">
-              {users.map((u) => (
-                <div key={u.id} className="flex items-center justify-between px-4 py-3">
-                  <div className="flex items-center gap-3">
-                    <div className="rounded bg-[#F6F7F8] px-3 py-1 text-xs text-[#637381]">{u.email}</div>
-                    <Separator orientation="vertical" className="h-5" />
-                    <div className="text-sm text-[#202223]">{u.name || "Unknown"}</div>
-                  </div>
-                  <div className="text-xs text-[#637381]">{new Date(u.createdAt).toLocaleString()}</div>
-                </div>
-              ))}
+          {!isLoading && (
+            <div className="rounded border border-[#DFE3E8] bg-white">
+              <DataTable table={table} />
             </div>
           )}
           <div className="mt-4 flex items-center justify-between">
@@ -143,18 +190,12 @@ function UsersListRefine() {
               <button
                 className="rounded px-2 py-1 text-xs text-[#637381] hover:bg-[#F6F7F8] hover:text-[#202223]"
                 disabled={currentPage <= 1}
-                onClick={() => {
-                  const onChange = (tableProps as any)?.pagination?.onChange;
-                  if (typeof onChange === "function") onChange(Math.max(currentPage - 1, 1), pageSize);
-                }}
+                onClick={() => (table as any).refineCore?.setCurrentPage?.(Math.max(currentPage - 1, 1))}
               >Prev</button>
               <button
                 className="rounded px-2 py-1 text-xs text-[#637381] hover:bg-[#F6F7F8] hover:text-[#202223]"
                 disabled={currentPage >= totalPages}
-                onClick={() => {
-                  const onChange = (tableProps as any)?.pagination?.onChange;
-                  if (typeof onChange === "function") onChange(Math.min(currentPage + 1, totalPages), pageSize);
-                }}
+                onClick={() => (table as any).refineCore?.setCurrentPage?.(Math.min(currentPage + 1, totalPages))}
               >Next</button>
             </div>
           </div>
