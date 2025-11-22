@@ -33,65 +33,37 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { CheckAll } from "@/components/table/checkall";
 
 type RowUser = { id: string; name?: string | null; email: string; createdAt: string };
-
-
-function UsersListRefine() {
-  "use no memo";
-  const [search, setSearch] = useState("");
-  const friendly = useUserFriendlyName();
-  
-  function bulkDeleteAction<TData>(
-    table: Table<TData>,
-    onDelete: (selected: TData[]) => void,
-  ) {
-    const count = table.getSelectedRowModel().rows.length;
-    const label = `Delete Selected (${count}) ${friendly(
-      "Row",
-      count > 1 ? "plural" : "singular",
-    )}`;
-
-    return {
-      label,
-      onClick: () => {
-        const selected = table
-          .getSelectedRowModel()
-          .rows.map((r) => r.original as TData);
-        onDelete(selected);
-      },
-    };
-  }
-  
   const columns: ColumnDef<RowUser>[] = [
-    {
-      id: 'select', // Unique ID for the select column
-      header: ({ table }) => (
-        <CheckAll<RowUser>
-          options={[
-            bulkDeleteAction(table, (selected) => {
-              alert(
-                `Delete ${selected.length} ${friendly(
-                  "Row",
-                  selected.length > 1 ? "plural" : "singular",
-                )}`
-              );
-            }),
-          ]}
-          table={table}
-        />
-      ),
-      size: 10,
-      cell: ({ row }) => (
-        <Checkbox
-          className="translate-y-[2px]"
-          checked={row.getIsSelected()}
-          onCheckedChange={(value) =>
-            row.toggleSelected(!!value)
-          }
-          aria-label="Select row"
-          key={`checkbox-${row.original.id}`}
-        />
-      ),
-    },
+    // {
+    //   id: 'select', // Unique ID for the select column
+    //   header: ({ table }) => (
+    //     <CheckAll<RowUser>
+    //       options={[
+    //         bulkDeleteAction(table, (selected) => {
+    //           alert(
+    //             `Delete ${selected.length} ${friendly(
+    //               "Row",
+    //               selected.length > 1 ? "plural" : "singular",
+    //             )}`
+    //           );
+    //         }),
+    //       ]}
+    //       table={table}
+    //     />
+    //   ),
+    //   size: 10,
+    //   cell: ({ row }) => (
+    //     <Checkbox
+    //       className="translate-y-[2px]"
+    //       checked={row.getIsSelected()}
+    //       onCheckedChange={(value) =>
+    //         row.toggleSelected(!!value)
+    //       }
+    //       aria-label="Select row"
+    //       key={`checkbox-${row.original.id}`}
+    //     />
+    //   ),
+    // },
     {
       id: "email",
       accessorKey: "email",
@@ -139,6 +111,31 @@ function UsersListRefine() {
     },
   ];
 
+function UsersListRefine() {
+  const [search, setSearch] = useState("");
+  const friendly = useUserFriendlyName();
+  
+  // function bulkDeleteAction<TData>(
+  //   table: Table<TData>,
+  //   onDelete: (selected: TData[]) => void,
+  // ) {
+  //   const count = table.getSelectedRowModel().rows.length;
+  //   const label = `Delete Selected (${count}) ${friendly(
+  //     "Row",
+  //     count > 1 ? "plural" : "singular",
+  //   )}`;
+
+  //   return {
+  //     label,
+  //     onClick: () => {
+  //       const selected = table
+  //         .getSelectedRowModel()
+  //         .rows.map((r) => r.original as TData);
+  //       onDelete(selected);
+  //     },
+  //   };
+  // }
+  
   const table = useTable<RowUser>({
     columns,
     refineCoreProps: {
@@ -183,7 +180,7 @@ function UsersListRefine() {
   return (
     <div className="space-y-6">
       <ListView>
-        <ListViewHeader title="Users" canCreate={true} resource="users" />
+        <ListViewHeader title="Users" canCreate={true} resource="users-refine" />
         <Card>
           <CardContent>
             <div className="flex items-center justify-between">
