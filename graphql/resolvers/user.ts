@@ -25,6 +25,15 @@ const createUserWhereInput = (filter?: InputMaybe<UsersFilterInput>) => {
 
 export const userResolvers: Resolvers = {
   Query: {
+    user: async (_, { id }, ctx) => {
+      const actor = ctx?.user;
+      if (!actor) return null;
+      const isAdmin = await isAdminForUserId(actor.id);
+      if (isAdmin || actor.id === id) {
+        return prisma.user.findUnique({ where: { id } });
+      }
+      return null;
+    },
     users: async (_, { filter, pagination, orderBy }, ctx) => {
       const user = ctx?.user;
       if (!user) return [];
@@ -57,7 +66,7 @@ export const userResolvers: Resolvers = {
       const email = String(input?.email || '').trim().toLowerCase();
       if (!email) throw new Error('Email is required');
       const exists = await prisma.user.findUnique({ where: { email } });
-      if (exists) return exists as any;
+      if (exists) throw new Error('USER_EXISTS');
       if (input?.password) {
         await auth.api.signUpEmail({ body: { email, password: String(input.password), name: input?.name || email, rememberMe: false } });
       } else {
@@ -74,7 +83,10 @@ export const userResolvers: Resolvers = {
       if (!isAdmin && actor.id !== id) throw new Error('Unauthorized');
       const data: any = {};
       if (input?.name !== undefined) data.name = input.name;
-      if (input?.email !== undefined) data.email = String(input.email);
+      if (input?.password) {
+        throw new Error('PASSWORD_CHANGE_NOT_SUPPORTED');
+      }
+      if (input?.email !== undefined) data.email = String(input.email || '').trim().toLowerCase();
       if (input?.image !== undefined) data.image = input.image ?? null;
       const updated = await prisma.user.update({ where: { id }, data });
       return updated as any;

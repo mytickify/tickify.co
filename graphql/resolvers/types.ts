@@ -25,6 +25,21 @@ export type GetEventsCountQueryVariables = Types.Exact<{
 
 export type GetEventsCountQuery = { __typename?: 'Query', eventsCount: number };
 
+export type GetUserQueryVariables = Types.Exact<{
+  id: Types.Scalars['ID']['input'];
+}>;
+
+
+export type GetUserQuery = { __typename?: 'Query', user?: { __typename?: 'User', id: string, name?: string | null, email: string, image?: string | null, createdAt: Date, updatedAt: Date } | null };
+
+export type UpdateUserMutationVariables = Types.Exact<{
+  id: Types.Scalars['ID']['input'];
+  input: Types.UserInput;
+}>;
+
+
+export type UpdateUserMutation = { __typename?: 'Mutation', updateUser: { __typename?: 'User', id: string, name?: string | null, email: string, image?: string | null, createdAt: Date, updatedAt: Date } };
+
 export type CreateUserMutationVariables = Types.Exact<{
   input: Types.UserInput;
 }>;
@@ -485,6 +500,7 @@ export type MutationResolvers<ContextType = any, ParentType extends ResolversPar
   createUser?: Resolver<ResolversTypes['User'], ParentType, ContextType, RequireFields<Types.MutationCreateUserArgs, 'input'>>;
   deleteEvent?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType, RequireFields<Types.MutationDeleteEventArgs, 'id'>>;
   deletePage?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType, RequireFields<Types.MutationDeletePageArgs, 'id'>>;
+  deleteUser?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType, RequireFields<Types.MutationDeleteUserArgs, 'id'>>;
   login?: Resolver<ResolversTypes['AuthPayload'], ParentType, ContextType, RequireFields<Types.MutationLoginArgs, 'input'>>;
   publishPage?: Resolver<ResolversTypes['Page'], ParentType, ContextType, RequireFields<Types.MutationPublishPageArgs, 'id'>>;
   register?: Resolver<ResolversTypes['AuthPayload'], ParentType, ContextType, RequireFields<Types.MutationRegisterArgs, 'input'>>;
@@ -575,6 +591,7 @@ export type QueryResolvers<ContextType = any, ParentType extends ResolversParent
   ticket?: Resolver<Types.Maybe<ResolversTypes['Ticket']>, ParentType, ContextType, Partial<Types.QueryTicketArgs>>;
   tickets?: Resolver<Array<ResolversTypes['Ticket']>, ParentType, ContextType, Partial<Types.QueryTicketsArgs>>;
   ticketsCount?: Resolver<ResolversTypes['Int'], ParentType, ContextType, Partial<Types.QueryTicketsCountArgs>>;
+  user?: Resolver<Types.Maybe<ResolversTypes['User']>, ParentType, ContextType, RequireFields<Types.QueryUserArgs, 'id'>>;
   users?: Resolver<Array<ResolversTypes['User']>, ParentType, ContextType, Partial<Types.QueryUsersArgs>>;
   usersCount?: Resolver<ResolversTypes['Int'], ParentType, ContextType, Partial<Types.QueryUsersCountArgs>>;
 };

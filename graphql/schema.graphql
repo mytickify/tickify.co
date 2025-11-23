@@ -321,6 +321,7 @@ type Query {
   eventsByCategory(categoryId: ID!): [Event!]!
   searchEvents(searchTerm: String!): [Event!]!
   me: User
+  user(id: ID!): User
   users(filter: UsersFilterInput, pagination: PaginationInput, orderBy: [UsersOrderByInput!]): [User!]!
   usersCount(filter: UsersFilterInput): Int!
   subscriptions: [MailSubscription!]!
@@ -349,6 +350,7 @@ type Mutation {
   login(input: LoginInput!): AuthPayload!
   createUser(input: UserInput!): User!
   updateUser(id: ID!, input: UserInput!): User!
+  deleteUser(id: ID!): Boolean!
   subscribe(input: SubscribeInput!): MailSubscription!
   confirmSubscription(input: ConfirmSubscriptionInput!): MailSubscription
   unsubscribe(input: UnsubscribeInput!): MailSubscription!

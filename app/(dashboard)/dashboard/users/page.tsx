@@ -4,7 +4,7 @@ import { useState } from "react";
 import { gql } from "@apollo/client";
 import { useUserFriendlyName } from "@refinedev/core";
 import { useTable } from "@refinedev/react-table";
-import type { ColumnDef, Table } from "@tanstack/react-table";
+import type { ColumnDef } from "@tanstack/react-table";
 import { DataTable } from "@/components/refine-ui/data-table/data-table";
 import { DataTableSorter } from "@/components/refine-ui/data-table/data-table-sorter";
 import { DataTableFilterDropdownDateRangePicker, DataTableFilterDropdownText } from "@/components/refine-ui/data-table/data-table-filter";
@@ -27,45 +27,51 @@ const USERS_LIST_QUERY = gql`
 import JsonView from "@uiw/react-json-view";
 import { ListView, ListViewHeader } from "@/components/refine-ui/views/list-view";
 import { Sort } from "@/components/table/sort";
-import { Checkbox } from "@/components/ui/checkbox";
-import { CheckAll } from "@/components/table/checkall";
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
+import { Button } from "@/components/ui/button";
+import Link from "next/link";
+import { MoreVertical, Trash2, Pencil } from "lucide-react";
+import { useMutation } from "@apollo/client/react";
+import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 
 type RowUser = { id: string; name?: string | null; email: string; createdAt: string };
+
+function UsersListRefine() {
+  const [search, setSearch] = useState("");
+  useUserFriendlyName();
+  const DELETE_USER_MUTATION = gql`
+    mutation DeleteUser($id: ID!) { deleteUser(id: $id) }
+  `;
+  const [deleteUser] = useMutation(DELETE_USER_MUTATION);
+  const [confirmOpen, setConfirmOpen] = useState(false);
+  const [confirmId, setConfirmId] = useState<string | null>(null);
+  
+  // function bulkDeleteAction<TData>(
+  //   table: Table<TData>,
+  //   onDelete: (selected: TData[]) => void,
+  // ) {
+  //   const count = table.getSelectedRowModel().rows.length;
+  //   const label = `Delete Selected (${count}) ${friendly(
+  //     "Row",
+  //     count > 1 ? "plural" : "singular",
+  //   )}`;
+
+  //   return {
+  //     label,
+  //     onClick: () => {
+  //       const selected = table
+  //         .getSelectedRowModel()
+  //         .rows.map((r) => r.original as TData);
+  //       onDelete(selected);
+  //     },
+  //   };
+  // }
+  
   const columns: ColumnDef<RowUser>[] = [
-    // {
-    //   id: 'select', // Unique ID for the select column
-    //   header: ({ table }) => (
-    //     <CheckAll<RowUser>
-    //       options={[
-    //         bulkDeleteAction(table, (selected) => {
-    //           alert(
-    //             `Delete ${selected.length} ${friendly(
-    //               "Row",
-    //               selected.length > 1 ? "plural" : "singular",
-    //             )}`
-    //           );
-    //         }),
-    //       ]}
-    //       table={table}
-    //     />
-    //   ),
-    //   size: 10,
-    //   cell: ({ row }) => (
-    //     <Checkbox
-    //       className="translate-y-[2px]"
-    //       checked={row.getIsSelected()}
-    //       onCheckedChange={(value) =>
-    //         row.toggleSelected(!!value)
-    //       }
-    //       aria-label="Select row"
-    //       key={`checkbox-${row.original.id}`}
-    //     />
-    //   ),
-    // },
     {
       id: "email",
       accessorKey: "email",
-      header: ({ column, table, ...props }) => (
+      header: ({ column, ...props }) => (
         <div className="flex items-center gap-1">
           <span>Email</span>
           <DataTableSorter column={column} {...props} />
@@ -107,33 +113,39 @@ type RowUser = { id: string; name?: string | null; email: string; createdAt: str
       ),
       cell: ({ getValue }) => new Date(String(getValue())).toLocaleString(),
     },
+    {
+      id: "actions",
+      header: () => <span>Actions</span>,
+      cell: ({ row }) => (
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <Button variant="ghost" size="icon">
+              <MoreVertical className="h-4 w-4" />
+            </Button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent align="end">
+            <DropdownMenuItem asChild>
+              <Link href={`/dashboard/users/${row.original.id}/edit`} className="flex items-center gap-2">
+                <Pencil className="h-4 w-4" />
+                <span>Edit</span>
+              </Link>
+            </DropdownMenuItem>
+            <DropdownMenuItem
+              onClick={() => { setConfirmId(row.original.id); setConfirmOpen(true); }}
+              className="text-red-600 focus:text-red-600"
+            >
+              <div className="flex items-center gap-2">
+                <Trash2 className="h-4 w-4" />
+                <span>Delete</span>
+              </div>
+            </DropdownMenuItem>
+          </DropdownMenuContent>
+        </DropdownMenu>
+      ),
+      size: 100,
+    },
   ];
 
-function UsersListRefine() {
-  const [search, setSearch] = useState("");
-  const friendly = useUserFriendlyName();
-  
-  // function bulkDeleteAction<TData>(
-  //   table: Table<TData>,
-  //   onDelete: (selected: TData[]) => void,
-  // ) {
-  //   const count = table.getSelectedRowModel().rows.length;
-  //   const label = `Delete Selected (${count}) ${friendly(
-  //     "Row",
-  //     count > 1 ? "plural" : "singular",
-  //   )}`;
-
-  //   return {
-  //     label,
-  //     onClick: () => {
-  //       const selected = table
-  //         .getSelectedRowModel()
-  //         .rows.map((r) => r.original as TData);
-  //       onDelete(selected);
-  //     },
-  //   };
-  // }
-  
   const table = useTable<RowUser>({
     columns,
     refineCoreProps: {
@@ -220,6 +232,35 @@ function UsersListRefine() {
         </Card>
         <DataTable table={table} />
       </ListView>
+      <Dialog open={confirmOpen} onOpenChange={setConfirmOpen}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Delete User</DialogTitle>
+            <DialogDescription>
+              This action is permanent. Are you sure you want to delete this user?
+            </DialogDescription>
+          </DialogHeader>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setConfirmOpen(false)}>Cancel</Button>
+            <Button
+              variant="destructive"
+              onClick={async () => {
+                if (!confirmId) return;
+                try {
+                  await deleteUser({ variables: { id: confirmId } });
+                  setConfirmOpen(false);
+                  setConfirmId(null);
+                  (table as any).refineCore.tableQuery.refetch();
+                } catch (e) {
+                  console.error(e);
+                }
+              }}
+            >
+              Delete
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
       <JsonView value={{ filters, pagination: { currentPage, pageSize }, sorters }} />
     </div>
   );

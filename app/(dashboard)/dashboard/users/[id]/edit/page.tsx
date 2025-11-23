@@ -1,23 +1,22 @@
-
 "use client";
 
-import React, { useState } from "react";
+import React, { useMemo, useState } from "react";
 import { gql } from "@apollo/client";
-import { useMutation } from "@apollo/client/react";
+import { useMutation, useQuery } from "@apollo/client/react";
+import { useParams } from "next/navigation";
 import { useNavigation } from "@refinedev/core";
 import { useForm } from "react-hook-form";
 
 import { Form, FormItem, FormLabel, FormMessage, FormField, FormControl } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
+import { ChevronLeft } from "lucide-react";
 
-import { ChevronLeft, ListIcon } from "lucide-react";
+type FormValues = { name: string; email: string; image?: string | null };
 
-type FormValues = { name: string; email: string; password: string; confirmPassword: string };
-
-const CREATE_USER_MUTATION = gql`
-  mutation CreateUser($input: UserInput!) {
-    createUser(input: $input) {
+const GET_USER_QUERY = gql`
+  query GetUser($id: ID!) {
+    user(id: $id) {
       id
       name
       email
@@ -28,30 +27,54 @@ const CREATE_USER_MUTATION = gql`
   }
 `;
 
-export default function UserCreate() {
+const UPDATE_USER_MUTATION = gql`
+  mutation UpdateUser($id: ID!, $input: UserInput!) {
+    updateUser(id: $id, input: $input) {
+      id
+      name
+      email
+      image
+      createdAt
+      updatedAt
+    }
+  }
+`;
+
+export default function UserEdit() {
   const { list } = useNavigation();
+  const params = useParams<{ id: string }>();
+  const id = useMemo(() => String(params?.id || ""), [params]);
+  const { data, loading } = useQuery(GET_USER_QUERY, { variables: { id }, skip: !id });
+  const [updateUser, { loading: updating }] = useMutation(UPDATE_USER_MUTATION);
+  const [submitError, setSubmitError] = useState<string | null>(null);
+
   const form = useForm<FormValues>({
-    defaultValues: { name: "", email: "", password: "", confirmPassword: "" },
+    defaultValues: { name: "", email: "", image: "" },
+    values: data?.user
+      ? { name: data.user.name || "", email: data.user.email, image: data.user.image || "" }
+      : undefined,
     mode: "onSubmit",
   });
-  const [submitError, setSubmitError] = useState<string | null>(null);
-  const [createUser, { loading } ] = useMutation(CREATE_USER_MUTATION);
 
   const onSubmit = async (values: FormValues) => {
     setSubmitError(null);
     try {
-      if (values.password !== values.confirmPassword) {
-        setSubmitError("Passwords do not match");
-        return;
-      }
-      await createUser({ variables: { input: { name: values.name.trim(), email: values.email.trim().toLowerCase(), password: values.password } } });
+      const input = {
+        name: values.name?.trim(),
+        email: values.email?.trim().toLowerCase(),
+        image: values.image || null,
+      };
+      await updateUser({ variables: { id, input } });
       list("users");
     } catch (e: any) {
-      const raw = String(e?.message || "Failed to create user");
-      const message = raw.includes('USER_EXISTS') ? 'A user with this email already exists' : raw;
+      const message = String(e?.message || "Failed to update user");
       setSubmitError(message);
     }
   };
+
+  if (!id) return <div className="p-4 text-sm text-[#637381]">Invalid user id</div>;
+  if (loading) return <div className="p-4 text-sm text-[#637381]">Loading…</div>;
+  if (!data?.user) return <div className="p-4 text-sm text-[#637381]">User not found or unauthorized</div>;
 
   return (
     <div className="mx-2 py-2">
@@ -60,12 +83,7 @@ export default function UserCreate() {
           <Button variant="ghost" size="sm" onClick={() => list("users")}>
             <ChevronLeft />
           </Button>
-          <h1 className="text-2xl font-bold">Create User</h1>
-        </div>
-        <div className="mt-8">
-          <Button variant="outline" size="sm" onClick={() => list("users")}> 
-            <ListIcon />
-          </Button>
+          <h1 className="text-2xl font-bold">Edit User</h1>
         </div>
       </div>
       <Form {...form}>
@@ -101,41 +119,21 @@ export default function UserCreate() {
             />
             <FormField
               control={form.control}
-              name="password"
-              rules={{ required: "Password is required", minLength: { value: 6, message: "Min 6 characters" } }}
+              name="image"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel className="m-2">Password</FormLabel>
+                  <FormLabel className="m-2">Image URL</FormLabel>
                   <FormControl>
-                    <Input type="password" placeholder="••••••" {...field} />
+                    <Input type="text" placeholder="https://example.com/avatar.jpg" {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
               )}
             />
-            <FormField
-              control={form.control}
-              name="confirmPassword"
-              rules={{
-                required: "Confirm your password",
-                validate: (value) => value === form.getValues("password") || "Passwords must match",
-              }}
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel className="m-2">Confirm Password</FormLabel>
-                  <FormControl>
-                    <Input type="password" placeholder="••••••" {...field} />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            {submitError && (
-              <p className="text-destructive text-sm">{submitError}</p>
-            )}
+            {submitError && <p className="text-destructive text-sm">{submitError}</p>}
             <div className="mt-4">
-              <Button className="w-40" type="submit" disabled={loading}>
-                {loading ? "Saving..." : "Save"}
+              <Button className="w-40" type="submit" disabled={updating}>
+                {updating ? "Saving..." : "Save"}
               </Button>
             </div>
           </div>
