@@ -11,6 +11,7 @@ import { Form, FormItem, FormLabel, FormMessage, FormField, FormControl } from "
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { ChevronLeft } from "lucide-react";
+import { GetUserQuery, GetUserQueryVariables, UpdateUserMutation, UpdateUserMutationVariables } from "@/graphql/types";
 
 type FormValues = { name: string; email: string; image?: string | null };
 
@@ -44,8 +45,8 @@ export default function UserEdit() {
   const { list } = useNavigation();
   const params = useParams<{ id: string }>();
   const id = useMemo(() => String(params?.id || ""), [params]);
-  const { data, loading } = useQuery(GET_USER_QUERY, { variables: { id }, skip: !id });
-  const [updateUser, { loading: updating }] = useMutation(UPDATE_USER_MUTATION);
+  const { data, loading } = useQuery<GetUserQuery, GetUserQueryVariables>(GET_USER_QUERY, { variables: { id }, skip: !id });
+  const [updateUser, { loading: updating }] = useMutation<UpdateUserMutation, UpdateUserMutationVariables>(UPDATE_USER_MUTATION);
   const [submitError, setSubmitError] = useState<string | null>(null);
 
   const form = useForm<FormValues>({
@@ -124,7 +125,7 @@ export default function UserEdit() {
                 <FormItem>
                   <FormLabel className="m-2">Image URL</FormLabel>
                   <FormControl>
-                    <Input type="text" placeholder="https://example.com/avatar.jpg" {...field} />
+                    <Input type="text" placeholder="https://example.com/avatar.jpg" {...field} value={field.value ?? ''} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
