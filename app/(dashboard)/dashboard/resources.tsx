@@ -12,10 +12,10 @@ export const resources: ResourceProps[] = [
     },
     {
         name: "users",
-        list: "/users",
-        show: "/users/:id",
-        create: "/users/create",
-        edit: "/users/:id/edit",
+        list: "/dashboard/users",
+        show: "/dashboard/users/:id",
+        create: "/dashboard/users/create",
+        edit: "/dashboard/users/:id/edit",
         meta: {
             title: "Users",
             icon: <User2 className="h-4 w-4" />,

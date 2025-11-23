@@ -25,6 +25,13 @@ export type GetEventsCountQueryVariables = Types.Exact<{
 
 export type GetEventsCountQuery = { __typename?: 'Query', eventsCount: number };
 
+export type CreateUserMutationVariables = Types.Exact<{
+  input: Types.UserInput;
+}>;
+
+
+export type CreateUserMutation = { __typename?: 'Mutation', createUser: { __typename?: 'User', id: string, name?: string | null, email: string, image?: string | null, createdAt: Date, updatedAt: Date } };
+
 export type GetUsersRefineQueryVariables = Types.Exact<{
   filter?: Types.InputMaybe<Types.UsersFilterInput>;
   pagination?: Types.InputMaybe<Types.PaginationInput>;
@@ -274,6 +281,7 @@ export type ResolversTypes = {
   UpdateEventInput: Types.UpdateEventInput;
   UpdatePageInput: Types.UpdatePageInput;
   User: ResolverTypeWrapper<UserModel>;
+  UserInput: Types.UserInput;
   UsersFilterInput: Types.UsersFilterInput;
   UsersOrderByInput: Types.UsersOrderByInput;
   UsersOrderField: Types.UsersOrderField;
@@ -338,6 +346,7 @@ export type ResolversParentTypes = {
   UpdateEventInput: Types.UpdateEventInput;
   UpdatePageInput: Types.UpdatePageInput;
   User: UserModel;
+  UserInput: Types.UserInput;
   UsersFilterInput: Types.UsersFilterInput;
   UsersOrderByInput: Types.UsersOrderByInput;
 };
@@ -473,6 +482,7 @@ export type MutationResolvers<ContextType = any, ParentType extends ResolversPar
   createEvent?: Resolver<ResolversTypes['Event'], ParentType, ContextType, RequireFields<Types.MutationCreateEventArgs, 'input'>>;
   createPage?: Resolver<ResolversTypes['Page'], ParentType, ContextType, RequireFields<Types.MutationCreatePageArgs, 'input'>>;
   createPurchase?: Resolver<ResolversTypes['Purchase'], ParentType, ContextType, RequireFields<Types.MutationCreatePurchaseArgs, 'input'>>;
+  createUser?: Resolver<ResolversTypes['User'], ParentType, ContextType, RequireFields<Types.MutationCreateUserArgs, 'input'>>;
   deleteEvent?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType, RequireFields<Types.MutationDeleteEventArgs, 'id'>>;
   deletePage?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType, RequireFields<Types.MutationDeletePageArgs, 'id'>>;
   login?: Resolver<ResolversTypes['AuthPayload'], ParentType, ContextType, RequireFields<Types.MutationLoginArgs, 'input'>>;
@@ -482,6 +492,7 @@ export type MutationResolvers<ContextType = any, ParentType extends ResolversPar
   unsubscribe?: Resolver<ResolversTypes['MailSubscription'], ParentType, ContextType, RequireFields<Types.MutationUnsubscribeArgs, 'input'>>;
   updateEvent?: Resolver<ResolversTypes['Event'], ParentType, ContextType, RequireFields<Types.MutationUpdateEventArgs, 'id' | 'input'>>;
   updatePage?: Resolver<ResolversTypes['Page'], ParentType, ContextType, RequireFields<Types.MutationUpdatePageArgs, 'id' | 'input'>>;
+  updateUser?: Resolver<ResolversTypes['User'], ParentType, ContextType, RequireFields<Types.MutationUpdateUserArgs, 'id' | 'input'>>;
 };
 
 export type OrderResolvers<ContextType = any, ParentType extends ResolversParentTypes['Order'] = ResolversParentTypes['Order']> = {

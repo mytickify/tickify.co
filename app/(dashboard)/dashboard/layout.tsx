@@ -1,9 +1,9 @@
 "use client";
+import apolloDataProvider from "@/lib/refine/apollo-data-provider";
 import { Refine } from "@refinedev/core";
 import routerProvider from "@refinedev/nextjs-router";
-import { PropsWithChildren } from "react";
+import type { PropsWithChildren } from "react";
 import { resources } from "./resources";
-import apolloDataProvider from "@/lib/refine/apollo-data-provider";
 
 const AppLayout = ({ children }: PropsWithChildren) => {
     return (

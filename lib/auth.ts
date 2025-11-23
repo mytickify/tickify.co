@@ -7,11 +7,16 @@ export const auth = betterAuth({
   database: prismaAdapter(prisma, {
     provider: "postgresql",
   }),
+  telemetry: { 
+    debug: true
+  },
   emailAndPassword: {
     enabled: true,
+    autoSignIn: false,
   },
   // Read secret and baseURL from environment, if provided
   secret: process.env.BETTER_AUTH_SECRET,
   baseURL: process.env.BETTER_AUTH_URL || `https://${process.env.VERCEL_PROJECT_PRODUCTION_URL}`,
   plugins: [nextCookies()],
 });
+

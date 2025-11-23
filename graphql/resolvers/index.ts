@@ -25,6 +25,7 @@ export const resolvers: Resolvers = {
     ...pageResolvers.Mutation,
     ...subscriptionResolvers.Mutation,
     ...authResolvers.Mutation,
+    ...userResolvers.Mutation,
   },
   DateTime: DateTimeResolver,
   JSON: JSONResolver,

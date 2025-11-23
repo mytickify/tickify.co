@@ -225,6 +225,7 @@ input CreatePurchaseInput { eventId: ID!, ticketTierId: ID!, quantity: Int!, buy
 
 input RegisterInput { name: String!, email: String!, password: String! }
 input LoginInput { email: String!, password: String! }
+input UserInput { name: String, email: String, image: String, password: String }
 
 input SubscribeInput { email: String!, name: String, preferences: JSON, source: SubscriptionSource }
 input ConfirmSubscriptionInput { token: String! }
@@ -346,6 +347,8 @@ type Mutation {
   createPurchase(input: CreatePurchaseInput!): Purchase!
   register(input: RegisterInput!): AuthPayload!
   login(input: LoginInput!): AuthPayload!
+  createUser(input: UserInput!): User!
+  updateUser(id: ID!, input: UserInput!): User!
   subscribe(input: SubscribeInput!): MailSubscription!
   confirmSubscription(input: ConfirmSubscriptionInput!): MailSubscription
   unsubscribe(input: UnsubscribeInput!): MailSubscription!

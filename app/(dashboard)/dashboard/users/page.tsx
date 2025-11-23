@@ -178,7 +178,7 @@ function UsersListRefine() {
   return (
     <div className="space-y-6">
       <ListView>
-        <ListViewHeader title="Users" canCreate={true} resource="users-refine" />
+        <ListViewHeader canCreate={true} resource="users" />
         <Card>
           <CardContent>
             <div className="flex items-center justify-between">

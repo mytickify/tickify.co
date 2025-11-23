@@ -27,6 +27,7 @@
     "@dnd-kit/utilities": "^3.2.2",
     "@ferdiunal/refine-shadcn": "^1.6.1",
     "@graphql-tools/schema": "^10.0.27",
+    "@hookform/resolvers": "^5.2.2",
     "@measured/puck": "^0.20.2",
     "@prisma/client": "^6.19.0",
     "@prisma/extension-accelerate": "^2.0.2",
@@ -45,6 +46,7 @@
     "@refinedev/core": "^5.0.6",
     "@refinedev/graphql": "^8.0.1",
     "@refinedev/nextjs-router": "^7.0.4",
+    "@refinedev/react-hook-form": "^5.0.3",
     "@refinedev/react-table": "^6.0.1",
     "@tanstack/react-table": "^8.21.3",
     "@uiw/react-json-view": "^2.0.0-alpha.39",
@@ -64,11 +66,13 @@
     "react": "19.2.0",
     "react-day-picker": "^9.11.1",
     "react-dom": "19.2.0",
+    "react-hook-form": "^7.66.1",
     "react-icons": "^5.5.0",
     "reflect-metadata": "^0.2.2",
     "rxjs": "^7.8.2",
     "sonner": "^2.0.7",
-    "tailwind-merge": "^3.3.1"
+    "tailwind-merge": "^3.3.1",
+    "zod": "^4.1.12"
   },
   "devDependencies": {
     "@0no-co/graphqlsp": "^1.15.0",
