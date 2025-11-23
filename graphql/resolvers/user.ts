@@ -91,5 +91,13 @@ export const userResolvers: Resolvers = {
       const updated = await prisma.user.update({ where: { id }, data });
       return updated as any;
     },
+    deleteUser: async (_: any, { id }: { id: string }, ctx: any) => {
+      const actor = ctx?.user;
+      if (!actor) throw new Error('Unauthorized');
+      const isAdmin = await isAdminForUserId(actor.id);
+      if (!isAdmin) throw new Error('Unauthorized');
+      await prisma.user.delete({ where: { id } });
+      return true;
+    },
   },
 };
