@@ -5,7 +5,6 @@ import { auth } from "@/lib/auth";
 export async function middleware(request: NextRequest) {
   const session = await auth.api.getSession({ headers: request.headers });
   const user = session?.user;
-  console.log(user);
   // Protect /dashboard routes: redirect unauthenticated users to /auth
   if (!user) {
     const url = request.nextUrl.clone();
