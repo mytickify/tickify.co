@@ -56,6 +56,13 @@ export type GetUsersRefineQueryVariables = Types.Exact<{
 
 export type GetUsersRefineQuery = { __typename?: 'Query', usersCount: number, users: Array<{ __typename?: 'User', id: string, name?: string | null, email: string, createdAt: Date }> };
 
+export type DeleteUserMutationVariables = Types.Exact<{
+  id: Types.Scalars['ID']['input'];
+}>;
+
+
+export type DeleteUserMutation = { __typename?: 'Mutation', deleteUser: boolean };
+
 export type GetMyEventsPagedQueryVariables = Types.Exact<{
   filter?: Types.InputMaybe<Types.EventsFilterInput>;
   pagination?: Types.InputMaybe<Types.PaginationInput>;
